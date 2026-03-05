@@ -1,0 +1,203 @@
+<div class="form-card">
+  <h2>Formulario de Registro</h2>
+
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+
+    <div>
+      <label for="dni">DNI:</label>
+      <input type="text" id="dni" formControlName="dni" maxlength="8">
+
+      @if (campoInvalido('dni')) {
+        <div class="error-message">
+          @if (obtenerError('dni', 'required')) {
+            <small>DNI es requerido.</small>
+          }
+          @if (obtenerError('dni', 'pattern')) {
+            <small>DNI debe tener exactamente 8 dígitos numéricos.</small>
+          }
+        </div>
+      }
+    </div>
+    
+    <div>
+      <label for="nombres">Nombres:</label>
+      <input type="text" id="nombres" formControlName="nombres">
+
+      @if (campoInvalido('nombres')) {
+        <div class="error-message">
+          @if (obtenerError('nombres', 'required')) {
+            <small>Nombres es requerido.</small>
+          }
+          @if (obtenerError('nombres', 'pattern')) {
+            <small>Nombres solo puede contener letras.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="apellidos">Apellidos:</label>
+      <input type="text" id="apellidos" formControlName="apellidos">
+
+      @if (campoInvalido('apellidos')) {
+        <div class="error-message">
+          @if (obtenerError('apellidos', 'required')) {
+            <small>Apellidos es requerido.</small>
+          }
+          @if (obtenerError('apellidos', 'pattern')) {
+            <small>Apellidos solo puede contener letras.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="correo">Correo:</label>
+      <input type="email" id="correo" formControlName="correo">
+
+      @if (campoInvalido('correo')) {
+        <div class="error-message">
+          @if (obtenerError('correo', 'required')) {
+            <small>Correo es requerido.</small>
+          }
+          @if (obtenerError('correo', 'email') || obtenerError('correo', 'pattern')) {
+            <small>Debe ingresar un correo válido (ej: usuario@dominio.com).</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="clave">Contraseña:</label>
+      <input type="password" id="clave" formControlName="clave">
+
+      @if (campoInvalido('clave')) {
+        <div class="error-message">
+          @if (obtenerError('clave', 'required')) {
+            <small>Contraseña es requerida.</small>
+          }
+          @if (obtenerError('clave', 'minlength')) {
+            <small>Debe tener al menos 6 caracteres.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+      <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento">
+
+      @if (campoInvalido('fechaNacimiento')) {
+        <div class="error-message">
+          @if (obtenerError('fechaNacimiento', 'required')) {
+            <small>Fecha de nacimiento es requerida.</small>
+          }
+          @if (obtenerError('fechaNacimiento', 'fechaFutura')) {
+            <small>No puede ser mayor a hoy.</small>
+          }
+          @if (obtenerError('fechaNacimiento', 'menorDeEdad')) {
+            <small>Debe ser mayor de 18 años para registrarse.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="sexo">Sexo:</label>
+      <select id="sexo" formControlName="sexo">
+        <option value="M">Masculino</option>
+        <option value="F">Femenino</option>
+      </select>
+    </div>
+
+    <hr>
+    <p style="text-align:center;color:#777;">Datos Opcionales</p>
+
+    <div>
+      <label for="telefono">Teléfono:</label>
+      <input
+        type="text"
+        id="telefono"
+        formControlName="telefono"
+        maxlength="9"
+      >
+
+      @if (campoInvalido('telefono')) {
+        <div class="error-message">
+          @if (obtenerError('telefono', 'pattern')) {
+            <small>Teléfono debe contener solo números y tener 9 dígitos.</small>
+          }
+        </div>
+      }
+    </div>
+
+
+    <div>
+      <label for="direccion">Dirección:</label>
+      <input type="text" id="direccion" formControlName="direccion">
+    </div>
+
+    <div>
+      <label for="ruc">RUC:</label>
+      <input type="text" id="ruc" formControlName="ruc" maxlength="11">
+
+      @if (campoInvalido('ruc')) {
+        <div class="error-message">
+          @if (obtenerError('ruc', 'pattern')) {
+            <small>RUC debe empezar con 20 y tener 11 dígitos numéricos.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="talla">Talla (m):</label>
+      <input 
+      type="text"
+      id="talla"
+      formControlName="talla"
+      (input)="limitarDecimales($event, 2)"
+    >
+
+      @if (campoInvalido('talla')) {
+        <div class="error-message">
+          <small>Talla debe estar entre 0.5 y 2.5.</small>
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="peso">Peso (kg):</label>
+      <input 
+        type="text"
+        id="peso"
+        formControlName="peso"
+        (input)="limitarDecimales($event, 1)"
+      >
+
+      @if (campoInvalido('peso')) {
+        <div class="error-message">
+          <small>Peso debe estar entre 1 y 300.</small>
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="estadoCivil">Estado Civil:</label>
+      <select id="estadoCivil" formControlName="estadoCivil">
+        <option value="Soltero">Soltero(a)</option>
+        <option value="Casado">Casado(a)</option>
+        <option value="Viudo">Viudo(a)</option>
+        <option value="Divorciado">Divorciado(a)</option>
+      </select>
+    </div>
+
+    <button type="submit" [disabled]="registroForm.invalid">
+      Registrar Paciente
+    </button>
+  </form>
+
+  <div class="form-link">
+    <p>¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión</a></p>
+  </div>
+</div>

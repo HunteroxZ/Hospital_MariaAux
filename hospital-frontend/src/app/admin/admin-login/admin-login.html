@@ -1,0 +1,81 @@
+<div class="form-card">
+  <h2>Iniciar Sesión - Administrador</h2>
+
+  @if (errorMessage) {
+    <div class="error-message-global">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form (ngSubmit)="onLoginAdmin()" #loginForm="ngForm">
+    <div>
+      <label for="dni">DNI:</label>
+      <input
+        type="text"
+        id="dni"
+        name="dni"
+        [(ngModel)]="credenciales.dni"
+        (input)="onDniInput($event)"
+        required
+        minlength="8"
+        maxlength="8"
+        pattern="[0-9]{8}"
+        #dniInput="ngModel"
+      />
+      @if (dniError) {
+        <div class="error-message">
+          <small>{{ dniError }}</small>
+        </div>
+      }
+      @if (!dniError && dniInput.invalid && (dniInput.dirty || dniInput.touched)) {
+        <div class="error-message">
+          @if (dniInput.errors?.['required']) {
+            <small>El DNI es requerido.</small>
+          }
+          @if (dniInput.errors?.['minlength'] || dniInput.errors?.['maxlength']) {
+            <small>El DNI debe tener exactamente 8 dígitos.</small>
+          }
+          @if (dniInput.errors?.['pattern']) {
+            <small>El DNI solo puede contener números.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="contrasena">Contraseña:</label>
+      <input
+        type="password"
+        id="contrasena"
+        name="contrasena"
+        [(ngModel)]="credenciales.contrasena"
+        required
+        #contrasenaInput="ngModel"
+      />
+      @if (contrasenaInput.invalid && (contrasenaInput.dirty || contrasenaInput.touched)) {
+        <div class="error-message">
+          @if (contrasenaInput.errors?.['required']) {
+            <small>La contraseña es requerida.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <button type="submit" [disabled]="!loginForm.form.valid || dniError">
+      Ingresar como Administrador
+    </button>
+  </form>
+
+  <div class="form-link"
+       style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 15px;">
+    <a routerLink="/seleccionar-rol">« Volver a seleccionar rol</a>
+  </div>
+</div>
+
+
+
+
+
+
+
+

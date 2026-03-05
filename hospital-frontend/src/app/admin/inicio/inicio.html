@@ -1,0 +1,225 @@
+
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Panel de Administración</h1>
+    <nav class="admin-nav">
+      <button routerLink="/admin/dashboard/inicio" routerLinkActive="active">Inicio</button>
+      <button routerLink="/admin/dashboard/pacientes" routerLinkActive="active">Pacientes</button>
+      <button routerLink="/admin/dashboard/medicos" routerLinkActive="active">Médicos</button>
+      <button routerLink="/admin/dashboard/reportes" routerLinkActive="active">Reportes</button>
+      <button class="cerrar-sesion" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </nav>
+  </div>
+
+  <div class="dashboard-content">
+    @if (admin?.nombre) {
+      <div class="welcome-message">
+        <h2>Bienvenido, {{ admin.nombre }} {{ admin.apellido }}</h2>
+      </div>
+    }
+
+
+    @if (notificacionesActivas.length > 0) {
+      <div class="notificaciones-container">
+        @for (notificacion of notificacionesActivas; track $index) {
+          <div class="notificacion-banner" [ngClass]="getNotificacionClass(notificacion.color)">
+            <span class="notificacion-texto">{{ notificacion.mensaje }}</span>
+            <button (click)="cerrarNotificacion($index)" class="close-btn">×</button>
+          </div>
+        }
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="error-banner">
+        <span>⚠️ {{ errorMessage }}</span>
+        <button (click)="errorMessage = ''" class="close-btn">×</button>
+      </div>
+    }
+
+    @if (loading) {
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando estadísticas...</p>
+      </div>
+    }
+
+    @if (!loading && stats) {
+      <div class="dashboard-body">
+        <div class="stats-grid">
+          <div class="stat-card blue">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <h3>{{ stats.totalPacientes }}</h3>
+              <p>Total Pacientes</p>
+            </div>
+          </div>
+
+          <div class="stat-card green">
+            <div class="stat-icon">👨‍⚕️</div>
+            <div class="stat-info">
+              <h3>{{ stats.totalMedicos }}</h3>
+              <p>Médicos Activos</p>
+            </div>
+          </div>
+
+          <div class="stat-card purple">
+            <div class="stat-icon">🏥</div>
+            <div class="stat-info">
+              <h3>{{ stats.totalEspecialidades }}</h3>
+              <p>Especialidades</p>
+            </div>
+          </div>
+
+          <div class="stat-card orange">
+            <div class="stat-icon">📅</div>
+            <div class="stat-info">
+              <h3>{{ stats.totalCitasHoy }}</h3>
+              <p>Citas Hoy</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-grid">
+          <div class="card">
+            <h2>Estado de Citas</h2>
+            <div class="citas-estado">
+              <div class="estado-item pendiente">
+                <span class="estado-label">⏳ Pendientes</span>
+                <span class="estado-valor">{{ stats.citasPendientes }}</span>
+              </div>
+              <div class="estado-item confirmada">
+                <span class="estado-label">✔️ Confirmadas</span>
+                <span class="estado-valor">{{ stats.citasConfirmadas }}</span>
+              </div>
+              <div class="estado-item atendida">
+                <span class="estado-label">✅ Atendidas</span>
+                <span class="estado-valor">{{ stats.citasAtendidas }}</span>
+              </div>
+              <div class="estado-item cancelada">
+                <span class="estado-label">❌ Canceladas</span>
+                <span class="estado-valor">{{ stats.citasCanceladas }}</span>
+              </div>
+              <div class="estado-item no-presentado">
+                <span class="estado-label">🚫 No Presentados</span>
+                <span class="estado-valor">{{ stats.citasNoPresentadas }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Ingresos Estimados</h2>
+            <div class="ingresos-container">
+              <div class="ingresos-amount">
+                S/ {{ stats.ingresosEstimados | number:'1.2-2' }}
+              </div>
+              <p class="ingresos-subtitle">Citas atendidas y confirmadas</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-grid">
+          <div class="card">
+            <h2>Top 5 Especialidades</h2>
+            <div class="top-list">
+              @for (esp of stats.topEspecialidades; track $index) {
+                <div class="top-item">
+                  <div class="top-rank">{{ $index + 1 }}</div>
+                  <div class="top-info">
+                    <div class="top-name">{{ esp.nombreEspecialidad }}</div>
+                    <div class="top-details">
+                      <span>{{ esp.numeroCitas }} citas</span>
+                      <span class="separator">•</span>
+                      <span>S/ {{ esp.ingresoTotal | number:'1.2-2' }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (stats.topEspecialidades.length === 0) {
+                <div class="empty-message">
+                  No hay especialidades registradas
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Top 5 Médicos</h2>
+            <div class="top-list">
+              @for (medico of stats.topMedicos; track $index) {
+                <div class="top-item">
+                  <div class="top-rank">{{ $index + 1 }}</div>
+                  <div class="top-info">
+                    <div class="top-name">{{ medico.nombreCompleto }}</div>
+                    <div class="top-details">
+                      <span>{{ medico.numeroCitas }} citas</span>
+                      <span class="separator">•</span>
+                      <span>{{ medico.especialidadPrincipal }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (stats.topMedicos.length === 0) {
+                <div class="empty-message">
+                  No hay médicos registrados
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="card full-width">
+          <h2>Citas por Día</h2>
+          
+
+          <div class="fecha-control">
+            <div class="fecha-inputs">
+              <div class="input-group">
+                <label for="fechaInicio">Fecha Inicio:</label>
+                <input 
+                  type="date" 
+                  id="fechaInicio"
+                  [(ngModel)]="fechaInicio"
+                />
+              </div>
+              <div class="input-group">
+                <label for="fechaFin">Fecha Fin:</label>
+                <input 
+                  type="date" 
+                  id="fechaFin"
+                  [(ngModel)]="fechaFin"
+                />
+              </div>
+            </div>
+            <div class="fecha-buttons">
+              <button (click)="aplicarRango()" class="btn-aplicar">
+                Aplicar Rango
+              </button>
+              <button (click)="resetearRango()" class="btn-resetear">
+                Últimos 7 Días
+              </button>
+            </div>
+          </div>
+          
+          <div class="chart-container">
+            <div class="bar-chart">
+              @for (dia of stats.citasPorDia; track $index) {
+                <div class="bar-item">
+                  <div class="bar-wrapper">
+                    <div 
+                      class="bar" 
+                      [style.height.%]="calcularAlturaBarra(dia.numeroCitas)"
+                      [title]="dia.numeroCitas + ' citas'">
+                      <span class="bar-value">{{ dia.numeroCitas }}</span>
+                    </div>
+                  </div>
+                  <div class="bar-label">{{ dia.fecha }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

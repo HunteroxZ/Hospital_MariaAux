@@ -1,0 +1,342 @@
+
+<div class="card-simple">
+  <h2>Panel de Administración - Pacientes</h2>
+
+  <nav class="admin-nav">
+    <button routerLink="/admin/dashboard/inicio" routerLinkActive="active">Inicio</button>
+    <button routerLink="/admin/dashboard/pacientes" routerLinkActive="active">Pacientes</button>
+    <button routerLink="/admin/dashboard/medicos" routerLinkActive="active">Médicos</button>
+    <button routerLink="/admin/dashboard/reportes" routerLinkActive="active">Reportes</button>
+    <button class="cerrar-sesion" (click)="cerrarSesion()">Cerrar Sesión</button>
+  </nav>
+
+
+  <div class="contenido">
+    
+ 
+    <div class="header-actions">
+      <h3>Lista de Pacientes</h3>
+      <button class="btn-refresh" (click)="cargarPacientes()" [disabled]="cargando">
+        🔄 Actualizar
+      </button>
+    </div>
+
+    <div class="filtro-container">
+      <label for="dniFiltro">Buscar Paciente por DNI:</label>
+      <div class="filtro-input-group">
+        <input
+          #inputBusqueda
+          type="text"
+          id="dniFiltro"
+          [(ngModel)]="dniFiltro"
+          (ngModelChange)="onBusquedaChange()"
+          (keypress)="validarSoloNumeros($event)"
+          placeholder="Ingrese DNI para buscar automáticamente..."
+          maxlength="8"
+          [disabled]="cargando"
+        />
+        <button 
+          class="btn-limpiar" 
+          (click)="limpiarFiltro()"
+          *ngIf="dniFiltro"
+          [disabled]="cargando"
+          title="Limpiar búsqueda">
+          ✖ Limpiar
+        </button>
+      </div>
+      <small class="filtro-resultado" *ngIf="dniFiltro && !cargando && !error">
+        🔍 Buscando pacientes con DNI que inicie con: <strong>{{ dniFiltro }}</strong>
+      </small>
+      <small class="filtro-buscando" *ngIf="cargando && dniFiltro">
+        ⏳ Buscando...
+      </small>
+    </div>
+
+
+    <div class="alert alert-error" *ngIf="error">
+      ⚠️ {{ error }}
+    </div>
+
+
+    <div class="loading-container" *ngIf="cargando">
+      <div class="spinner"></div>
+      <p>Cargando pacientes...</p>
+    </div>
+
+
+    <div class="tabla-responsive" *ngIf="!cargando">
+      <table class="tabla-pacientes">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>DNI</th>
+            <th>Correo Electrónico</th>
+            <th>Teléfono</th>
+            <th>N° Citas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let paciente of pacientesPaginados; let i = index" [class.row-even]="i % 2 === 0">
+            <td>{{ paciente.idPaciente }}</td>
+            <td class="nombre-col">{{ paciente.nombre }}</td>
+            <td>{{ paciente.dni }}</td>
+            <td>{{ paciente.correoElectronico }}</td>
+            <td>{{ paciente.telefono }}</td>
+            <td class="text-center">
+              <span class="badge-citas">{{ paciente.numeroCitas }}</span>
+            </td>
+            <td class="acciones-col">
+              <button 
+                class="btn-action btn-ver" 
+                (click)="verDetalles(paciente)"
+                title="Ver detalles">
+                👁️
+              </button>
+              <button 
+                class="btn-action btn-editar" 
+                (click)="editarPaciente(paciente)"
+                title="Editar">
+                ✏️
+              </button>
+              <button 
+                class="btn-action btn-eliminar" 
+                (click)="eliminarPaciente(paciente)"
+                title="Eliminar">
+                🗑️
+              </button>
+            </td>
+          </tr>
+          
+         
+          <tr *ngIf="pacientes.length === 0 && !error">
+            <td colspan="7" class="no-data">
+              📋 No hay pacientes registrados en el sistema
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <div class="paginacion-container" *ngIf="totalPaginas > 1">
+        <button 
+          class="btn-pag" 
+          (click)="irAPagina(paginaActual - 1)"
+          [disabled]="paginaActual === 1">
+          ← Anterior
+        </button>
+
+        <span class="info-pag">
+          Página {{ paginaActual }} de {{ totalPaginas }}
+        </span>
+
+        <div class="paginas-numeros">
+          <button 
+            *ngFor="let pagina of getPaginas()"
+            class="btn-num-pag"
+            [class.active]="pagina === paginaActual"
+            (click)="irAPagina(pagina)">
+            {{ pagina }}
+          </button>
+        </div>
+
+        <button 
+          class="btn-pag" 
+          (click)="irAPagina(paginaActual + 1)"
+          [disabled]="paginaActual === totalPaginas">
+          Siguiente →
+        </button>
+      </div>
+
+
+      <div class="tabla-footer" *ngIf="pacientes.length > 0">
+        <p>
+          <strong>Total de pacientes:</strong> {{ pacientes.length }}
+          <span *ngIf="totalPaginas > 1"> | Mostrando {{ pacientesPaginados.length }} de {{ pacientes.length }}</span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="modal-overlay" *ngIf="mostrarModalDetalles" (click)="cerrarModalDetalles()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Detalles del Paciente</h3>
+      <button class="btn-close" (click)="cerrarModalDetalles()">✖</button>
+    </div>
+
+    <div class="modal-body" *ngIf="!cargandoDetalles && pacienteSeleccionado">
+      <div class="detalle-grid">
+        <div class="detalle-item">
+          <strong>ID:</strong>
+          <span>{{ pacienteSeleccionado.idPaciente }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Nombres:</strong>
+          <span>{{ pacienteSeleccionado.nombres }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Apellidos:</strong>
+          <span>{{ pacienteSeleccionado.apellidos }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>DNI:</strong>
+          <span>{{ pacienteSeleccionado.dni }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Correo:</strong>
+          <span>{{ pacienteSeleccionado.correo }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Teléfono:</strong>
+          <span>{{ pacienteSeleccionado.telefono || 'No especificado' }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Dirección:</strong>
+          <span>{{ pacienteSeleccionado.direccion || 'No especificada' }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Sexo:</strong>
+          <span>{{ pacienteSeleccionado.sexo === 'M' ? 'Masculino' : 'Femenino' }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Fecha de Nacimiento:</strong>
+          <span>{{ pacienteSeleccionado.fechaNacimiento }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Edad:</strong>
+          <span>{{ pacienteSeleccionado.edad }} años</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Talla:</strong>
+          <span>{{ pacienteSeleccionado.talla || 'No especificada' }} m</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Peso:</strong>
+          <span>{{ pacienteSeleccionado.peso || 'No especificado' }} kg</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Estado Civil:</strong>
+          <span>{{ pacienteSeleccionado.estadoCivil || 'No especificado' }}</span>
+        </div>
+        <div class="detalle-item">
+          <strong>Fecha de Registro:</strong>
+          <span>{{ pacienteSeleccionado.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-body loading-modal" *ngIf="cargandoDetalles">
+      <div class="spinner"></div>
+      <p>Cargando detalles...</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="cerrarModalDetalles()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModalEdicion" (click)="cerrarModalEdicion()">
+  <div class="modal-content modal-form" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Editar Paciente</h3>
+      <button class="btn-close" (click)="cerrarModalEdicion()">✖</button>
+    </div>
+
+    <div class="modal-body" *ngIf="!cargandoDetalles">
+      <form #formEdicion="ngForm">
+        <div class="form-group">
+          <label for="telefono">Teléfono:</label>
+          <input
+            type="text"
+            id="telefono"
+            [(ngModel)]="pacienteEditar.telefono"
+            name="telefono"
+            maxlength="20"
+            placeholder="Ej: 987654321"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="direccion">Dirección:</label>
+          <textarea
+            id="direccion"
+            [(ngModel)]="pacienteEditar.direccion"
+            name="direccion"
+            rows="3"
+            maxlength="200"
+            placeholder="Ingrese la dirección completa"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="talla">Talla (m):</label>
+            <input
+              type="number"
+              id="talla"
+              [(ngModel)]="pacienteEditar.talla"
+              name="talla"
+              step="0.01"
+              min="0"
+              max="3"
+              placeholder="Ej: 1.75"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="peso">Peso (kg):</label>
+            <input
+              type="number"
+              id="peso"
+              [(ngModel)]="pacienteEditar.peso"
+              name="peso"
+              step="0.01"
+              min="0"
+              max="500"
+              placeholder="Ej: 70.5"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clave">Nueva Contraseña:</label>
+          <input
+            type="password"
+            id="clave"
+            [(ngModel)]="pacienteEditar.clave"
+            name="clave"
+            placeholder="Dejar vacío para no cambiar"
+          />
+          <small class="form-hint">* Dejar en blanco si no desea cambiar la contraseña</small>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-body loading-modal" *ngIf="cargandoDetalles">
+      <div class="spinner"></div>
+      <p>Cargando datos...</p>
+    </div>
+
+    <div class="modal-footer">
+      <button 
+        class="btn-secondary" 
+        (click)="cerrarModalEdicion()"
+        [disabled]="guardandoEdicion">
+        Cancelar
+      </button>
+      <button 
+        class="btn-primary" 
+        (click)="guardarEdicion()"
+        [disabled]="guardandoEdicion || cargandoDetalles">
+        {{ guardandoEdicion ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </div>
+  </div>
+</div>
+

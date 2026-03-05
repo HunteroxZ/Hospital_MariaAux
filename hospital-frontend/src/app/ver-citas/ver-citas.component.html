@@ -1,0 +1,39 @@
+<div class="card-simple"> <h2>Mis Citas Programadas</h2>
+
+  <div *ngIf="isLoading" class="loading-message">Cargando citas...</div>
+  <div *ngIf="errorMessage && !isLoading" class="error-message">{{ errorMessage }}</div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <div *ngIf="citas.length === 0" class="info-message">
+      Aún no tienes citas registradas.
+    </div>
+
+    <table *ngIf="citas.length > 0" class="citas-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Especialidad</th>
+          <th>Médico</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cita of citas">
+          <td>{{ cita.fecha }}</td>
+          <td>{{ formatHora(cita.hora) }}</td> <td>{{ cita.nombreEspecialidad }}</td>
+          <td>Dr(a). {{ cita.nombreMedico }}</td>
+          <td>{{ cita.motivoConsulta }}</td>
+          <td>
+            <span [ngClass]="'status-' + cita.estado">{{ cita.estado }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-link" style="margin-top: 20px;">
+    <a routerLink="/dashboard">Volver</a>
+  </div>
+</div>

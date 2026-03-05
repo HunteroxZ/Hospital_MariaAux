@@ -1,0 +1,272 @@
+
+<div class="modal-overlay">
+  <div class="modal-content pago-modal">
+    <div class="modal-header">
+      <h2>Menú de Pago</h2>
+      <button class="btn-close" (click)="cerrarModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="monto-cita">
+        <h3>Monto de la Cita: <span class="precio">S/ {{ cita.precio | number:'1.2-2' }}</span></h3>
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-message">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <div class="pago-section">
+        <h4>Ingrese el monto de dinero con el que está pagando:</h4>
+        <input 
+          type="number" 
+          [(ngModel)]="montoPagado" 
+          (ngModelChange)="calcularVuelto()"
+          placeholder="0.00"
+          step="0.01"
+          min="0"
+        />
+
+        <div class="vuelto-section">
+          <label>Su vuelto es de:</label>
+          <input type="text" [value]="'S/ ' + (vuelto | number:'1.2-2')" readonly />
+        </div>
+      </div>
+
+      <div class="facturacion-section">
+        <h4>INGRESAR RUC (SI EL CLIENTE ASÍ LO SOLICITA):</h4>
+        
+        <div class="form-group">
+          <label>INGRESAR RUC:</label>
+          <input 
+            type="text" 
+            [(ngModel)]="ruc" 
+            placeholder="20XXXXXXXXX"
+            maxlength="11"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>INGRESAR RAZÓN SOCIAL:</label>
+          <input 
+            type="text" 
+            [(ngModel)]="razonSocial" 
+            placeholder="Razón Social"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>INGRESAR DIRECCIÓN:</label>
+          <input 
+            type="text" 
+            [(ngModel)]="direccion" 
+            placeholder="Dirección"
+          />
+        </div>
+      </div>
+
+      <div class="metodos-pago">
+        <button (click)="procesarPagoEfectivo()" class="btn-efectivo">
+          EFECTIVO
+        </button>
+        <button (click)="abrirModalIzipay()" class="btn-tarjeta">
+          TARJETA
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (mostrarModalIzipay) {
+  <div class="modal-overlay">
+    <div class="modal-content izipay-modal">
+      <div class="modal-header izipay-header">
+        <h2>IZIPAY</h2>
+        <button class="btn-close" (click)="cerrarModalIzipay()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <button (click)="seleccionarPagoTarjeta()" class="btn-option">
+          Pago con Tarjeta
+        </button>
+        <button (click)="seleccionarPagoQR()" class="btn-option">
+          Pago con QR
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarModalTarjeta) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Pago con Tarjeta</h2>
+        <button class="btn-close" (click)="mostrarModalTarjeta = false; errorMessageTarjeta = ''">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        @if (errorMessageTarjeta) {
+          <div class="error-message">
+            {{ errorMessageTarjeta }}
+          </div>
+        }
+        
+        <div class="form-group">
+          <label>Ingrese monto:</label>
+          <input 
+            type="number" 
+            [(ngModel)]="montoPagoTarjeta" 
+            placeholder="0.00"
+            step="0.01"
+            (input)="errorMessageTarjeta = ''"
+          />
+        </div>
+
+        <div class="cuotas-section">
+          <label>
+            <input type="checkbox" [(ngModel)]="pagarEnCuotas" />
+            Pagar en cuotas
+          </label>
+          @if (pagarEnCuotas) {
+            <input 
+              type="number" 
+              [(ngModel)]="numeroCuotas" 
+              placeholder="Número de cuotas"
+              min="1"
+              (input)="errorMessageTarjeta = ''"
+            />
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button (click)="mostrarModalTarjeta = false; errorMessageTarjeta = ''" class="btn-cancelar">
+            Cancelar
+          </button>
+          <button (click)="continuarPagoTarjeta()" class="btn-continuar">
+            Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarModalPasarTarjeta) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header izipay-header">
+        <h2>IZIPAY</h2>
+      </div>
+      <div class="modal-body pasar-tarjeta">
+        <div class="tarjeta-icon">
+          <div class="card-animation">💳</div>
+          <p>Por favor, pase su tarjeta</p>
+        </div>
+        <button (click)="siguientePasarTarjeta()" class="btn-siguiente">
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarModalQR) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Pago con QR</h2>
+        <button class="btn-close" (click)="mostrarModalQR = false; mostrarQRGenerado = false; mostrarFallbackQR = false; errorMessageQR = ''">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        @if (errorMessageQR) {
+          <div class="error-message">
+            {{ errorMessageQR }}
+          </div>
+        }
+        
+        <div class="form-group">
+          <label>Ingrese monto a pagar:</label>
+          <input 
+            type="number" 
+            [(ngModel)]="montoPagoTarjeta" 
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            (ngModelChange)="calcularVueltoTarjeta()"
+            (input)="errorMessageQR = ''"
+          />
+          <small style="color: #7f8c8d; display: block; margin-top: 5px;">
+            Precio de la cita: S/ {{ cita.precio | number:'1.2-2' }}
+          </small>
+        </div>
+
+        @if (!mostrarQRGenerado) {
+          <button (click)="generarQR()" class="btn-generar-qr">
+            Generar QR
+          </button>
+        }
+
+        @if (mostrarQRGenerado) {
+          <div class="qr-section">
+            <div class="qr-placeholder">
+              @if (!mostrarFallbackQR) {
+                <div class="qr-image-container">
+                  <img 
+                    [src]="qrImagePath" 
+                    alt="Código QR para pago"
+                    (error)="manejarErrorQR($event)"
+                  >
+                </div>
+              }
+              
+              @if (mostrarFallbackQR) {
+                <div class="qr-fallback">
+                  <div></div><div></div><div></div>
+                  <div></div><div></div><div></div>
+                  <div></div><div></div><div></div>
+                </div>
+              }
+            </div>
+            
+            <div class="qr-instructions">
+              <p><strong>Instrucciones:</strong></p>
+              <p>1. Abra su aplicación bancaria</p>
+              <p>2. Seleccione "Pagar con QR"</p>
+              <p>3. Escanee el código QR</p>
+              <p>4. Confirme el pago de:</p>
+              <p class="qr-amount">S/ {{ montoPagoTarjeta | number:'1.2-2' }}</p>
+            </div>
+          </div>
+        }
+
+        @if (mostrarQRGenerado) {
+          <div class="modal-actions">
+            <button (click)="mostrarQRGenerado = false; mostrarFallbackQR = false" class="btn-cancelar">
+              Generar Nuevo QR
+            </button>
+            <button (click)="continuarQR()" class="btn-continuar">
+              Pago Completado
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarModalConfirmacion) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-body confirmacion">
+        <div class="check-icon">✓</div>
+        <h2>Venta Finalizada</h2>
+        <p>BOLETA DE VENTA ELECTRÓNICA</p>
+        <button (click)="imprimirBoleta()" class="btn-imprimir">
+          Imprimir Boleta
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,106 @@
+<div class="card-simple container-historial">
+  
+    <div class="header-historial">
+        <h2>Registro y Historial Médico</h2>
+        <p>Paciente: <strong>{{ nombrePaciente }}</strong></p>
+        <button (click)="volverAAgenda()" class="btn btn-secondary">
+            « Volver a Agenda
+        </button>
+    </div>
+
+    <section *ngIf="estadoCita === 'pendiente' && !isLoading" class="registro-actual form-card">
+        <h3>Registro de Diagnóstico (Cita ID: {{ idCita }})</h3> 
+        <p class="warning-message">
+            <strong>AVISO:</strong> Al registrar este historial, la cita se marcará automáticamente como 'Atendida'.
+        </p>
+        
+        <form [formGroup]="historialForm" (ngSubmit)="onSubmit()">
+            
+            <fieldset>
+                <legend>Datos de la Consulta</legend>
+                <div class="form-group">
+                    <label for="sintomas">Síntomas Reportados (*):</label>
+                    <textarea id="sintomas" formControlName="sintomas" rows="3"></textarea>
+                    <div *ngIf="historialForm.controls['sintomas'].invalid && (historialForm.controls['sintomas'].touched || historialForm.controls['sintomas'].dirty)" class="error-message">
+                        Los síntomas son obligatorios.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="diagnostico">Diagnóstico y Plan de Tratamiento (*):</label>
+                    <textarea id="diagnostico" formControlName="diagnostico" rows="5"></textarea>
+                    <div *ngIf="historialForm.controls['diagnostico'].invalid && (historialForm.controls['diagnostico'].touched || historialForm.controls['diagnostico'].dirty)" class="error-message">
+                        El diagnóstico es obligatorio.
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Antecedentes y Notas (Opcional - Se autorrellena)</legend>
+                <div class="form-group">
+                    <label for="antecedentesPersonales">Antecedentes Personales:</label>
+                    <textarea id="antecedentesPersonales" formControlName="antecedentesPersonales" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="antecedentesFamiliares">Antecedentes Familiares:</label>
+                    <textarea id="antecedentesFamiliares" formControlName="antecedentesFamiliares" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="historiaEnfermedadActual">Historia de Enfermedad Actual:</label>
+                    <textarea id="historiaEnfermedadActual" formControlName="historiaEnfermedadActual" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="historiaPsicosocial">Historia Psicosocial:</label>
+                    <textarea id="historiaPsicosocial" formControlName="historiaPsicosocial" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="antecedentes">Otros Antecedentes (Campo genérico):</label>
+                    <textarea id="antecedentes" formControlName="antecedentes" rows="2"></textarea>
+                </div>
+            </fieldset>
+            
+            <button type="submit" [disabled]="historialForm.invalid || isSubmitting" class="btn btn-primary">
+                {{ isSubmitting ? 'Guardando...' : 'Registrar Historial y Finalizar Cita' }}
+            </button>
+        </form>
+    </section>
+
+    <section *ngIf="estadoCita === 'atendida' && !isLoading" class="info-message" style="background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460;">
+        El historial de esta cita (ID: {{ idCita }}) ya fue registrado. Solo puede consultar o imprimir.
+    </section>
+
+    <hr>
+    
+    <section class="historial-previo">
+        <h3>Historial Previo ({{ historialFiltrado.length }} Consultas en esta Especialidad)</h3>
+        
+        <div *ngIf="isLoading" class="loading-message">Cargando...</div>
+        <div *ngIf="!isLoading && historialFiltrado.length === 0" class="info-message">
+            El paciente no tiene entradas de historial previas *en esta especialidad*.
+        </div>
+
+        <div *ngIf="!isLoading && historialFiltrado.length > 0" class="history-list">
+            <div *ngFor="let entrada of historialFiltrado" class="history-card">
+                <div class="card-header">
+                    <div>
+                        <strong>Fecha:</strong> {{ entrada.fechaConsulta | date:'dd/MM/yyyy' }} | 
+                        <strong>Especialidad:</strong> {{ entrada.especialidad }}
+                    </div>
+                    <div>
+                        <button class="btn btn-icon-print" (click)="imprimirHistorialPDF(entrada)">
+                            📄 Imprimir
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <h4>Diagnóstico:</h4>
+                    <p>{{ entrada.diagnostico }}</p>
+                    
+                    <p><strong>Síntomas:</strong> {{ entrada.sintomas }}</p>
+                    
+                    <p class="medico-info-historial">Atendido por: Dr(a). {{ entrada.nombreMedico }}</p>
+                </div>
+                </div>
+        </div>
+    </section>
+</div>

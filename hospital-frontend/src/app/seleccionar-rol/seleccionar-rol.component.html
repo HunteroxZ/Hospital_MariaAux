@@ -1,0 +1,23 @@
+
+<div class="role-selection-card">
+  <h2>Bienvenido al Hospital María Auxiliadora</h2>
+  <p>Por favor, seleccione su rol para iniciar sesión:</p>
+
+  <div class="role-buttons">
+    <button (click)="goToLogin('/login')" class="role-button patient">
+      Soy Paciente
+    </button>
+
+    <button (click)="goToLogin('/medico/login')" class="role-button doctor">
+      Soy Médico
+    </button>
+
+    <button (click)="goToLogin('/recepcionista/login')" class="role-button recepcionista">
+      Soy Recepcionista
+    </button>
+
+    <button (click)="goToLogin('/admin/login')" class="role-button admin">
+      Soy Administrador
+    </button>
+  </div>
+</div>

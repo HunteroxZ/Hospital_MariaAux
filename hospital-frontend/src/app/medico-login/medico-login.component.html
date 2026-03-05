@@ -1,0 +1,59 @@
+<div class="form-card">
+  <h2>Iniciar Sesión - Personal Médico</h2>
+
+  @if (errorMessage) {
+    <div class="error-message-global">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form [formGroup]="formMedico" (ngSubmit)="onLoginMedico()">
+
+
+    <div>
+      <label for="dni">DNI:</label>
+      <input
+        id="dni"
+        type="text"
+        formControlName="dni"
+        maxlength="8"
+        (input)="limitarCampo($event, 'dni', 8)"
+      >
+
+
+      @if (formMedico.get('dni')?.invalid && formMedico.get('dni')?.touched) {
+        <div class="error-message">
+          @if (formMedico.get('dni')?.errors?.['required']) {
+            <small>El DNI es obligatorio.</small>
+          }
+          @if (formMedico.get('dni')?.errors?.['pattern']) {
+            <small>Debe tener 8 dígitos numéricos.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="clave">Contraseña:</label>
+      <input id="clave" type="password" formControlName="clave" />
+
+      @if (formMedico.get('clave')?.invalid && formMedico.get('clave')?.touched) {
+        <div class="error-message">
+          <small>La contraseña es obligatoria.</small>
+        </div>
+      }
+    </div>
+
+    <button type="submit" [disabled]="formMedico.invalid">
+      Ingresar como Médico
+    </button>
+  </form>
+
+  <div class="form-link">
+    <p>¿Eres un paciente? <a routerLink="/login">Inicia sesión aquí</a></p>
+  </div>
+
+  <div class="form-link" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 15px;">
+    <a routerLink="/seleccionar-rol">« Volver a seleccionar rol</a>
+  </div>
+</div>

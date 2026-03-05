@@ -1,0 +1,31 @@
+# --- IDEs y Sistema ---
+.vscode/
+.idea/
+*.swp
+*.log
+.DS_Store
+Thumbs.db
+
+# --- BACKEND (Java / Spring Boot / Maven) ---
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.settings/
+.project
+.classpath
+*.class
+*.jar
+*.war
+*.ear
+.factorypath
+
+# --- FRONTEND (Angular / Node) ---
+node_modules/
+/dist/
+/.angular/
+.npm/
+/tmp/
+/out/
+
+# --- ARCHIVOS DE CONFIGURACIÓN---
+src/main/resources/application-local.properties
+.env

@@ -1,0 +1,90 @@
+
+<div class="card-simple">
+  <h2>Consultar Historiales Médicos</h2>
+  <p>Ingrese el DNI del paciente para ver su historial médico completo.</p>
+
+  <form (ngSubmit)="onBuscarPaciente()" #searchForm="ngForm" class="search-form">
+    <div class="form-group">
+      <label for="dniBusqueda">DNI del Paciente:</label>
+      <input type="text" id="dniBusqueda" name="dniBusqueda"
+             [(ngModel)]="dniBusqueda"
+             placeholder="Ingrese 8 dígitos..."
+             required minlength="8" maxlength="8" pattern="[0-9]*"
+             #dniInput="ngModel">
+    </div>
+    <button type="submit" [disabled]="!searchForm.form.valid || isLoading" class="btn btn-primary">
+      {{ isLoading ? 'Buscando...' : 'Buscar Paciente' }}
+    </button>
+  </form>
+
+  @if (isLoading) {
+    <div class="loading-message" style="margin-top: 20px;">Buscando...</div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-message-global" style="margin-top: 20px;">{{ errorMessage }}</div>
+  }
+
+  @if (infoMessage) {
+    <div class="info-message" style="margin-top: 20px;">{{ infoMessage }}</div>
+  }
+
+  @if (historialPaciente.length > 0 && !isLoading) {
+    <hr>
+    <h3>Historial Encontrado: {{ pacienteEncontradoNombre }} (DNI: {{ dniBusqueda }})</h3>
+
+    <section class="historial-previo">
+      <div class="history-list">
+        @for (entrada of historialPaciente; track entrada.idHistoriaMedica) {
+          <div class="history-card">
+            <div class="card-header">
+              <div>
+                <strong>Fecha:</strong> {{ entrada.fechaConsulta | date:'dd/MM/yyyy' }} | 
+                <strong>Especialidad:</strong> {{ entrada.especialidad }}
+              </div>
+            </div>
+            <div class="card-body">
+              <h4>Diagnóstico:</h4>
+              <p>{{ entrada.diagnostico }}</p>
+              <p><strong>Síntomas:</strong> {{ entrada.sintomas }}</p>
+              
+              @if (entrada.antecedentesPersonales) {
+                <div class="optional-field">
+                  <strong>Ant. Personales:</strong> 
+                  <p>{{ entrada.antecedentesPersonales }}</p>
+                </div>
+              }
+              
+              @if (entrada.antecedentesFamiliares) {
+                <div class="optional-field">
+                  <strong>Ant. Familiares:</strong>
+                  <p>{{ entrada.antecedentesFamiliares }}</p>
+                </div>
+              }
+              
+              @if (entrada.historiaEnfermedadActual) {
+                <div class="optional-field">
+                  <strong>Historia Enfermedad Actual:</strong>
+                  <p>{{ entrada.historiaEnfermedadActual }}</p>
+                </div>
+              }
+              
+              @if (entrada.historiaPsicosocial) {
+                <div class="optional-field">
+                  <strong>Historia Psicosocial:</strong>
+                  <p>{{ entrada.historiaPsicosocial }}</p>
+                </div>
+              }
+              
+              <p class="medico-info-historial">Atendido por: Dr(a). {{ entrada.nombreMedico }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <div class="form-link" style="margin-top: 30px;">
+    <a routerLink="/medico/dashboard">Volver al Dashboard</a>
+  </div>
+</div>

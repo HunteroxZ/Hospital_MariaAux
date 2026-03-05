@@ -1,0 +1,121 @@
+<div class="form-card"> <h2>Registrar Nueva Cita</h2>
+
+  <form (ngSubmit)="onSubmit()" #citaForm="ngForm">
+
+    <div>
+      <label for="idEspecialidad">Seleccione Especialidad:</label>
+      <select id="idEspecialidad" name="idEspecialidad"
+             [(ngModel)]="citaData.idEspecialidad" required
+             (change)="onEspecialidadChange()"
+             [disabled]="isLoadingEspecialidades">
+        <option [ngValue]="null" disabled>
+          {{ isLoadingEspecialidades ? 'Cargando...' : '-- Seleccione --' }}
+        </option>
+        <option *ngFor="let esp of especialidades" [value]="esp.idEspecialidad">
+          {{ esp.nombre }} (S/ {{ esp.precio }})
+        </option>
+      </select>
+       <div *ngIf="citaForm.controls['idEspecialidad']?.invalid && (citaForm.controls['idEspecialidad']?.dirty || citaForm.controls['idEspecialidad']?.touched)" class="error-message">
+        <small *ngIf="citaForm.controls['idEspecialidad']?.errors?.['required']">Debe seleccionar una especialidad.</small>
+      </div>
+    </div>
+
+    <div *ngIf="citaData.idEspecialidad">
+      <label for="idMedico">Seleccione Médico:</label>
+      <select id="idMedico" name="idMedico"
+             [(ngModel)]="citaData.idMedico" required
+             (change)="cargarHorariosDisponibles()"
+             [disabled]="isLoadingMedicos || !medicos.length">
+        <option [ngValue]="null" disabled>
+          {{ isLoadingMedicos ? 'Cargando...' : (medicos.length ? '-- Seleccione --' : 'No hay médicos disponibles') }}
+        </option>
+        <option *ngFor="let med of medicos" [value]="med.idMedico">
+          Dr(a). {{ med.nombres }} {{ med.apellidos }}
+        </option>
+      </select>
+       <div *ngIf="citaForm.controls['idMedico']?.invalid && (citaForm.controls['idMedico']?.dirty || citaForm.controls['idMedico']?.touched)" class="error-message">
+        <small *ngIf="citaForm.controls['idMedico']?.errors?.['required']">Debe seleccionar un médico.</small>
+      </div>
+    </div>
+
+    <div *ngIf="citaData.idMedico">
+      <label for="fecha">Seleccione Fecha:</label>
+      <input type="date" id="fecha" name="fecha"
+             [(ngModel)]="citaData.fecha" required
+             (change)="onFechaChange()"
+             [min]="getTodayDate()">
+       <div *ngIf="citaForm.controls['fecha']?.invalid && (citaForm.controls['fecha']?.dirty || citaForm.controls['fecha']?.touched)" class="error-message">
+        <small *ngIf="citaForm.controls['fecha']?.errors?.['required']">Debe seleccionar una fecha.</small>
+      </div>
+    </div>
+
+    <div *ngIf="citaData.idMedico && citaData.fecha">
+      <label>Seleccione Hora Disponible:</label>
+      <div *ngIf="isLoadingHorarios" class="loading-message">Cargando horarios...</div>
+      <div *ngIf="!isLoadingHorarios && errorMessage" class="info-message error-message">
+          {{ errorMessage }}
+      </div>
+
+      <div class="time-slots-container" *ngIf="!isLoadingHorarios && timeSlots.length > 0">
+         <button *ngFor="let slot of timeSlots"
+                 type="button" class="time-slot-button"
+                 [class.selected]="citaData.hora === slot.hora"
+                 [disabled]="!slot.disponible"
+                 (click)="selectTimeSlot(slot)">
+           {{ slot.hora.substring(0, 5) }} </button>
+      </div>
+      <input type="hidden" name="horaSeleccionadaInput" [(ngModel)]="citaData.hora" required #horaHiddenInput="ngModel">
+       <div *ngIf="horaHiddenInput.invalid && citaForm.submitted" class="error-message">
+         <small *ngIf="horaHiddenInput.errors?.['required']">Debe seleccionar una hora.</small>
+       </div>
+    </div>
+
+    <div *ngIf="citaData.hora"> <hr>
+      <div>
+        <label for="motivoConsulta">Motivo de la Consulta:</label>
+        <textarea id="motivoConsulta" name="motivoConsulta" rows="3"
+                  [(ngModel)]="citaData.motivoConsulta" required></textarea>
+        <div *ngIf="citaForm.controls['motivoConsulta']?.invalid && (citaForm.controls['motivoConsulta']?.dirty || citaForm.controls['motivoConsulta']?.touched)" class="error-message">
+            <small *ngIf="citaForm.controls['motivoConsulta']?.errors?.['required']">El motivo es requerido.</small>
+        </div>
+      </div>
+
+      <div>
+        <label for="sintomas">Síntomas:</label>
+        <textarea id="sintomas" name="sintomas" rows="3"
+                  [(ngModel)]="citaData.sintomas" required></textarea>
+        <div *ngIf="citaForm.controls['sintomas']?.invalid && (citaForm.controls['sintomas']?.dirty || citaForm.controls['sintomas']?.touched)" class="error-message">
+            <small *ngIf="citaForm.controls['sintomas']?.errors?.['required']">Los síntomas son requeridos.</small>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="!citaForm.form.valid || isLoadingEspecialidades || isLoadingMedicos || isLoadingHorarios">
+        Confirmar Cita
+      </button>
+    </div>
+
+    <button *ngIf="!citaData.hora" type="button" disabled style="background-color: #bdc3c7;">
+      Complete los pasos anteriores
+    </button>
+
+  </form>
+
+  <hr style="margin-top: 30px;">
+    
+    <div class="color-index">
+        <p><strong>Índice de Horarios:</strong></p>
+        <span class="index-item">
+            <span class="color-dot available-dot"></span> Disponible (Celeste)
+        </span>
+        <span class="index-item">
+            <span class="color-dot reserved-dot"></span> Reservado (Amarillo)
+        </span>
+        <span class="index-item">
+            <span class="color-dot selected-dot"></span> Seleccionado (Azul)
+        </span>
+    </div>
+
+  <div class="form-link">
+    <a routerLink="/dashboard">Volver</a>
+  </div>
+</div>

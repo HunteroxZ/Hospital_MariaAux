@@ -1,0 +1,96 @@
+
+.time-slots-container {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 10px; 
+  margin-top: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f8f9fa; 
+  border-radius: 4px;
+}
+
+.time-slot-button {
+  background-color: #e0f7fa; 
+  border: 1px solid #00bcd4;
+  color: #007bff;
+  padding: 8px 15px;
+  border-radius: 20px; 
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  flex-grow: 1; 
+  text-align: center;
+}
+.time-slot-button:hover:not(:disabled) {
+  background-color: #c4f1f9;
+  border-color: #008fa3;
+}
+
+.time-slot-button.selected {
+  background-color: #0d6efd; 
+  color: white;
+  border-color: #0a58ca;
+  font-weight: bold;
+}
+
+.time-slot-button:disabled:not(.selected) { 
+  background-color: #ffecb3; 
+  border-color: #ffc107; 
+  color: #795548; 
+  cursor: not-allowed;
+  opacity: 1; 
+  text-decoration: none;
+}
+
+.color-index {
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9em;
+    color: #555;
+}
+.color-index p {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+.index-item {
+    margin-right: 15px;
+    display: inline-flex;
+    align-items: center;
+}
+.color-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.available-dot { 
+    background-color: #e0f7fa; 
+    border: 1px solid #00bcd4; 
+}
+.reserved-dot { 
+    background-color: #ffecb3; 
+    border: 1px solid #ffc107; 
+}
+.selected-dot { 
+    background-color: #0d6efd; 
+}
+
+.error-message {
+  color: #dc3545; 
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.loading-message,
+.info-message {
+  text-align: center;
+  color: #6c757d; 
+  padding: 15px 0;
+  font-style: italic;
+}

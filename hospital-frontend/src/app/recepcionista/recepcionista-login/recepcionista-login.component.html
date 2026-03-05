@@ -1,0 +1,43 @@
+
+<div class="form-card">
+  <h2>Inicio de Sesión - Recepcionista</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="dni">DNI</label>
+      <input
+        type="text"
+        id="dni"
+        name="dni"
+        [(ngModel)]="dni"
+        placeholder="Ingrese su DNI"
+        maxlength="8"
+        required
+      />
+    </div>
+
+    <div>
+      <label for="clave">Contraseña</label>
+      <input
+        type="password"
+        id="clave"
+        name="clave"
+        [(ngModel)]="clave"
+        placeholder="Ingrese su contraseña"
+        required
+      />
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="isLoading">
+      {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+    </button>
+  </form>
+
+  <div class="form-link">
+    <a routerLink="/seleccionar-rol">Volver a selección de rol</a>
+  </div>
+</div>

@@ -1,0 +1,222 @@
+/*app/medico-historial-buscar/medico-historial-buscar.component.css*/
+
+/*app/medico-historial-buscar/medico-historial-buscar.component.css*/
+
+/* === FORMULARIO DE BÚSQUEDA === */
+.search-form {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.search-form .form-group {
+  flex-grow: 1;
+  margin-bottom: 0;
+}
+
+.search-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #363636;
+}
+
+.search-form input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+.search-form .btn {
+  padding: 12px 20px;
+  margin-top: 25px;
+}
+
+/* === SECCIÓN DE HISTORIAL === */
+.historial-previo h3 {
+  color: #333;
+  text-align: left;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+  font-size: 1.2rem;
+}
+
+/* ✅ CAMBIO PRINCIPAL: Eliminado max-height para mostrar todo el contenido */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Mayor espacio entre tarjetas */
+  padding: 10px 0;
+  /* Removido: max-height y overflow-y */
+}
+
+/* === TARJETAS DE HISTORIAL === */
+.history-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  background: white;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.history-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* === ENCABEZADO === */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3498db;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: white;
+  font-size: 0.95em;
+}
+
+.card-header strong {
+  font-weight: 700;
+}
+
+/* === CUERPO DE LA TARJETA === */
+.card-body {
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.card-body h4 {
+  font-size: 1.05em;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.card-body p {
+  margin-bottom: 12px;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.card-body strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* === CAMPOS OPCIONALES === */
+.optional-field {
+  font-size: 0.92em;
+  color: #444;
+  background-color: #f8f9fa;
+  border-left: 4px solid #3498db;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+
+.optional-field strong {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.optional-field p {
+  margin: 0;
+  padding: 5px 0 0 0;
+  white-space: pre-wrap; /* Respeta saltos de línea */
+  word-wrap: break-word; /* Rompe palabras largas */
+  color: #555;
+  line-height: 1.5;
+}
+
+/* === INFO DEL MÉDICO === */
+.medico-info-historial {
+  font-size: 0.88em;
+  color: #6c757d;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px dashed #dee2e6;
+  font-style: italic;
+  text-align: right;
+}
+
+/* === BOTONES === */
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s, transform 0.2s;
+  display: inline-block;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-form .btn {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .history-list {
+    gap: 15px;
+  }
+}
+
+/* === MEJORAS DE ACCESIBILIDAD === */
+.search-form input:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+  border-color: #3498db;
+}
+
+button:focus,
+a:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}

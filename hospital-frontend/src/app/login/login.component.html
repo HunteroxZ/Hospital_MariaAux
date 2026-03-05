@@ -1,0 +1,59 @@
+<div class="form-card">
+  <h2>Iniciar Sesión</h2>
+
+  @if (errorMessage) {
+    <div class="error-message-global">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form [formGroup]="formLogin" (ngSubmit)="onLogin()">
+
+
+    <div>
+      <label for="dni">DNI:</label>
+      <input
+        id="dni"
+        type="text"
+        maxlength="8"
+        formControlName="dni"
+        (input)="limitarDNI($event)"
+      />
+
+      @if (formLogin.get('dni')?.invalid && formLogin.get('dni')?.touched) {
+        <div class="error-message">
+          @if (formLogin.get('dni')?.errors?.['required']) {
+            <small>El DNI es obligatorio.</small>
+          }
+          @if (formLogin.get('dni')?.errors?.['pattern']) {
+            <small>DNI debe tener exactamente 8 dígitos numéricos.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <label for="clave">Contraseña:</label>
+      <input id="clave" type="password" formControlName="clave" />
+
+      @if (formLogin.get('clave')?.invalid && formLogin.get('clave')?.touched) {
+        <div class="error-message">
+          <small>La contraseña es obligatoria.</small>
+        </div>
+      }
+    </div>
+
+    <button type="submit" [disabled]="formLogin.invalid">
+      Ingresar
+    </button>
+  </form>
+
+  <div class="form-link">
+    <p>¿No tienes una cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
+  </div>
+
+  <div class="form-link" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 15px;">
+    <a routerLink="/seleccionar-rol">« Volver a seleccionar rol</a>
+  </div>
+
+</div>

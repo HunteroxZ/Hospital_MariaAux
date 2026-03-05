@@ -1,0 +1,465 @@
+
+<div class="card-simple">
+  <h2>Panel de Administración - Médicos</h2>
+
+  <nav class="admin-nav">
+    <button routerLink="/admin/dashboard/inicio" routerLinkActive="active">Inicio</button>
+    <button routerLink="/admin/dashboard/pacientes" routerLinkActive="active">Pacientes</button>
+    <button routerLink="/admin/dashboard/medicos" routerLinkActive="active">Médicos</button>
+    <button routerLink="/admin/dashboard/reportes" routerLinkActive="active">Reportes</button>
+    <button class="cerrar-sesion" (click)="cerrarSesion()">Cerrar Sesión</button>
+  </nav>
+
+
+  <div *ngIf="errorMessage" class="error-message-global">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="success-message-global">
+    {{ successMessage }}
+  </div>
+
+
+  <div class="estadisticas">
+    <div class="stat-card">
+      <h3>{{ totalMedicos }}</h3>
+      <p>Total Médicos</p>
+    </div>
+    <div class="stat-card activo">
+      <h3>{{ medicosActivos }}</h3>
+      <p>Activos</p>
+    </div>
+    <div class="stat-card inactivo">
+      <h3>{{ medicosInactivos }}</h3>
+      <p>Inactivos</p>
+    </div>
+  </div>
+
+  <div class="controles">
+    <button class="btn-primary" (click)="abrirFormularioNuevo()">
+      ➕ Agregar Médico
+    </button>
+    
+    <div class="filtros">
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre, DNI o código..." 
+        [(ngModel)]="busqueda"
+        (ngModelChange)="aplicarFiltros()"
+        class="input-busqueda"
+      />
+      
+      <select [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()" class="select-filtro">
+        <option value="TODOS">Todos los estados</option>
+        <option value="ACTIVO">Activos</option>
+        <option value="INACTIVO">Inactivos</option>
+      </select>
+    </div>
+  </div>
+
+
+  <div class="tabla-container">
+    <table class="tabla-medicos">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre Completo</th>
+          <th>DNI</th>
+          <th>Cód. Colegiatura</th>
+          <th>Correo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let medico of medicosFiltrados">
+          <td>{{ medico.idMedico }}</td>
+          <td>{{ medico.nombres }} {{ medico.apellidos }}</td>
+          <td>{{ medico.dni }}</td>
+          <td>{{ medico.codigoColegiatura }}</td>
+          <td>{{ medico.correo }}</td>
+          <td>
+            <span class="badge" [class.badge-activo]="medico.estado === 'ACTIVO'" 
+                  [class.badge-inactivo]="medico.estado === 'INACTIVO'">
+              {{ medico.estado }}
+            </span>
+          </td>
+          <td class="acciones">
+            <button class="btn-icon btn-ver" (click)="verDetalle(medico)" title="Ver detalle">👁️</button>
+            <button class="btn-icon btn-editar" (click)="abrirFormularioEditar(medico)" title="Editar">✏️</button>
+            <button class="btn-icon btn-especialidades" (click)="abrirModalEspecialidades(medico)" title="Especialidades">🩺</button>
+            <button class="btn-icon btn-estado" (click)="cambiarEstado(medico)" title="Cambiar estado">🔄</button>
+            
+          </td>
+        </tr>
+        <tr *ngIf="medicosFiltrados.length === 0">
+          <td colspan="7" style="text-align: center; padding: 20px;">
+            No se encontraron médicos
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="modal" *ngIf="mostrarFormulario">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>{{ modoEdicion ? 'Editar Médico' : 'Registrar Nuevo Médico' }}</h3>
+      <button class="btn-cerrar" (click)="cerrarFormulario()">✖</button>
+    </div>
+    
+    <form (ngSubmit)="guardarMedico()" #formMedico="ngForm">
+      
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombres *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="medicoForm.nombres" 
+            name="nombres" 
+            required 
+            pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+            #nombres="ngModel"
+          />
+          <div *ngIf="nombres.invalid && (nombres.dirty || nombres.touched)" class="error-message">
+            <small *ngIf="nombres.errors?.['required']">Nombres es requerido.</small>
+            <small *ngIf="nombres.errors?.['pattern']">Nombres solo puede contener letras.</small>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Apellidos *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="medicoForm.apellidos" 
+            name="apellidos" 
+            required 
+            pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+            #apellidos="ngModel"
+          />
+          <div *ngIf="apellidos.invalid && (apellidos.dirty || apellidos.touched)" class="error-message">
+            <small *ngIf="apellidos.errors?.['required']">Apellidos es requerido.</small>
+            <small *ngIf="apellidos.errors?.['pattern']">Apellidos solo puede contener letras.</small>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>DNI *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="medicoForm.dni" 
+            name="dni" 
+            maxlength="8" 
+            pattern="^[0-9]{8}$" 
+            required 
+            [disabled]="modoEdicion"
+            #dni="ngModel"
+          />
+          <div *ngIf="dni.invalid && (dni.dirty || dni.touched) && !modoEdicion" class="error-message">
+            <small *ngIf="dni.errors?.['required']">DNI es requerido.</small>
+            <small *ngIf="dni.errors?.['pattern']">DNI debe tener exactamente 8 dígitos numéricos.</small>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Fecha de Nacimiento *</label>
+          <input 
+            type="date" 
+            [(ngModel)]="medicoForm.fechaNacimiento" 
+            name="fechaNacimiento"
+            [max]="fechaMaxima"
+            required
+            #fechaNacimiento="ngModel"
+          />
+          <div *ngIf="fechaNacimiento.invalid && (fechaNacimiento.dirty || fechaNacimiento.touched)" class="error-message">
+            <small *ngIf="fechaNacimiento.errors?.['required']">Fecha de nacimiento es requerida.</small>
+          </div>
+          <div *ngIf="medicoForm.fechaNacimiento && !validarFechaNoFutura(medicoForm.fechaNacimiento)" class="error-message">
+            <small>La fecha no puede ser mayor a hoy.</small>
+          </div>
+          <div *ngIf="medicoForm.fechaNacimiento && !validarEdadMinima(medicoForm.fechaNacimiento)" class="error-message">
+            <small>El médico debe ser mayor de 18 años.</small>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Código de Colegiatura *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="medicoForm.codigoColegiatura" 
+            name="codigoColegiatura" 
+            maxlength="9"
+            pattern="^[0-9]{9}$"
+            required 
+            [disabled]="modoEdicion"
+            #codigoColegiatura="ngModel"
+          />
+          <div *ngIf="codigoColegiatura.invalid && (codigoColegiatura.dirty || codigoColegiatura.touched) && !modoEdicion" class="error-message">
+            <small *ngIf="codigoColegiatura.errors?.['required']">Código de colegiatura es requerido.</small>
+            <small *ngIf="codigoColegiatura.errors?.['pattern']">Debe tener exactamente 9 dígitos numéricos.</small>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Correo Electrónico *</label>
+          <input 
+            type="email" 
+            [(ngModel)]="medicoForm.correo" 
+            name="correo" 
+            required
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            #correo="ngModel"
+          />
+          <div *ngIf="correo.invalid && (correo.dirty || correo.touched)" class="error-message">
+            <small *ngIf="correo.errors?.['required']">Correo es requerido.</small>
+            <small *ngIf="correo.errors?.['pattern']">Debe ingresar un correo válido (ej: usuario@dominio.com).</small>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input 
+            type="tel" 
+            [(ngModel)]="medicoForm.telefono" 
+            name="telefono"
+            maxlength="9"
+            pattern="^[0-9]{9}$"
+            #telefono="ngModel"
+          />
+          <div *ngIf="telefono.invalid && (telefono.dirty || telefono.touched)" class="error-message">
+            <small *ngIf="telefono.errors?.['pattern']">Teléfono debe contener exactamente 9 dígitos numéricos.</small>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Dirección</label>
+          <input type="text" [(ngModel)]="medicoForm.direccion" name="direccion" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>{{ modoEdicion ? 'Nueva Contraseña (dejar vacío para no cambiar)' : 'Contraseña *' }}</label>
+        <input 
+          type="password" 
+          [(ngModel)]="medicoForm.clave" 
+          name="clave" 
+          [required]="!modoEdicion"
+          minlength="6"
+          #clave="ngModel"
+        />
+        <div *ngIf="clave.invalid && (clave.dirty || clave.touched)" class="error-message">
+          <small *ngIf="clave.errors?.['required']">Contraseña es requerida.</small>
+          <small *ngIf="clave.errors?.['minlength']">Debe tener al menos 6 caracteres.</small>
+        </div>
+      </div>
+
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="cerrarFormulario()">Cancelar</button>
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          [disabled]="!formMedico.form.valid || 
+            (medicoForm.fechaNacimiento && !validarEdadMinima(medicoForm.fechaNacimiento)) ||
+            (medicoForm.fechaNacimiento && !validarFechaNoFutura(medicoForm.fechaNacimiento))">
+          {{ modoEdicion ? 'Actualizar' : 'Registrar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Detalle -->
+<div class="modal" *ngIf="mostrarDetalle && medicoSeleccionado">
+  <div class="modal-content modal-detalle">
+    <div class="modal-header">
+      <h3>Detalle del Médico</h3>
+      <button class="btn-cerrar" (click)="cerrarDetalle()">✖</button>
+    </div>
+    
+    <div class="detalle-content">
+      <div class="detalle-seccion">
+        <h4>Información Personal</h4>
+        <p><strong>Nombre:</strong> {{ medicoSeleccionado.nombres }} {{ medicoSeleccionado.apellidos }}</p>
+        <p><strong>DNI:</strong> {{ medicoSeleccionado.dni }}</p>
+        <p><strong>Fecha de Nacimiento:</strong> {{ medicoSeleccionado.fechaNacimiento || 'No especificada' }}</p>
+        <p><strong>Edad:</strong> {{ medicoSeleccionado.edad || 'N/A' }} años</p>
+      </div>
+
+      <div class="detalle-seccion">
+        <h4>Información Profesional</h4>
+        <p><strong>Código de Colegiatura:</strong> {{ medicoSeleccionado.codigoColegiatura }}</p>
+        <p><strong>Estado:</strong> 
+          <span class="badge" [class.badge-activo]="medicoSeleccionado.estado === 'ACTIVO'" 
+                [class.badge-inactivo]="medicoSeleccionado.estado === 'INACTIVO'">
+            {{ medicoSeleccionado.estado }}
+          </span>
+        </p>
+      </div>
+
+      <div class="detalle-seccion">
+        <h4>Contacto</h4>
+        <p><strong>Correo:</strong> {{ medicoSeleccionado.correo }}</p>
+        <p><strong>Teléfono:</strong> {{ medicoSeleccionado.telefono || 'No especificado' }}</p>
+        <p><strong>Dirección:</strong> {{ medicoSeleccionado.direccion || 'No especificada' }}</p>
+      </div>
+
+      <div class="detalle-seccion">
+        <h4>Especialidades</h4>
+        <div class="especialidades-list">
+          <span *ngFor="let esp of especialidadesMedico" class="chip-especialidad">
+            {{ esp.nombre }}
+          </span>
+          <span *ngIf="especialidadesMedico.length === 0" class="text-muted">
+            No tiene especialidades asignadas
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="cerrarDetalle()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Especialidades y Horarios -->
+<div class="modal" *ngIf="mostrarModalEspecialidades && medicoSeleccionado">
+  <div class="modal-content modal-especialidades-horarios">
+    <div class="modal-header">
+      <h3>Gestionar Especialidades y Horarios</h3>
+      <p class="subtitle">{{ medicoSeleccionado.nombres }} {{ medicoSeleccionado.apellidos }}</p>
+      <button class="btn-cerrar" (click)="cerrarModalEspecialidades()">✖</button>
+    </div>
+    
+    <div class="especialidades-horarios-content">
+      <!-- Sección de Especialidades -->
+      <div class="seccion-especialidades">
+        <h4>📋 Especialidades Asignadas</h4>
+        <div class="especialidades-asignadas">
+          <div *ngFor="let esp of especialidadesMedico" class="especialidad-item">
+            <span>{{ esp.nombre }}</span>
+            <button class="btn-quitar" (click)="quitarEspecialidad(esp.idEspecialidad!)">✖</button>
+          </div>
+          <p *ngIf="especialidadesMedico.length === 0" class="text-muted">
+            No tiene especialidades asignadas
+          </p>
+        </div>
+
+        <h5 style="margin-top: 20px;">Especialidades Disponibles</h5>
+        <div class="especialidades-disponibles">
+          <button 
+            *ngFor="let esp of especialidades" 
+            class="especialidad-disponible"
+            [disabled]="tieneEspecialidad(esp.idEspecialidad!)"
+            (click)="asignarEspecialidad(esp.idEspecialidad!)">
+            {{ esp.nombre }}
+            <span *ngIf="tieneEspecialidad(esp.idEspecialidad!)">✓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sección de Horarios -->
+      <div class="seccion-horarios">
+        <h4>🕐 Gestión de Horarios</h4>
+        
+        <!-- Formulario para agregar horario -->
+        <div class="form-horario">
+          <h5>Agregar Nuevo Horario</h5>
+          
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Especialidad *</label>
+              <select [(ngModel)]="horarioForm.idEspecialidad" name="idEspecialidad" required>
+                <option [value]="0">Seleccione una especialidad</option>
+                <option *ngFor="let esp of especialidadesMedico" [value]="esp.idEspecialidad">
+                  {{ esp.nombre }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Día de la Semana *</label>
+              <select [(ngModel)]="horarioForm.diaSemana" name="diaSemana" required>
+                <option *ngFor="let dia of diasSemana" [value]="dia">
+                  {{ dia | titlecase }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Hora Inicio *</label>
+              <input type="time" [(ngModel)]="horarioForm.horaInicio" name="horaInicio" required />
+            </div>
+
+            <div class="form-group">
+              <label>Hora Fin *</label>
+              <input type="time" [(ngModel)]="horarioForm.horaFin" name="horaFin" required />
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary btn-agregar" (click)="agregarHorario()">
+            ➕ Agregar Horario
+          </button>
+        </div>
+
+        <!-- Lista de horarios existentes -->
+        <div class="horarios-existentes">
+          <h5>Horarios Configurados</h5>
+          
+          <div *ngIf="disponibilidades.length === 0" class="text-muted">
+            No hay horarios configurados
+          </div>
+
+          <div *ngFor="let esp of especialidadesMedico" class="especialidad-horarios">
+            <h6 class="especialidad-titulo">{{ esp.nombre }}</h6>
+            
+            <div class="horarios-lista">
+              <div *ngFor="let horario of obtenerHorariosPorEspecialidad(esp.idEspecialidad!)" 
+                   class="horario-item">
+                <div class="horario-info">
+                  <span class="dia">{{ horario.diaSemana | titlecase }}</span>
+                  <span class="horas">{{ horario.horaInicio }} - {{ horario.horaFin }}</span>
+                </div>
+                <button class="btn-eliminar-horario" (click)="eliminarHorario(horario.idDisponibilidad!)">
+                  🗑️
+                </button>
+              </div>
+
+              <p *ngIf="obtenerHorariosPorEspecialidad(esp.idEspecialidad!).length === 0" 
+                 class="text-muted-small">
+                Sin horarios configurados
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="cerrarModalEspecialidades()">Cerrar</button>
+    </div>
+  </div>
+</div>

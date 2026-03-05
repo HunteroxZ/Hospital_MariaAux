@@ -1,0 +1,70 @@
+<div class="card-simple">
+  <h2>Gestionar mi Perfil</h2>
+
+  <div *ngIf="isLoading" class="loading-message">Cargando perfil...</div>
+  <div *ngIf="errorMessage" class="error-message-global">{{ errorMessage }}</div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+
+    <div *ngIf="!modoEdicion" class="perfil-lectura">
+      <h4>Datos Personales (Fijos)</h4>
+      <p><strong>Nombre:</strong> {{ medicoInfo.nombres }} {{ medicoInfo.apellidos }}</p>
+      <p><strong>DNI:</strong> {{ medicoInfo.dni }}</p>
+      <p><strong>Cód. Colegiatura:</strong> {{ medicoInfo.codigoColegiatura }}</p>
+
+      <hr>
+      <h4>Datos de Contacto (Editables)</h4>
+      <p><strong>Correo:</strong> {{ updateData.correo }}</p>
+      <p><strong>Teléfono:</strong> {{ updateData.telefono || 'No registrado' }}</p>
+      <p><strong>Dirección:</strong> {{ updateData.direccion || 'No registrada' }}</p>
+
+      <div class="perfil-acciones">
+        <button (click)="activarModoEdicion()" class="btn btn-primary">Editar Datos</button>
+        <a routerLink="/medico/dashboard" class="btn btn-secondary">Volver al Dashboard</a>
+      </div>
+    </div>
+
+    <div *ngIf="modoEdicion" class="perfil-edicion form-card">
+
+      <h4>Datos Personales (Fijos)</h4>
+      <p><strong>Nombre:</strong> {{ medicoInfo.nombres }} {{ medicoInfo.apellidos }}</p>
+      <p><strong>DNI:</strong> {{ medicoInfo.dni }}</p>
+
+      <hr>
+
+      <form (ngSubmit)="guardarCambios()" #perfilForm="ngForm">
+
+        <h4>Datos de Contacto (Editables)</h4>
+        <div>
+          <label for="correo">Correo Electrónico:</label>
+          <input type="email" id="correo" name="correo" [(ngModel)]="updateData.correo" required>
+        </div>
+        <div>
+          <label for="telefono">Teléfono:</label>
+          <input type="tel" id="telefono" name="telefono" [(ngModel)]="updateData.telefono">
+        </div>
+        <div>
+          <label for="direccion">Dirección:</label>
+          <input type="text" id="direccion" name="direccion" [(ngModel)]="updateData.direccion">
+        </div>
+
+        <hr>
+        <h4>Actualizar Contraseña (Opcional)</h4>
+        <div>
+          <label for="clave">Nueva Contraseña:</label>
+          <input type="password" id="clave" name="clave" [(ngModel)]="updateData.clave" placeholder="Dejar en blanco para no cambiar">
+        </div>
+
+        <div class="perfil-acciones-edicion">
+          <button type="submit" [disabled]="isSubmitting || perfilForm.invalid" class="btn btn-success">
+            {{ isSubmitting ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+          <button type="button" (click)="cancelarEdicion()" class="btn btn-secondary">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

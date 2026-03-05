@@ -1,0 +1,59 @@
+
+.perfil-lectura p {
+  font-size: 1.1em;
+  margin: 10px 0;
+  color: #333;
+  word-wrap: break-word;
+}
+
+.perfil-lectura p strong {
+  color: #000;
+  min-width: 160px; 
+  display: inline-block;
+}
+
+.perfil-acciones,
+.perfil-acciones-edicion {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px; 
+}
+
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary { background-color: #3498db; color: white; }
+.btn-primary:hover { background-color: #2980b9; }
+
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-secondary:hover { background-color: #5c636a; }
+
+.btn-success { background-color: #198754; color: white; }
+.btn-success:hover { background-color: #157347; }
+
+.perfil-edicion.form-card {
+  margin-top: 0;
+  padding: 0;
+  box-shadow: none;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.perfil-edicion h4 {
+  text-align: left;
+  color: #3498db;
+  margin-top: 0;
+}

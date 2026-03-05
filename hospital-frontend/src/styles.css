@@ -1,0 +1,239 @@
+/*src/styles.css*/
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  color: #000000;
+  /* --- Fondo Dinámico  --- */
+  background: linear-gradient(-45deg,
+      #5cb8ff,
+      #c3b5f6,
+      #81b7ff,
+      #e264f8
+    );
+  background-size: 400% 400%;
+  animation: gradientShift 10s ease infinite;
+}
+
+h1,
+h2,
+h3 {
+  color: #000000;
+  text-align: center;
+}
+
+.main-header .logo-container a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.4em;
+  font-weight: 700;
+}
+
+.main-header .main-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 20px;
+  transition: color 0.2s;
+  cursor: pointer;
+  /* Para el logout */
+}
+
+.main-header .main-nav a:hover {
+  color: #3498db;
+}
+
+/* Contenedor para tu <router-outlet> */
+.page-content {
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
+/* --- Estructura de Tarjetas (Contenedores) --- */
+.form-card,
+.card-simple {
+  background: #ffffff;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+
+.form-card {
+  max-width: 500px;
+}
+
+.card-simple {
+  max-width: 900px;
+}
+
+/* Títulos dentro de las tarjetas */
+.form-card h2,
+.card-simple h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.8rem;
+}
+
+/* --- Estilos de Formularios --- */
+.form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #363636;
+}
+
+.form-card input[type="text"],
+.form-card input[type="email"],
+.form-card input[type="password"],
+.form-card input[type="date"],
+.form-card input[type="tel"],
+.form-card input[type="number"],
+.form-card select,
+.form-card textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+.form-card textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-card button {
+  background-color: #3498db;
+  color: white;
+  font-weight: 700;
+  border: none;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 1em;
+  margin-top: 10px;
+}
+
+.form-card button:hover {
+  background-color: #2980b9;
+}
+
+.form-card button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* --- Enlaces (Login <-> Registro) --- */
+.form-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-link a {
+  color: #177ec3;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-link a:hover {
+  text-decoration: underline;
+}
+
+/* --- Dashboard Menu --- */
+.dashboard-menu {
+  list-style: none;
+  padding: 0;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.dashboard-menu li {
+  background: white;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-menu li a {
+  display: block;
+  padding: 20px;
+  text-decoration: none;
+  color: #2c3e50;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.dashboard-menu li a:hover {
+  background-color: #f9f9f9;
+}
+
+/* --- Mensajes de error/info --- */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.loading-message,
+.info-message {
+  text-align: center;
+  padding: 20px;
+  margin-top: 15px;
+  border-radius: 5px;
+}
+
+.loading-message {
+  background-color: #cfe2ff;
+  color: #084298;
+  border: 1px solid #b6d4fe;
+}
+
+.info-message {
+  background-color: #e9ecef;
+  color: #6c757d;
+}
+
+.error-message-global {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+  text-align: center;
+  padding: 15px;
+  margin: 1rem auto;
+  max-width: 500px;
+  border-radius: 5px;
+}
+
+/* --- Animación del Fondo --- */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}

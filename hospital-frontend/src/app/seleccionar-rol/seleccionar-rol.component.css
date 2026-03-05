@@ -1,0 +1,85 @@
+
+.role-selection-card {
+    background: #ffffff;
+    max-width: 450px;
+    margin: 3rem auto;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    text-align: center;
+}
+
+.role-selection-card h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.role-selection-card p {
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.role-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.role-button {
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.role-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.role-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.role-button.patient { 
+    background-color: #3498db; 
+}
+.role-button.patient:hover:not(:disabled) { 
+    background-color: #2980b9; 
+}
+
+.role-button.doctor { 
+    background-color: #2ecc71; 
+}
+.role-button.doctor:hover:not(:disabled) { 
+    background-color: #27ae60; 
+}
+
+.role-button.recepcionista { 
+    background-color: #9b59b6; 
+}
+.role-button.recepcionista:hover:not(:disabled) { 
+    background-color: #8e44ad; 
+}
+
+.role-button.admin { 
+    background-color: #e67e22; 
+}
+.role-button.admin:hover:not(:disabled) { 
+    background-color: #d35400; 
+}
+
+.role-button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+}

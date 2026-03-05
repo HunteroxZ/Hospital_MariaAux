@@ -1,0 +1,307 @@
+
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Panel de Administración - Reportes</h1>
+    <nav class="admin-nav">
+      <button routerLink="/admin/dashboard/inicio" routerLinkActive="active">Inicio</button>
+      <button routerLink="/admin/dashboard/pacientes" routerLinkActive="active">Pacientes</button>
+      <button routerLink="/admin/dashboard/medicos" routerLinkActive="active">Médicos</button>
+      <button routerLink="/admin/dashboard/reportes" routerLinkActive="active">Reportes</button>
+      <button class="cerrar-sesion" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </nav>
+  </div>
+
+  <div class="reportes-container">
+    
+
+    <div class="reporte-selector">
+      <h2>Seleccione el tipo de reporte</h2>
+      <div class="tipo-botones">
+        <button 
+          [class.active]="tipoReporte === 'citas'" 
+          (click)="seleccionarTipo('citas')">
+          📅 Reporte de Citas
+        </button>
+        <button 
+          [class.active]="tipoReporte === 'ingresos'" 
+          (click)="seleccionarTipo('ingresos')">
+          💰 Reporte de Ingresos
+        </button>
+        <button 
+          [class.active]="tipoReporte === 'pacientes'" 
+          (click)="seleccionarTipo('pacientes')">
+          👥 Reporte de Pacientes
+        </button>
+        <button 
+          [class.active]="tipoReporte === 'medicos'" 
+          (click)="seleccionarTipo('medicos')">
+          👨‍⚕️ Reporte de Médicos
+        </button>
+      </div>
+    </div>
+
+
+    <div class="filtros-card" *ngIf="tipoReporte === 'citas'">
+      <h3>Filtros de Citas</h3>
+      <div class="filtros-grid">
+        <div class="form-group">
+          <label>Fecha Inicio:</label>
+          <input type="date" [(ngModel)]="filtrosCitas.fechaInicio" />
+        </div>
+        <div class="form-group">
+          <label>Fecha Fin:</label>
+          <input type="date" [(ngModel)]="filtrosCitas.fechaFin" />
+        </div>
+        <div class="form-group">
+          <label>Especialidad:</label>
+          <select [(ngModel)]="filtrosCitas.idEspecialidad">
+            <option [ngValue]="null">Todas</option>
+            <option *ngFor="let esp of especialidades" [ngValue]="esp.idEspecialidad">
+              {{ esp.nombre }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Médico:</label>
+          <select [(ngModel)]="filtrosCitas.idMedico">
+            <option [ngValue]="null">Todos</option>
+            <option *ngFor="let med of medicos" [ngValue]="med.idMedico">
+              {{ med.nombres }} {{ med.apellidos }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estado:</label>
+          <select [(ngModel)]="filtrosCitas.estado">
+            <option [ngValue]="null">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="atendida">Atendida</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="no_presentado">No Presentado</option>
+          </select>
+        </div>
+      </div>
+      <div class="acciones">
+        <button class="btn-generar" (click)="generarReporteCitas()">
+          🔍 Generar Reporte
+        </button>
+        <button class="btn-pdf" (click)="descargarReporteCitasPDF()" [disabled]="!datosCitas || datosCitas.length === 0">
+          📄 Descargar PDF
+        </button>
+      </div>
+    </div>
+
+
+    <div class="filtros-card" *ngIf="tipoReporte === 'ingresos'">
+      <h3>Filtros de Ingresos</h3>
+      <div class="filtros-grid">
+        <div class="form-group">
+          <label>Fecha Inicio:</label>
+          <input type="date" [(ngModel)]="filtrosIngresos.fechaInicio" />
+        </div>
+        <div class="form-group">
+          <label>Fecha Fin:</label>
+          <input type="date" [(ngModel)]="filtrosIngresos.fechaFin" />
+        </div>
+      </div>
+      <div class="acciones">
+        <button class="btn-generar" (click)="generarReporteIngresos()">
+          🔍 Generar Reporte
+        </button>
+        <button class="btn-pdf" (click)="descargarReporteIngresosPDF()" [disabled]="!datosIngresos">
+          📄 Descargar PDF
+        </button>
+      </div>
+    </div>
+
+
+    <div class="filtros-card" *ngIf="tipoReporte === 'pacientes'">
+      <h3>Reporte de Pacientes</h3>
+      <p>Este reporte incluye todos los pacientes registrados en el sistema.</p>
+      <div class="acciones">
+        <button class="btn-generar" (click)="generarReportePacientes()">
+          🔍 Generar Reporte
+        </button>
+        <button class="btn-pdf" (click)="descargarReportePacientesPDF()" [disabled]="!datosPacientes || datosPacientes.length === 0">
+          📄 Descargar PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="filtros-card" *ngIf="tipoReporte === 'medicos'">
+      <h3>Reporte de Médicos</h3>
+      <p>Este reporte incluye todos los médicos registrados en el sistema.</p>
+      <div class="acciones">
+        <button class="btn-generar" (click)="generarReporteMedicos()">
+          🔍 Generar Reporte
+        </button>
+        <button class="btn-pdf" (click)="descargarReporteMedicosPDF()" [disabled]="!datosMedicos || datosMedicos.length === 0">
+          📄 Descargar PDF
+        </button>
+      </div>
+    </div>
+
+
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Generando reporte...</p>
+    </div>
+
+
+    <div *ngIf="errorMessage" class="error-banner">
+      <span>⚠️ {{ errorMessage }}</span>
+      <button (click)="errorMessage = ''" class="close-btn">×</button>
+    </div>
+
+    <!-- Tabla de Citas -->
+    <div class="tabla-reporte" *ngIf="tipoReporte === 'citas' && datosCitas && datosCitas.length > 0 && !loading">
+      <h3>Resultados: {{ datosCitas.length }} citas encontradas</h3>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Paciente</th>
+              <th>DNI</th>
+              <th>Médico</th>
+              <th>Especialidad</th>
+              <th>Estado</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cita of datosCitas">
+              <td>{{ cita.idCita }}</td>
+              <td>{{ cita.fecha }}</td>
+              <td>{{ cita.hora }}</td>
+              <td>{{ cita.nombrePaciente }}</td>
+              <td>{{ cita.dniPaciente }}</td>
+              <td>{{ cita.nombreMedico }}</td>
+              <td>{{ cita.especialidad }}</td>
+              <td><span [class]="'badge badge-' + cita.estado">{{ cita.estado }}</span></td>
+              <td>S/ {{ cita.precio }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Resumen de Ingresos -->
+    <div class="tabla-reporte" *ngIf="tipoReporte === 'ingresos' && datosIngresos && !loading">
+      <h3>Resumen de Ingresos</h3>
+      <div class="resumen-grid">
+        <div class="resumen-card">
+          <span class="resumen-label">Total de Citas:</span>
+          <span class="resumen-valor">{{ datosIngresos.totalCitas }}</span>
+        </div>
+        <div class="resumen-card">
+          <span class="resumen-label">Citas Atendidas:</span>
+          <span class="resumen-valor">{{ datosIngresos.citasAtendidas }}</span>
+        </div>
+        <div class="resumen-card destacado">
+          <span class="resumen-label">Ingreso Total:</span>
+          <span class="resumen-valor">S/ {{ datosIngresos.ingresoTotal }}</span>
+        </div>
+      </div>
+
+      <h4>Por Especialidad</h4>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Especialidad</th>
+              <th>Total Citas</th>
+              <th>Atendidas</th>
+              <th>Precio Unitario</th>
+              <th>Ingreso Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let esp of datosIngresos.ingresosPorEspecialidad">
+              <td>{{ esp.nombreEspecialidad }}</td>
+              <td>{{ esp.totalCitas }}</td>
+              <td>{{ esp.citasAtendidas }}</td>
+              <td>S/ {{ esp.precioUnitario }}</td>
+              <td>S/ {{ esp.ingresoTotal }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tabla de Pacientes -->
+    <div class="tabla-reporte" *ngIf="tipoReporte === 'pacientes' && datosPacientes && datosPacientes.length > 0 && !loading">
+      <h3>Resultados: {{ datosPacientes.length }} pacientes encontrados</h3>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>DNI</th>
+              <th>Edad</th>
+              <th>Sexo</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Total Citas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pac of datosPacientes">
+              <td>{{ pac.idPaciente }}</td>
+              <td>{{ pac.nombreCompleto }}</td>
+              <td>{{ pac.dni }}</td>
+              <td>{{ pac.edad }}</td>
+              <td>{{ pac.sexo }}</td>
+              <td>{{ pac.correo }}</td>
+              <td>{{ pac.telefono }}</td>
+              <td>{{ pac.totalCitas }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tabla de Médicos -->
+    <div class="tabla-reporte" *ngIf="tipoReporte === 'medicos' && datosMedicos && datosMedicos.length > 0 && !loading">
+      <h3>Resultados: {{ datosMedicos.length }} médicos encontrados</h3>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>DNI</th>
+              <th>CMP</th>
+              <th>Correo</th>
+              <th>Estado</th>
+              <th>Total Citas</th>
+              <th>Especialidades</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let med of datosMedicos">
+              <td>{{ med.idMedico }}</td>
+              <td>{{ med.nombreCompleto }}</td>
+              <td>{{ med.dni }}</td>
+              <td>{{ med.codigoColegiatura }}</td>
+              <td>{{ med.correo }}</td>
+              <td>{{ med.estado }}</td>
+              <td>{{ med.totalCitas }}</td>
+              <td>{{ med.especialidades.join(', ') }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mensaje cuando no hay datos -->
+    <div *ngIf="!loading && tipoReporte && mostrarMensajeVacio()" class="empty-message">
+      <p>No se encontraron resultados. Intente ajustar los filtros.</p>
+    </div>
+
+  </div>
+</div>

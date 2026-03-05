@@ -1,0 +1,49 @@
+
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  justify-content: center; 
+}
+
+.date-selector label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0; 
+}
+
+.date-selector input[type="date"] {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+
+.action-button {
+  background: none;
+  border: none;
+  font-size: 1.3em; 
+  cursor: pointer;
+  margin: 0 4px; 
+  padding: 4px;
+  opacity: 0.65;
+  transition: opacity 0.2s, color 0.2s;
+  vertical-align: middle;
+}
+
+.action-button:hover {
+  opacity: 1;
+}
+
+
+.action-button.view { color: #0d6efd; } 
+.action-button.attend { color: #198754; } 
+
+
+.status-pendiente { color: #fd7e14; font-weight: bold;}
+.status-confirmada { color: #198754; font-weight: bold;}
+.status-atendida { color: #6c757d; }
+.status-cancelada { color: #dc3545; text-decoration: line-through;}

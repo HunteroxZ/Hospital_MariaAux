@@ -1,0 +1,493 @@
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  background: #3498db;
+  color: white;
+  padding: 20px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: white;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 2em;
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.monto-cita {
+  text-align: center;
+  padding: 20px;
+  background: #e8f4f8;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.monto-cita h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.precio {
+  color: #27ae60;
+  font-size: 1.5em;
+  font-weight: 700;
+}
+
+.pago-section {
+  margin: 25px 0;
+}
+
+.pago-section h4 {
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+.pago-section input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1.1em;
+  transition: border-color 0.3s;
+}
+
+.pago-section input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.vuelto-section {
+  margin-top: 20px;
+}
+
+.vuelto-section label {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.vuelto-section input {
+  background: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.facturacion-section {
+  margin: 30px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.facturacion-section h4 {
+  color: #e74c3c;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.metodos-pago {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn-efectivo, .btn-tarjeta {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.btn-efectivo {
+  background: #27ae60;
+  color: white;
+}
+
+.btn-efectivo:hover {
+  background: #229954;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+}
+
+.btn-tarjeta {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-tarjeta:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+}
+
+/* Estilos para modales de Izipay */
+.izipay-modal {
+  max-width: 400px;
+}
+
+.izipay-header {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.btn-option {
+  width: 100%;
+  padding: 20px;
+  margin: 10px 0;
+  background: white;
+  border: 2px solid #e74c3c;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #e74c3c;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-option:hover {
+  background: #e74c3c;
+  color: white;
+  transform: scale(1.02);
+}
+
+.cuotas-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.cuotas-section label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.cuotas-section input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.cuotas-section input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-cancelar, .btn-continuar {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancelar {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background: #7f8c8d;
+}
+
+.btn-continuar {
+  background: #3498db;
+  color: white;
+}
+
+.btn-continuar:hover {
+  background: #2980b9;
+}
+
+.pasar-tarjeta {
+  text-align: center;
+  padding: 40px;
+}
+
+.tarjeta-icon {
+  margin: 30px 0;
+}
+
+.tarjeta-icon p {
+  font-size: 1.2em;
+  color: #2c3e50;
+  margin-top: 20px;
+}
+
+/* Animación de tarjeta */
+.card-animation {
+  font-size: 80px;
+  animation: slideCard 2s infinite;
+}
+
+@keyframes slideCard {
+  0%, 100% { transform: translateX(-20px); }
+  50% { transform: translateX(20px); }
+}
+
+.btn-siguiente, .btn-generar-qr, .btn-imprimir {
+  width: 100%;
+  padding: 15px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.btn-siguiente:hover, .btn-generar-qr:hover, .btn-imprimir:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+}
+
+.qr-section {
+  text-align: center;
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.qr-section p {
+  margin-top: 15px;
+  color: #2c3e50;
+  font-size: 1.1em;
+}
+
+/* QR Code - Imagen real y fallback */
+.qr-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.qr-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+}
+
+.qr-image-container img {
+  max-width: 250px;
+  width: 100%;
+  height: auto;
+  border: 3px solid #2c3e50;
+  border-radius: 8px;
+  padding: 10px;
+  background: white;
+  display: block;
+}
+
+/* Instrucciones del QR */
+.qr-instructions {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.qr-instructions p {
+  margin: 8px 0;
+  color: #2c3e50;
+  font-size: 0.95em;
+}
+
+.qr-amount {
+  font-size: 1.5em !important;
+  font-weight: bold !important;
+  color: #27ae60 !important;
+  text-align: center !important;
+  margin-top: 10px !important;
+  padding: 10px;
+  background: #d4edda;
+  border-radius: 5px;
+}
+
+/* Fallback QR en CSS (si la imagen no carga) */
+.qr-fallback {
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  gap: 10px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border: 2px solid #2c3e50;
+  border-radius: 8px;
+}
+
+.qr-fallback div {
+  width: 60px;
+  height: 60px;
+  background: #000;
+  border-radius: 4px;
+  animation: qrPulse 1.5s infinite;
+}
+
+.qr-fallback div:nth-child(1) { animation-delay: 0s; }
+.qr-fallback div:nth-child(2) { animation-delay: 0.2s; }
+.qr-fallback div:nth-child(3) { animation-delay: 0.4s; }
+.qr-fallback div:nth-child(4) { animation-delay: 0.6s; }
+.qr-fallback div:nth-child(5) { animation-delay: 0.8s; }
+.qr-fallback div:nth-child(6) { animation-delay: 1s; }
+.qr-fallback div:nth-child(7) { animation-delay: 1.2s; }
+.qr-fallback div:nth-child(8) { animation-delay: 1.4s; }
+.qr-fallback div:nth-child(9) { animation-delay: 1.6s; }
+
+@keyframes qrPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.confirmacion {
+  text-align: center;
+  padding: 50px 30px;
+}
+
+.check-icon {
+  width: 100px;
+  height: 100px;
+  background: #27ae60;
+  color: white;
+  font-size: 4em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30px;
+  animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.confirmacion h2 {
+  color: #27ae60;
+  margin: 20px 0;
+}
+
+.confirmacion p {
+  color: #7f8c8d;
+  font-size: 1.1em;
+  margin-bottom: 30px;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 15px 0;
+}

@@ -1,0 +1,75 @@
+<div class="card-simple">
+  <h2>Agenda del Día - {{ nombreMedicoLogueado }}</h2>
+
+  <div class="date-selector">
+    <label for="fechaAgenda">Seleccionar Fecha:</label>
+    <input type="date" id="fechaAgenda" name="fechaAgenda"
+           [(ngModel)]="fechaSeleccionada"
+           (change)="cargarAgenda()">
+  </div>
+
+  <hr>
+
+  <div *ngIf="isLoading" class="loading-message">Cargando agenda...</div>
+  <div *ngIf="errorMessage && !isLoading" class="error-message">{{ errorMessage }}</div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <div *ngIf="citasDelDia.length === 0 && !errorMessage" class="info-message">
+      No hay citas programadas para esta fecha.
+    </div>
+
+    <table *ngIf="citasDelDia.length > 0" class="citas-table">
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th>Paciente</th>
+          <th>Motivo Consulta</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cita of citasDelDia">
+          <td>{{ formatHora(cita.hora) }}</td>
+          <td>{{ cita.nombrePaciente }}</td>
+          <td>{{ cita.motivoConsulta }}</td>
+          <td>
+            <span [ngClass]="'status-' + cita.estado">{{ cita.estado }}</span>
+          </td>
+          <td>
+            <ng-container *ngIf="cita.estado === 'pendiente' || cita.estado === 'confirmada'">
+                
+                <button class="action-button view" title="Ver Detalles/Historial"
+                        (click)="verDetalles(cita.idCita, cita.idPaciente, cita.idEspecialidad)">📋</button>
+                
+                <button class="action-button attend" title="Marcar como Atendida"
+                        (click)="marcarComoAtendida(cita.idCita)">✔️</button>
+
+                <button class="action-button cancel" title="Marcar como No Presentado"
+                        (click)="marcarComoNoPresentado(cita.idCita)">🚫</button>
+            
+            </ng-container>
+
+             <ng-container *ngIf="cita.estado === 'atendida'">
+                <button class="action-button view" title="Ver Historial Registrado"
+                        (click)="verDetalles(cita.idCita, cita.idPaciente, cita.idEspecialidad)">📋</button>
+                <span style="color: #198754; font-weight: bold;">Finalizada</span>
+            </ng-container>
+            
+             <ng-container *ngIf="cita.estado === 'no_presentado'">
+                 <span style="color: #e67e22; font-weight: bold;">No Asistió</span>
+            </ng-container>
+            <ng-container *ngIf="cita.estado === 'cancelada'">
+                 <span style="color: #dc3545; font-weight: bold;">Cancelada</span>
+            </ng-container>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+   <div class="form-link" style="margin-top: 20px;">
+    <a routerLink="/medico/dashboard">Volver al Dashboard</a>
+  </div>
+</div>

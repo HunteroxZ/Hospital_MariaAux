@@ -1,0 +1,109 @@
+
+    <div class="dashboard-container">
+      <div class="header-section">
+        <h1>Panel de Recepción</h1>
+        <div class="user-info">
+          <span>Bienvenido/a: <strong>{{ nombreRecepcionista }}</strong></span>
+          <button (click)="cerrarSesion()" class="btn-cerrar-sesion">Cerrar Sesión</button>
+        </div>
+      </div>
+
+      <div class="card-simple">
+        <h2>Buscar Cita por DNI del Paciente</h2>
+        
+        <div class="busqueda-section">
+          <div class="input-group">
+            <label for="dniBusqueda">DNI del Paciente:</label>
+            <input
+              type="text"
+              id="dniBusqueda"
+              [(ngModel)]="dniBusqueda"
+              placeholder="Ingrese DNI (8 dígitos)"
+              maxlength="8"
+            />
+          </div>
+          <button (click)="buscarCita()" [disabled]="isLoading" class="btn-buscar">
+            {{ isLoading ? 'Buscando...' : 'Buscar Cita' }}
+          </button>
+        </div>
+
+        @if (errorMessage) {
+          <div class="error-message">
+            {{ errorMessage }}
+          </div>
+        }
+
+        @if (tieneCitas) {
+          <div class="citas-list">
+            <h3>Citas Pendientes Encontradas:</h3>
+            @for (cita of citasEncontradas; track cita.idCita) {
+              <div 
+                class="cita-card" 
+                [class.seleccionada]="esCitaSeleccionada(cita.idCita)"
+                (click)="seleccionarCita(cita)">
+                <div class="cita-info">
+                  <p><strong>Paciente:</strong> {{ cita.nombrePaciente }}</p>
+                  <p><strong>DNI:</strong> {{ cita.dniPaciente }}</p>
+                  <p><strong>Médico:</strong> {{ cita.nombreMedico }}</p>
+                  <p><strong>Especialidad:</strong> {{ cita.especialidad }}</p>
+                  <p><strong>Fecha:</strong> {{ cita.fecha }} - {{ cita.hora }}</p>
+                  <p><strong>Motivo:</strong> {{ cita.motivoConsulta }}</p>
+                  <p class="precio"><strong>Precio:</strong> S/ {{ cita.precio | number:'1.2-2' }}</p>
+                  
+                  <!-- CHECKBOX SIS -->
+                  <div class="sis-checkbox">
+                    <label>
+                      <input 
+                        type="checkbox" 
+                        [(ngModel)]="cita.tieneSIS"
+                        (change)="actualizarEstadoSIS(cita)"
+                      />
+                      <span>Paciente tiene SIS</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (citaSeleccionada) {
+          <div class="acciones-section">
+            <button (click)="verificarSIS()" class="btn-sis">Verificar SIS</button>
+            
+            @if (citaSeleccionada.tieneSIS) {
+              <button (click)="generarTicketSIS()" class="btn-ticket-sis">
+                Generar Ticket SIS
+              </button>
+            } @else {
+              <button (click)="abrirMenuPago()" class="btn-pagar">
+                Proceder al Pago
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (mostrarMenuPago && citaParaPago) {
+      <app-menu-pago
+        [cita]="citaParaPago"
+        (cerrar)="cerrarMenuPago()"
+        (pagoCompletado)="cerrarMenuPago()"
+      ></app-menu-pago>
+    }
+
+    @if (mostrarModalTicketSIS && citaParaPago) {
+      <div class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-body confirmacion">
+            <div class="check-icon">✓</div>
+            <h2>Ticket Generado</h2>
+            <p>TICKET DE CITA - PACIENTE SIS</p>
+            <button (click)="imprimirTicketSIS()" class="btn-imprimir">
+              Imprimir Ticket
+            </button>
+          </div>
+        </div>
+      </div>
+    }

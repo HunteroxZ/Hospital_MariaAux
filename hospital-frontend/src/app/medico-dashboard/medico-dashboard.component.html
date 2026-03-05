@@ -1,0 +1,19 @@
+<div class="card-simple">
+  <h2>Dashboard Médico - {{ nombreMedico }}</h2>
+  <p>Seleccione una opción:</p>
+
+  <ul class="dashboard-menu">
+    <li>
+      <a routerLink="/medico/agenda">Ver mi Agenda del Día</a>
+    </li>
+    <li>
+      <a routerLink="/medico/perfil">Gestionar mi Perfil</a>
+    </li>
+    <li>
+      <a routerLink="/medico/historiales">Consultar Historiales Médicos</a>
+    </li>
+    <li>
+      <a (click)="onLogoutMedico()" style="cursor: pointer; color: #e74c3c; font-weight: bold;">Cerrar Sesión</a>
+    </li>
+  </ul>
+</div>

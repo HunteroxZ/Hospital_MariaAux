@@ -1,0 +1,49 @@
+
+.citas-table {
+  width: 100%;
+  border-collapse: collapse; 
+  margin-top: 20px;
+  font-size: 0.9em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+}
+
+.citas-table th,
+.citas-table td {
+  border: 1px solid #dee2e6; 
+  padding: 12px 15px; 
+  text-align: left;
+  vertical-align: middle; 
+}
+
+.citas-table thead th {
+  background-color: #e9ecef; 
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #adb5bd; 
+}
+
+.citas-table tbody tr:nth-child(even) { 
+  background-color: #f8f9fa; 
+}
+
+.citas-table tbody tr:hover {
+  background-color: #f1f3f5; 
+}
+
+
+.status-pendiente { color: #fd7e14; font-weight: bold;} 
+.status-confirmada { color: #198754; font-weight: bold;} 
+.status-atendida { color: #6c757d; } 
+.status-cancelada { color: #dc3545; text-decoration: line-through;} 
+
+
+.loading-message, .info-message, .error-message {
+  text-align: center;
+  padding: 20px;
+  margin-top: 15px;
+  border-radius: 5px;
+}
+.loading-message { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe;} 
+.info-message { background-color: #e9ecef; color: #6c757d;} 
+.error-message { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7;} 
+

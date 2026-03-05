@@ -1,0 +1,6 @@
+:host h2 + p {
+  text-align: center;
+  font-size: 1.1em;
+  color: #000000; 
+  margin-bottom: 1.5rem; 
+}
