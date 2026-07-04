@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { MedicoAuthService } from '../auth/medico-auth.service';
 import { FormsModule } from '@angular/forms'; 
+import { environment } from '../../environments/environment'; 
 
 @Component({
   selector: 'app-medico-perfil',
@@ -14,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class MedicoPerfilComponent implements OnInit {
 
-  private apiUrlBase = 'http://localhost:8080/medicos/';
+  private apiUrlBase = environment.apiUrl + '/medicos/';
   idMedicoLogueado: number | null = null;
 
 

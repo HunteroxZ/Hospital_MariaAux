@@ -5,6 +5,7 @@ import { RouterLink, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { forkJoin } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 
 interface TimeSlot {
@@ -21,7 +22,7 @@ interface TimeSlot {
 })
 export class GenerarCitaComponent implements OnInit {
 
-  private apiUrlBase = 'http://localhost:8080';
+  private apiUrlBase = environment.apiUrl;
   private apiUrlCitas = `${this.apiUrlBase}/citas`;
   private apiUrlEspecialidades = `${this.apiUrlBase}/especialidades`;
   private apiUrlMedicos = `${this.apiUrlBase}/medicos`;

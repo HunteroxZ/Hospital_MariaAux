@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common'; 
 import { Router, RouterLink } from '@angular/router'; 
+import { environment } from '../../environments/environment'; 
 
 @Component({
   selector: 'app-registro',
@@ -17,7 +18,7 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class RegistroComponent {
 
-  private apiUrl = 'http://localhost:8080/registro';
+  private apiUrl = environment.apiUrl + '/registro';
   public fechaMaxima: string;
   public registroForm: FormGroup;
 

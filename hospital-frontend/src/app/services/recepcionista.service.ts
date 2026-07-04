@@ -9,12 +9,13 @@ import {
   PagoRequest,
   PagoResponse
 } from '../models/recepcionista.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecepcionistaService {
-  private baseUrl = 'http://localhost:8080/recepcionista';
+  private baseUrl = environment.apiUrl + '/recepcionista';
 
   constructor(private http: HttpClient) { }
 

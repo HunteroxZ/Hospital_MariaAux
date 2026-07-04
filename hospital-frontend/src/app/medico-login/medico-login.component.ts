@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MedicoAuthService } from '../auth/medico-auth.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-medico-login',
@@ -14,7 +15,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 })
 export class MedicoLoginComponent {
 
-  private apiUrl = 'http://localhost:8080/medicos/login';
+  private apiUrl = environment.apiUrl + '/medicos/login';
 
   formMedico: FormGroup;
   errorMessage = '';

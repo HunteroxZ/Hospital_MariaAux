@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
 import { MedicoAuthService } from '../auth/medico-auth.service';
+import { environment } from '../../environments/environment';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -16,8 +17,8 @@ import autoTable from 'jspdf-autotable';
 })
 export class MedicoHistorialRegistroComponent implements OnInit {
 
-  private apiUrlHistorial = 'http://localhost:8080/historiales'; 
-  private apiUrlPaciente = 'http://localhost:8080/'; 
+  private apiUrlHistorial = environment.apiUrl + '/historiales'; 
+  private apiUrlPaciente = environment.apiUrl + '/'; 
   
   idCita: number = 0;
   idPaciente: number = 0;

@@ -4,6 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -14,7 +15,7 @@ import { AuthService } from '../auth.service';
 })
 export class EditarPerfilComponent implements OnInit {
 
-  private apiUrl = 'http://localhost:8080/'; 
+  private apiUrl = environment.apiUrl + '/';
   
   pacienteId: number | null = null;
   

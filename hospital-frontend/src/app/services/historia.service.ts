@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HistoriaMedicaDTO, RegistrarHistoriaRequest } from '../models/historia-medica';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HistoriaService {
-  private apiUrl = 'http://localhost:8080/historiales';
+  private apiUrl = environment.apiUrl + '/historiales';
 
   constructor(private http: HttpClient) {}
 

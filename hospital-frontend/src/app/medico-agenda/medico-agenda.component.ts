@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router'; 
 import { MedicoAuthService } from '../auth/medico-auth.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-medico-agenda',
@@ -14,8 +15,8 @@ import { MedicoAuthService } from '../auth/medico-auth.service';
 })
 export class MedicoAgendaComponent implements OnInit {
 
-  private apiUrlBase = 'http://localhost:8080/medicos/';
-  private apiUrlCitas = 'http://localhost:8080/citas/'; 
+  private apiUrlBase = environment.apiUrl + '/medicos/';
+  private apiUrlCitas = environment.apiUrl + '/citas/';
   
   idMedicoLogueado: number | null = null;
   nombreMedicoLogueado: string = "Doctor(a) Desconocido";

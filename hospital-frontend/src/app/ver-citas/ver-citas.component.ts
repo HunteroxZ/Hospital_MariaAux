@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router'; 
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-ver-citas',
@@ -13,7 +14,7 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class VerCitasComponent implements OnInit {
 
-  private apiUrl = 'http://localhost:8080/citas/paciente/'; 
+  private apiUrl = environment.apiUrl + '/citas/paciente/';
   pacienteId: number | null = null;
   citas: any[] = []; 
   isLoading = false;
