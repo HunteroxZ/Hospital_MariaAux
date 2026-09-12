@@ -34,14 +34,14 @@ public class DisponibilidadMedico {
 
     @NotNull(message = "La hora de fin es obligatoria")
     @Column(nullable = false)
-    private LocalTime horaFin; 
+    private LocalTime horaFin;
 
-    @JsonIgnore 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idMedico", insertable = false, updatable = false)
     private Medico medico;
 
-    @JsonIgnore 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idEspecialidad", insertable = false, updatable = false)
     private Especialidad especialidad;

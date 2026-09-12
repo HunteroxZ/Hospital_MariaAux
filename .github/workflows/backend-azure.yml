@@ -1,0 +1,35 @@
+name: Backend - Build & Deploy to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'hospital-backend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build with Maven
+        working-directory: hospital-backend
+        run: mvn -B clean package
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          slot-name: 'production'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: hospital-backend/target/*.jar

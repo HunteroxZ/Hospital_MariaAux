@@ -152,7 +152,7 @@ export class MedicoHistorialRegistroComponent implements OnInit {
     doc.setFontSize(20);
     doc.text("Resumen de Consulta Médica", 105, 20, { align: 'center' });
     doc.setFontSize(14);
-    doc.text("Hospital María Auxiliadora", 105, 30, { align: 'center' });
+    doc.text("Sistema de Gestión Hospitalaria", 105, 30, { align: 'center' });
 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');

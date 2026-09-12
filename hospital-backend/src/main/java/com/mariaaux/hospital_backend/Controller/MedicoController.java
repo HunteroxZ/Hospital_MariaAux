@@ -8,6 +8,7 @@ import com.mariaaux.hospital_backend.dto.LoginRequest;
 import com.mariaaux.hospital_backend.dto.LoginResponseMedico;
 import com.mariaaux.hospital_backend.dto.RegistrarMedicoRequest;
 import com.mariaaux.hospital_backend.model.Medico;
+import com.mariaaux.hospital_backend.model.CupoAdicional;
 import com.mariaaux.hospital_backend.service.CitaService;
 import com.mariaaux.hospital_backend.service.MedicoService;
 import jakarta.validation.Valid;
@@ -32,6 +33,85 @@ public class MedicoController {
 
     @Autowired
     private CitaService citaService;
+
+    @PostMapping("/{idMedico}/cupos-adicionales")
+    public ResponseEntity<?> habilitarCuposAdicionales(
+            @PathVariable Long idMedico,
+            @RequestBody Map<String, Object> request) {
+        try {
+            Long idEspecialidad = Long.valueOf(request.get("idEspecialidad").toString());
+            String fechaStr = request.get("fecha").toString();
+            LocalDate fecha = LocalDate.parse(fechaStr);
+            int cantidadCupos = Integer.parseInt(request.get("cantidadCupos").toString());
+
+            List<CupoAdicional> cupos = medicoService.habilitarCuposAdicionales(
+                idMedico, idEspecialidad, fecha, cantidadCupos);
+
+            String mensaje = cupos.size() == cantidadCupos
+                ? "Se habilitaron " + cupos.size() + " cupos adicionales"
+                : "Solo se pudieron habilitar " + cupos.size() + " de " + cantidadCupos + " solicitados (jornada sin más bloques libres)";
+            return ResponseEntity.ok(Map.of(
+                "mensaje", mensaje,
+                "cupos", cupos
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al habilitar cupos adicionales."));
+        }
+    }
+
+    @GetMapping("/{idMedico}/cupos-adicionales/fecha")
+    public ResponseEntity<?> obtenerCuposAdicionalesPorFecha(
+            @PathVariable Long idMedico,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        try {
+            List<CupoAdicional> cupos = medicoService.obtenerCuposAdicionalesPorFecha(idMedico, fecha);
+            return ResponseEntity.ok(cupos);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al obtener cupos adicionales."));
+        }
+    }
+
+    @GetMapping("/{idMedico}/cupos-adicionales")
+    public ResponseEntity<?> obtenerCuposAdicionales(
+            @PathVariable Long idMedico,
+            @RequestParam Long idEspecialidad,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        try {
+            List<CupoAdicional> cupos = medicoService.obtenerCuposAdicionales(
+                idMedico, idEspecialidad, fecha);
+            return ResponseEntity.ok(cupos);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al obtener cupos adicionales."));
+        }
+    }
+
+    @DeleteMapping("/{idMedico}/cupos-adicionales/{idCupo}")
+    public ResponseEntity<?> eliminarCupoAdicional(
+            @PathVariable Long idMedico,
+            @PathVariable Long idCupo) {
+        try {
+            medicoService.eliminarCupoAdicional(idMedico, idCupo);
+            return ResponseEntity.ok(Map.of("mensaje", "Cupo adicional eliminado."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al eliminar el cupo adicional."));
+        }
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginMedico(@RequestBody LoginRequest loginRequest) {

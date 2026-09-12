@@ -121,4 +121,18 @@ public class CitaController {
                                  .body(Map.of("error", "Error interno al obtener horas reservadas."));
         }
     }
+
+    @GetMapping("/semanales/{idMedico}")
+    public ResponseEntity<?> obtenerConteoSemanal(
+            @PathVariable Long idMedico,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio) {
+        try {
+            return ResponseEntity.ok(citaService.obtenerConteoSemanalPorMedico(idMedico, inicio));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(Map.of("error", "Error interno al obtener conteo semanal."));
+        }
+    }
 }

@@ -1,11 +1,27 @@
 <div class="card-simple">
   <h2>Agenda del Día - {{ nombreMedicoLogueado }}</h2>
 
-  <div class="date-selector">
-    <label for="fechaAgenda">Seleccionar Fecha:</label>
-    <input type="date" id="fechaAgenda" name="fechaAgenda"
-           [(ngModel)]="fechaSeleccionada"
-           (change)="cargarAgenda()">
+  <div class="week-nav">
+    <button class="week-btn" (click)="semanaAnterior()" title="Semana anterior">‹</button>
+    <span class="week-label">{{ etiquetaSemana }}</span>
+    <button class="week-btn today" (click)="irAHoy()">Hoy</button>
+    <button class="week-btn" (click)="semanaSiguiente()" title="Semana siguiente">›</button>
+    <button class="action-button add" *ngIf="puedeHabilitarAdicionales" (click)="abrirModalAdicionales()" style="margin-left: 10px;" title="Agenda finalizada: habilite hasta 2 adicionales de 10 min">
+      ➕ Habilitar Adicionales
+    </button>
+  </div>
+
+  <div class="week-strip">
+    <div *ngFor="let dia of diasSemana" class="day-cell"
+         [class.selected]="fechaSeleccionada === dia.fecha"
+         [class.disabled]="dia.esDomingo"
+         [class.off]="!dia.atiende && !dia.esDomingo"
+         (click)="seleccionarDia(dia)">
+      <span class="day-name">{{ dia.nombre }}</span>
+      <span class="day-num">{{ dia.num }}</span>
+      <span class="day-count" *ngIf="dia.totalCitas > 0">{{ dia.totalCitas }} {{ dia.totalCitas === 1 ? 'cita' : 'citas' }}</span>
+      <span class="day-off" *ngIf="!dia.atiende && !dia.esDomingo">sin turno</span>
+    </div>
   </div>
 
   <hr>
@@ -30,7 +46,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let cita of citasDelDia">
-          <td>{{ formatHora(cita.hora) }}</td>
+          <td>{{ formatHora(cita.hora) }} <span *ngIf="cita.esAdicional" class="badge-adicional" title="Cita adicional">➕</span></td>
           <td>{{ cita.nombrePaciente }}</td>
           <td>{{ cita.motivoConsulta }}</td>
           <td>
@@ -69,7 +85,77 @@
     </table>
   </div>
 
+  <div *ngIf="cuposAdicionalesFecha.length > 0" class="adicionales-section">
+    <hr>
+    <h3>➕ Cupos Adicionales Habilitados ({{ fechaSeleccionada }})</h3>
+    <div class="cupos-grid">
+      <div *ngFor="let cupo of cuposAdicionalesFecha" class="cupo-card" [class.reservado]="esCupoReservado(cupo)">
+        <span class="cupo-hora">{{ formatHora(cupo.horaInicio) }} - {{ formatHora(cupo.horaFin) }}</span>
+        <span class="cupo-esp">{{ nombreEspecialidad(cupo.idEspecialidad) }}</span>
+        <span class="cupo-estado">{{ esCupoReservado(cupo) ? 'Reservado' : 'Disponible' }}</span>
+        <button *ngIf="cupo.disponible && !esCupoReservado(cupo)" class="cupo-delete" title="Eliminar cupo"
+                (click)="eliminarCupoAdicional(cupo)">🗑️</button>
+      </div>
+    </div>
+    <div class="color-index">
+      <span class="index-item">
+        <span class="color-dot adicional-dot"></span> Adicional (Verde)
+      </span>
+    </div>
+  </div>
+
    <div class="form-link" style="margin-top: 20px;">
     <a routerLink="/medico/dashboard">Volver al Dashboard</a>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModalAdicionales" (click)="cerrarModalAdicionales()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Habilitar Cupos Adicionales</h3>
+      <button class="close-button" (click)="cerrarModalAdicionales()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Cuántos cupos adicionales desea abrir para el turno actual?</p>
+      <p><small>Se generan de 10 minutos (máx. 2 por día), en secuencia desde que terminó su última atención y sin pasar el fin de su jornada ({{ fechaSeleccionada }}).</small></p>
+      
+      <div class="form-group">
+        <label for="especialidad">Especialidad:</label>
+        <select id="especialidad" [(ngModel)]="idEspecialidadSeleccionada" (change)="cargarCuposExistentes()">
+          <option [ngValue]="null">Seleccione una especialidad</option>
+          <option *ngFor="let esp of especialidades" [ngValue]="esp.idEspecialidad">
+            {{ esp.nombre }}
+          </option>
+        </select>
+        <small *ngIf="especialidades.length === 0" style="color: #dc3545;">
+          No tiene especialidades asignadas. Contacte al administrador.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="cantidadCupos">Cantidad de cupos (máx. 2):</label>
+        <input type="number" id="cantidadCupos" [(ngModel)]="cantidadCuposAdicionales" 
+               min="1" max="2" placeholder="Ingrese cantidad">
+      </div>
+
+      <div *ngIf="cuposAdicionales.length > 0" class="cupos-existente">
+        <h4>Cupos adicionales existentes:</h4>
+        <ul>
+          <li *ngFor="let cupo of cuposAdicionales">
+            {{ formatHora(cupo.horaInicio) }} - {{ formatHora(cupo.horaFin) }}
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="mensajeAdicionales" class="mensaje" [ngClass]="{'error': mensajeAdicionales.includes('Error'), 'success': !mensajeAdicionales.includes('Error')}">
+        {{ mensajeAdicionales }}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="action-button cancel" (click)="cerrarModalAdicionales()">Cancelar</button>
+      <button class="action-button add" (click)="habilitarCuposAdicionales()" [disabled]="isLoadingAdicionales || !idEspecialidadSeleccionada">
+        {{ isLoadingAdicionales ? 'Habilitando...' : 'Habilitar Cupos' }}
+      </button>
+    </div>
   </div>
 </div>

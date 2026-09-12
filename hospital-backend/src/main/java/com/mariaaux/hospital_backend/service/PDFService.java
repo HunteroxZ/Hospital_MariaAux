@@ -8,6 +8,9 @@ import com.mariaaux.hospital_backend.dto.Reportes.ReporteIngresoMedicoDTO;
 import com.mariaaux.hospital_backend.dto.Reportes.ReporteIngresosGeneralDTO;
 import com.mariaaux.hospital_backend.dto.Reportes.ReporteMedicoDTO;
 import com.mariaaux.hospital_backend.dto.Reportes.ReportePacienteDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReporteAdicionalesDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.AdicionalPorMedicoDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.AdicionalPorEspecialidadDTO;
 
 import org.springframework.stereotype.Service;
 
@@ -234,6 +237,81 @@ public class PDFService {
         return baos.toByteArray();
     }
 
+
+    public byte[] generarPDFReporteAdicionales(ReporteAdicionalesDTO datos) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4.rotate());
+        PdfWriter.getInstance(document, baos);
+
+        document.open();
+
+        Paragraph title = new Paragraph("REPORTE DE CUPOS ADICIONALES (ANÓNIMO)", FONT_TITLE);
+        title.setAlignment(Element.ALIGN_CENTER);
+        title.setSpacingAfter(10);
+        document.add(title);
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Paragraph subtitle = new Paragraph(
+            "Desde: " + datos.getDesde().format(fmt) +
+            " - Hasta: " + datos.getHasta().format(fmt) +
+            " - Corte: " + datos.getFechaCorte().format(fmt),
+            FONT_SUBTITLE
+        );
+        subtitle.setAlignment(Element.ALIGN_CENTER);
+        subtitle.setSpacingAfter(10);
+        document.add(subtitle);
+
+        Paragraph resumen = new Paragraph(
+            "Total citas: " + datos.getTotalCitas() +
+            " | Normales: " + datos.getTotalNormales() +
+            " | Adicionales: " + datos.getTotalAdicionales() +
+            " | Promedio diario antes: " + datos.getPromedioDiarioAntes() +
+            " | Promedio diario después: " + datos.getPromedioDiarioDespues() +
+            " | Incremento: " + datos.getIncrementoPorcentual() + "%",
+            FONT_NORMAL
+        );
+        resumen.setSpacingAfter(15);
+        document.add(resumen);
+
+        Paragraph h1 = new Paragraph("Por médico (anónimo)", FONT_SUBTITLE);
+        h1.setSpacingAfter(5);
+        document.add(h1);
+
+        PdfPTable tablaMedicos = new PdfPTable(5);
+        tablaMedicos.setWidthPercentage(100);
+        tablaMedicos.setWidths(new float[]{2f, 2f, 2f, 2f, 2.5f});
+        addTableHeader(tablaMedicos, "Médico", "Total Citas", "Normales", "Adicionales", "Promedio Diario Adic.");
+        int i = 1;
+        for (AdicionalPorMedicoDTO m : datos.getPorMedico()) {
+            addTableCell(tablaMedicos, "Médico " + (i++));
+            addTableCell(tablaMedicos, m.getTotalCitas().toString());
+            addTableCell(tablaMedicos, m.getCitasNormales().toString());
+            addTableCell(tablaMedicos, m.getCitasAdicionales().toString());
+            addTableCell(tablaMedicos, m.getPromedioDiarioAdicionales().toString());
+        }
+        document.add(tablaMedicos);
+
+        Paragraph h2 = new Paragraph("Por especialidad", FONT_SUBTITLE);
+        h2.setSpacingBefore(15);
+        h2.setSpacingAfter(5);
+        document.add(h2);
+
+        PdfPTable tablaEsp = new PdfPTable(5);
+        tablaEsp.setWidthPercentage(100);
+        tablaEsp.setWidths(new float[]{3f, 2f, 2f, 2f, 2.5f});
+        addTableHeader(tablaEsp, "Especialidad", "Total Citas", "Normales", "Adicionales", "Promedio Diario Adic.");
+        for (AdicionalPorEspecialidadDTO e : datos.getPorEspecialidad()) {
+            addTableCell(tablaEsp, e.getNombreEspecialidad());
+            addTableCell(tablaEsp, e.getTotalCitas().toString());
+            addTableCell(tablaEsp, e.getCitasNormales().toString());
+            addTableCell(tablaEsp, e.getCitasAdicionales().toString());
+            addTableCell(tablaEsp, e.getPromedioDiarioAdicionales().toString());
+        }
+        document.add(tablaEsp);
+
+        document.close();
+        return baos.toByteArray();
+    }
 
     private void addTableHeader(PdfPTable table, String... headers) {
         for (String header : headers) {

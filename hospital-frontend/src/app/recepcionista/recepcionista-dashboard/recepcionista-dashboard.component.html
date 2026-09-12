@@ -83,6 +83,78 @@
           </div>
         }
       </div>
+
+      <div class="card-simple horarios-section">
+        <h2>Ver Horarios de Médico</h2>
+
+        <div class="horarios-filtros">
+          <div class="input-group">
+            <label for="espHorario">Especialidad:</label>
+            <select id="espHorario" [(ngModel)]="idEspHorario" (change)="onEspHorarioChange()">
+              <option [ngValue]="null">-- Seleccione --</option>
+              @for (esp of especialidadesHorario; track esp.idEspecialidad) {
+                <option [ngValue]="esp.idEspecialidad">{{ esp.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="medHorario">Médico:</label>
+            <select id="medHorario" [(ngModel)]="idMedicoHorario" (change)="onMedicoHorarioChange()" [disabled]="medicosHorario.length === 0">
+              <option [ngValue]="null">{{ medicosHorario.length ? '-- Seleccione --' : 'Seleccione especialidad' }}</option>
+              @for (med of medicosHorario; track med.idMedico) {
+                <option [ngValue]="med.idMedico">Dr(a). {{ med.nombres }} {{ med.apellidos }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        @if (idMedicoHorario) {
+          <label>Días morados = el médico atiende:</label>
+          <div class="week-nav">
+            <button (click)="semanaAnterior()" class="week-btn" title="Semana anterior">‹</button>
+            <button (click)="semanaSiguiente()" class="week-btn" title="Semana siguiente">›</button>
+          </div>
+          <div class="week-strip">
+            @for (dia of diasDisponibles; track dia.fecha) {
+              <div class="day-cell"
+                [class.selected]="fechaHorario === dia.fecha"
+                [class.available]="dia.disponible"
+                [class.disabled]="!dia.disponible"
+                (click)="seleccionarDia(dia)">
+                <span class="day-name">{{ dia.nombre }}</span>
+                <span class="day-num">{{ dia.num }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        @if (isLoadingHorarios) {
+          <div class="loading-message">Cargando horarios...</div>
+        }
+        @if (errorHorarios && !isLoadingHorarios) {
+          <div class="info-message">{{ errorHorarios }}</div>
+        }
+
+        @if (slotsHorario.length > 0) {
+          <div class="slots-grid">
+            @for (slot of slotsHorario; track slot.hora) {
+              <div class="slot"
+                [class.disponible]="slot.disponible && !slot.esAdicional && !slot.pasada"
+                [class.reservado]="!slot.disponible && !slot.pasada"
+                [class.adicional]="slot.esAdicional && slot.disponible && !slot.pasada"
+                [class.pasada]="slot.pasada">
+                {{ formatHoraCorta(slot.hora) }}@if (slot.esAdicional && !slot.pasada) { ➕ }
+              </div>
+            }
+          </div>
+          <div class="slots-legend">
+            <span class="legend-item"><span class="legend-dot disponible-dot"></span> Disponible</span>
+            <span class="legend-item"><span class="legend-dot reservado-dot"></span> Reservado</span>
+            <span class="legend-item"><span class="legend-dot adicional-dot"></span> Adicional (Verde)</span>
+            <span class="legend-item"><span class="legend-dot pasada-dot"></span> Hora pasada (Gris)</span>
+          </div>
+        }
+      </div>
     </div>
 
     @if (mostrarMenuPago && citaParaPago) {

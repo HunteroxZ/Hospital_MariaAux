@@ -9,7 +9,7 @@
     </div>
 
     <section *ngIf="estadoCita === 'pendiente' && !isLoading" class="registro-actual form-card">
-        <h3>Registro de Diagnóstico (Cita ID: {{ idCita }})</h3> 
+        <h3>Registro de Diagnóstico</h3> 
         <p class="warning-message">
             <strong>AVISO:</strong> Al registrar este historial, la cita se marcará automáticamente como 'Atendida'.
         </p>
@@ -65,7 +65,7 @@
     </section>
 
     <section *ngIf="estadoCita === 'atendida' && !isLoading" class="info-message" style="background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460;">
-        El historial de esta cita (ID: {{ idCita }}) ya fue registrado. Solo puede consultar o imprimir.
+        El historial de esta cita ya fue registrado. Solo puede consultar o imprimir.
     </section>
 
     <hr>

@@ -11,6 +11,8 @@ import { environment } from '../../environments/environment';
 interface TimeSlot {
   hora: string; 
   disponible: boolean; 
+  esAdicional: boolean;
+  pasada: boolean;
 }
 
 @Component({
@@ -42,6 +44,10 @@ export class GenerarCitaComponent implements OnInit {
   isLoadingMedicos = false;
   isLoadingHorarios = false;
   errorMessage = '';
+
+  semanaInicio: string = '';
+  diasDisponibles: any[] = [];
+  private disponibilidadMedico: any[] = [];
 
   constructor(
     private http: HttpClient,
@@ -78,6 +84,7 @@ export class GenerarCitaComponent implements OnInit {
   onEspecialidadChange(): void {
      this.medicos = []; this.timeSlots = []; this.citaData.idMedico = null;
      this.citaData.fecha = ''; this.citaData.hora = ''; this.errorMessage = '';
+     this.diasDisponibles = []; this.disponibilidadMedico = [];
      const idEspecialidadSeleccionada = this.citaData.idEspecialidad;
      if (!idEspecialidadSeleccionada) return;
      this.isLoadingMedicos = true;
@@ -92,11 +99,98 @@ export class GenerarCitaComponent implements OnInit {
 
   onMedicoSelect(idMedicoSeleccionado: number): void {
       this.citaData.idMedico = idMedicoSeleccionado;
-      if (this.citaData.fecha) { this.cargarHorariosDisponibles(); }
+      this.citaData.fecha = ''; this.citaData.hora = ''; this.timeSlots = [];
+      this.semanaInicio = this.obtenerLunes(this.getTodayDate());
+      this.cargarDisponibilidadSemana();
   }
 
   onFechaChange(): void {
       this.cargarHorariosDisponibles();
+  }
+
+  obtenerLunes(fechaStr: string): string {
+    const f = new Date(fechaStr + 'T00:00:00');
+    const diff = (f.getDay() + 6) % 7;
+    f.setDate(f.getDate() - diff);
+    return this.toFechaStr(f);
+  }
+
+  toFechaStr(f: Date): string {
+    const y = f.getFullYear();
+    const m = (f.getMonth() + 1).toString().padStart(2, '0');
+    const d = f.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  nombreDiaCorto(fechaStr: string): string {
+    const nombres = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    return nombres[new Date(fechaStr + 'T00:00:00').getDay()];
+  }
+
+  cargarDisponibilidadSemana(): void {
+    const idMedicoSeleccionado = this.citaData.idMedico;
+    if (!idMedicoSeleccionado || !this.semanaInicio) return;
+    this.http.get<any[]>(`${this.apiUrlMedicos}/${idMedicoSeleccionado}/disponibilidad`).subscribe({
+      next: (data) => {
+        this.disponibilidadMedico = data || [];
+        this.construirDiasDisponibles();
+      },
+      error: (err) => {
+        console.error('Error al cargar disponibilidad:', err);
+        this.disponibilidadMedico = [];
+        this.construirDiasDisponibles();
+      }
+    });
+  }
+
+  construirDiasDisponibles(): void {
+    const nombresDias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+    const idEsp = Number(this.citaData.idEspecialidad);
+    const diasAtiende = new Set(
+      this.disponibilidadMedico
+        .filter(d => Number(d.idEspecialidad) === idEsp)
+        .map(d => String(d.diaSemana).toLowerCase())
+    );
+    const hoy = this.getTodayDate();
+    const base = new Date(this.semanaInicio + 'T00:00:00');
+    this.diasDisponibles = [];
+    for (let i = 0; i < 7; i++) {
+      const f = new Date(base);
+      f.setDate(base.getDate() + i);
+      const fecha = this.toFechaStr(f);
+      const esDomingo = f.getDay() === 0;
+      const idx = (f.getDay() + 6) % 7;
+      this.diasDisponibles.push({
+        fecha,
+        nombre: this.nombreDiaCorto(fecha),
+        num: f.getDate(),
+        esDomingo,
+        esPasado: fecha < hoy,
+        disponible: !esDomingo && fecha >= hoy && diasAtiende.has(nombresDias[idx])
+      });
+    }
+  }
+
+  seleccionarDia(dia: any): void {
+    if (!dia.disponible) return;
+    this.citaData.fecha = dia.fecha;
+    this.cargarHorariosDisponibles();
+  }
+
+  semanaAnterior(): void {
+    const f = new Date(this.semanaInicio + 'T00:00:00');
+    f.setDate(f.getDate() - 7);
+    const lunesActual = this.obtenerLunes(this.getTodayDate());
+    if (this.toFechaStr(f) < lunesActual) return;
+    this.semanaInicio = this.toFechaStr(f);
+    this.construirDiasDisponibles();
+  }
+
+  semanaSiguiente(): void {
+    const f = new Date(this.semanaInicio + 'T00:00:00');
+    f.setDate(f.getDate() + 7);
+    this.semanaInicio = this.toFechaStr(f);
+    this.construirDiasDisponibles();
   }
 
 
@@ -130,9 +224,10 @@ export class GenerarCitaComponent implements OnInit {
 
     const getDisponibilidad = this.http.get<any[]>(`${this.apiUrlMedicos}/${idMedicoSeleccionado}/disponibilidad`);
     const getHorasReservadas = this.http.get<string[]>(`${this.apiUrlCitasReservadas}/${idMedicoSeleccionado}/${fechaSeleccionada}`); 
+    const getAdicionales = this.http.get<any[]>(`${this.apiUrlMedicos}/${idMedicoSeleccionado}/cupos-adicionales/fecha?fecha=${fechaSeleccionada}`);
 
-    forkJoin([getDisponibilidad, getHorasReservadas]).subscribe({
-      next: ([disponibilidades, horasReservadas]) => {
+    forkJoin([getDisponibilidad, getHorasReservadas, getAdicionales]).subscribe({
+      next: ([disponibilidades, horasReservadas, cuposAdicionales]) => {
         const horariosDelDia = disponibilidades.filter(d => d.diaSemana === diaSemanaNombre);
 
         if (horariosDelDia.length === 0) {
@@ -143,10 +238,27 @@ export class GenerarCitaComponent implements OnInit {
 
         const slotsGenerados = this.generateTimeSlots(horariosDelDia, 20);
 
-        this.timeSlots = slotsGenerados.map(slot => ({
-          ...slot, 
-          disponible: !horasReservadas.includes(slot.hora)
-        }));
+        const idEsp = Number(this.citaData.idEspecialidad);
+        const cuposValidos = (cuposAdicionales || [])
+          .filter((c: any) => c.disponible && Number(c.idEspecialidad) === idEsp);
+        const horasAdicionales = new Set(cuposValidos.map((c: any) => c.horaInicio.substring(0, 8)));
+
+        this.timeSlots = slotsGenerados
+          .filter(slot => !horasAdicionales.has(slot.hora))
+          .map(slot => ({
+            ...slot,
+            disponible: !horasReservadas.includes(slot.hora) && !this.esHoraPasada(slot.hora, fechaSeleccionada),
+            pasada: this.esHoraPasada(slot.hora, fechaSeleccionada)
+          }));
+
+        cuposValidos.forEach((cupo: any) => {
+          const hora = cupo.horaInicio.substring(0, 8);
+          if (!this.timeSlots.some(s => s.hora === hora)) {
+            const pasada = this.esHoraPasada(hora, fechaSeleccionada);
+            this.timeSlots.push({ hora, disponible: !horasReservadas.includes(hora) && !pasada, esAdicional: true, pasada });
+          }
+        });
+        this.timeSlots.sort((a, b) => a.hora.localeCompare(b.hora));
 
         const hayDisponibles = this.timeSlots.some(slot => slot.disponible);
         if (!hayDisponibles && this.timeSlots.length > 0) {
@@ -179,7 +291,7 @@ export class GenerarCitaComponent implements OnInit {
       let slotEndTime = new Date(slotStartTime.getTime() + intervalMinutes * 60000);
 
       while (slotEndTime.getTime() <= blockEndTime.getTime()) {
-        slots.push({ hora: this.formatTime(slotStartTime), disponible: true }); // Inicialmente true
+        slots.push({ hora: this.formatTime(slotStartTime), disponible: true, esAdicional: false, pasada: false }); // Inicialmente true
         slotStartTime = new Date(slotEndTime.getTime());
         slotEndTime = new Date(slotStartTime.getTime() + intervalMinutes * 60000);
       }
@@ -207,6 +319,15 @@ export class GenerarCitaComponent implements OnInit {
       }
   }
 
+  esHoraPasada(hora: string, fechaSeleccionada: string): boolean {
+    if (fechaSeleccionada !== this.getTodayDate()) return false;
+    const ahora = new Date();
+    const [h, m] = hora.split(':').map(Number);
+    const slotDate = new Date();
+    slotDate.setHours(h, m, 0, 0);
+    return slotDate.getTime() <= ahora.getTime();
+  }
+
   onSubmit() {
      if (!this.citaData.idPaciente) {
        alert('Error: No se pudo identificar al paciente.'); return;
@@ -217,7 +338,7 @@ export class GenerarCitaComponent implements OnInit {
      console.log('Datos de la cita a enviar:', this.citaData);
      this.http.post(this.apiUrlCitas, this.citaData).subscribe({
        next: (respuesta: any) => {
-         alert('¡Cita registrada con éxito! ID Cita: ' + respuesta.idCita);
+          alert('¡Cita registrada con éxito!');
          this.router.navigate(['/dashboard']);
        },
        error: (error) => {

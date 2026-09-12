@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.FutureOrPresent;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Data
@@ -31,7 +30,6 @@ public class Cita {
     private Long idEspecialidad; 
 
     @NotNull(message = "La fecha de la cita es obligatoria")
-    @FutureOrPresent(message = "La fecha de la cita no puede ser en el pasado")
     @Column(nullable = false)
     private LocalDate fecha;
 
@@ -50,6 +48,12 @@ public class Cita {
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private EstadoCita estado = EstadoCita.pendiente; 
+
+    @Column(nullable = false)
+    private Boolean esAdicional = false;
+
+    @Column(name = "hora_fin_real")
+    private LocalTime horaFinReal;
 
     @CreationTimestamp
     @Column(updatable = false)

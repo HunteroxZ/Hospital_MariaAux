@@ -1,8 +1,9 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Chart } from 'chart.js/auto';
 import { ReporteService } from '../../services/reporte.service';
 import { EspecialidadService } from '../../services/especialidad.service';
 import { MedicoService } from '../../services/medico.service';
@@ -14,7 +15,7 @@ import { MedicoService } from '../../services/medico.service';
   templateUrl: './reportes.html',
   styleUrls: ['./reportes.css']
 })
-export class Reportes implements OnInit {
+export class Reportes implements OnInit, OnDestroy {
   
   tipoReporte: string = '';
   loading = false;
@@ -34,11 +35,19 @@ export class Reportes implements OnInit {
     fechaFin: this.obtenerFechaHoy()
   };
 
+  filtrosAdicionales = {
+    fechaInicio: this.obtenerFechaInicioPorDefecto(),
+    fechaFin: this.obtenerFechaHoy(),
+    fechaCorte: ''
+  };
+
 
   datosCitas: any[] = [];
   datosIngresos: any = null;
   datosPacientes: any[] = [];
   datosMedicos: any[] = [];
+  datosAdicionales: any = null;
+  private chartsAdicionales: Chart[] = [];
 
 
   especialidades: any[] = [];
@@ -56,6 +65,10 @@ export class Reportes implements OnInit {
     this.cargarMedicos();
   }
 
+  ngOnDestroy(): void {
+    this.destruirChartsAdicionales();
+  }
+
   cerrarSesion(): void {
     localStorage.removeItem('admin');
     this.router.navigate(['/admin/login']);
@@ -64,6 +77,7 @@ export class Reportes implements OnInit {
   seleccionarTipo(tipo: string): void {
     this.tipoReporte = tipo;
     this.limpiarDatos();
+    this.destruirChartsAdicionales();
     this.errorMessage = '';
   }
 
@@ -254,6 +268,119 @@ export class Reportes implements OnInit {
     });
   }
 
+  generarReporteAdicionales(): void {
+    if (!this.validarFechas(this.filtrosAdicionales.fechaInicio, this.filtrosAdicionales.fechaFin)) {
+      this.errorMessage = 'La fecha de inicio no puede ser mayor que la fecha fin.';
+      return;
+    }
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.reporteService.obtenerReporteAdicionales(
+      this.filtrosAdicionales.fechaInicio,
+      this.filtrosAdicionales.fechaFin,
+      this.filtrosAdicionales.fechaCorte || undefined
+    ).subscribe({
+      next: (data) => {
+        this.datosAdicionales = data;
+        this.loading = false;
+        if (!data || data.totalCitas === 0) {
+          this.errorMessage = 'No se encontraron citas con los filtros seleccionados.';
+        } else {
+          setTimeout(() => this.renderChartsAdicionales(), 0);
+        }
+      },
+      error: (error) => {
+        console.error('Error al generar reporte:', error);
+        this.errorMessage = 'Error al generar el reporte. Intente nuevamente.';
+        this.loading = false;
+      }
+    });
+  }
+
+  descargarReporteAdicionalesPDF(): void {
+    this.loading = true;
+    this.reporteService.descargarReporteAdicionalesPDF(
+      this.filtrosAdicionales.fechaInicio,
+      this.filtrosAdicionales.fechaFin,
+      this.filtrosAdicionales.fechaCorte || undefined
+    ).subscribe({
+      next: (blob) => {
+        this.descargarArchivo(blob, 'reporte_adicionales.pdf');
+        this.loading = false;
+        setTimeout(() => this.renderChartsAdicionales(), 0);
+      },
+      error: (error) => {
+        console.error('Error al descargar PDF:', error);
+        this.errorMessage = 'Error al descargar el PDF. Intente nuevamente.';
+        this.loading = false;
+        setTimeout(() => this.renderChartsAdicionales(), 0);
+      }
+    });
+  }
+
+  nombreAnonimo(index: number): string {
+    return `Médico ${index + 1}`;
+  }
+
+  private destruirChartsAdicionales(): void {
+    this.chartsAdicionales.forEach(c => c.destroy());
+    this.chartsAdicionales = [];
+  }
+
+  private renderChartsAdicionales(): void {
+    if (!this.datosAdicionales) return;
+    this.destruirChartsAdicionales();
+
+    const porMedico = this.datosAdicionales.porMedico || [];
+    const porEsp = this.datosAdicionales.porEspecialidad || [];
+
+    const canvasMedicos = document.getElementById('chartAdicionalesMedicos') as HTMLCanvasElement | null;
+    if (canvasMedicos && porMedico.length > 0) {
+      this.chartsAdicionales.push(new Chart(canvasMedicos, {
+        type: 'bar',
+        data: {
+          labels: porMedico.map((_: any, i: number) => this.nombreAnonimo(i)),
+          datasets: [
+            { label: 'Normales', data: porMedico.map((m: any) => m.citasNormales), backgroundColor: '#5dade2' },
+            { label: 'Adicionales', data: porMedico.map((m: any) => m.citasAdicionales), backgroundColor: '#27ae60' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Citas por médico (anónimo)' } } }
+      }));
+    }
+
+    const canvasEsp = document.getElementById('chartAdicionalesEspecialidad') as HTMLCanvasElement | null;
+    if (canvasEsp && porEsp.length > 0) {
+      this.chartsAdicionales.push(new Chart(canvasEsp, {
+        type: 'bar',
+        data: {
+          labels: porEsp.map((e: any) => e.nombreEspecialidad),
+          datasets: [
+            { label: 'Normales', data: porEsp.map((e: any) => e.citasNormales), backgroundColor: '#5dade2' },
+            { label: 'Adicionales', data: porEsp.map((e: any) => e.citasAdicionales), backgroundColor: '#27ae60' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Citas por especialidad' } } }
+      }));
+    }
+
+    const canvasComp = document.getElementById('chartAdicionalesComparativa') as HTMLCanvasElement | null;
+    if (canvasComp) {
+      this.chartsAdicionales.push(new Chart(canvasComp, {
+        type: 'bar',
+        data: {
+          labels: ['Antes del corte', 'Después del corte'],
+          datasets: [
+            { label: 'Promedio diario de adicionales', data: [this.datosAdicionales.promedioDiarioAntes, this.datosAdicionales.promedioDiarioDespues], backgroundColor: ['#f39c12', '#27ae60'] }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Promedio diario antes vs después' } } }
+      }));
+    }
+  }
+
 
   private descargarArchivo(blob: Blob, nombreArchivo: string): void {
     const url = window.URL.createObjectURL(blob);
@@ -273,6 +400,7 @@ export class Reportes implements OnInit {
     this.datosIngresos = null;
     this.datosPacientes = [];
     this.datosMedicos = [];
+    this.datosAdicionales = null;
   }
 
   private obtenerFechaHoy(): string {
@@ -290,6 +418,7 @@ export class Reportes implements OnInit {
     if (this.tipoReporte === 'ingresos' && !this.datosIngresos) return true;
     if (this.tipoReporte === 'pacientes' && this.datosPacientes.length === 0) return true;
     if (this.tipoReporte === 'medicos' && this.datosMedicos.length === 0) return true;
+    if (this.tipoReporte === 'adicionales' && !this.datosAdicionales) return true;
     return false;
   }
 }

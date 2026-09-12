@@ -10,6 +10,80 @@
   border-radius: 4px;
 }
 
+.week-nav {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.week-btn {
+  background: #e8f4f8;
+  border: 1px solid #3498db;
+  color: #1a5276;
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.week-btn:hover {
+  background: #d6eaf8;
+}
+
+.week-strip {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 15px 0;
+  flex-wrap: wrap;
+}
+
+.day-cell {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 6px 4px;
+  min-width: 64px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: white;
+}
+
+.day-cell.available {
+  border-color: #8e44ad;
+  background: #ede7f6;
+  cursor: pointer;
+}
+
+.day-cell.available:hover {
+  box-shadow: 0 2px 8px rgba(142, 68, 173, 0.3);
+}
+
+.day-cell.selected {
+  border-color: #0d6efd;
+  background: #e8f4f8;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.25);
+}
+
+.day-cell.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #f2f3f4;
+}
+
+.day-name {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 600;
+}
+
+.day-num {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
 .time-slot-button {
   background-color: #e0f7fa; 
   border: 1px solid #00bcd4;
@@ -34,6 +108,13 @@
   font-weight: bold;
 }
 
+.time-slot-button.adicional:not(.selected):not(:disabled) {
+  background-color: #d1e7dd;
+  border-color: #198754;
+  color: #0f5132;
+  font-weight: bold;
+}
+
 .time-slot-button:disabled:not(.selected) { 
   background-color: #ffecb3; 
   border-color: #ffc107; 
@@ -41,6 +122,12 @@
   cursor: not-allowed;
   opacity: 1; 
   text-decoration: none;
+}
+
+.time-slot-button.pasada:disabled:not(.selected) {
+  background-color: #e5e8e8;
+  border-color: #aab7b8;
+  color: #7f8c8d;
 }
 
 .color-index {
@@ -79,6 +166,14 @@
 }
 .selected-dot { 
     background-color: #0d6efd; 
+}
+.adicional-dot {
+    background-color: #d1e7dd;
+    border: 1px solid #198754;
+}
+.pasada-dot {
+    background-color: #e5e8e8;
+    border: 1px solid #aab7b8;
 }
 
 .error-message {

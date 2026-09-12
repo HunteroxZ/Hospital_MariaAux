@@ -81,9 +81,16 @@ public class RecepcionistaController {
             PagoResponse response = recepcionistaService.procesarPago(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
+            e.printStackTrace();
+            Throwable causa = e;
+            while (causa.getCause() != null && causa.getCause() != causa) {
+                causa = causa.getCause();
+            }
+            String detalle = causa.getMessage() != null ? causa.getMessage() : e.getMessage();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", e.getMessage()));
+                .body(Map.of("error", e.getMessage() + " | Causa: " + detalle));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Error interno al procesar el pago."));
         }

@@ -37,6 +37,11 @@
           (click)="seleccionarTipo('medicos')">
           👨‍⚕️ Reporte de Médicos
         </button>
+        <button 
+          [class.active]="tipoReporte === 'adicionales'" 
+          (click)="seleccionarTipo('adicionales')">
+          ➕ Reporte de Adicionales
+        </button>
       </div>
     </div>
 
@@ -137,6 +142,32 @@
           🔍 Generar Reporte
         </button>
         <button class="btn-pdf" (click)="descargarReporteMedicosPDF()" [disabled]="!datosMedicos || datosMedicos.length === 0">
+          📄 Descargar PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="filtros-card" *ngIf="tipoReporte === 'adicionales'">
+      <h3>Filtros de Adicionales (anónimo)</h3>
+      <div class="filtros-grid">
+        <div class="form-group">
+          <label>Fecha Inicio:</label>
+          <input type="date" [(ngModel)]="filtrosAdicionales.fechaInicio" />
+        </div>
+        <div class="form-group">
+          <label>Fecha Fin:</label>
+          <input type="date" [(ngModel)]="filtrosAdicionales.fechaFin" />
+        </div>
+        <div class="form-group">
+          <label>Fecha de Corte (antes/después):</label>
+          <input type="date" [(ngModel)]="filtrosAdicionales.fechaCorte" />
+        </div>
+      </div>
+      <div class="acciones">
+        <button class="btn-generar" (click)="generarReporteAdicionales()">
+          🔍 Generar Reporte
+        </button>
+        <button class="btn-pdf" (click)="descargarReporteAdicionalesPDF()" [disabled]="!datosAdicionales">
           📄 Descargar PDF
         </button>
       </div>
@@ -296,6 +327,90 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Reporte de Adicionales -->
+    <div class="tabla-reporte" *ngIf="tipoReporte === 'adicionales' && datosAdicionales && !loading">
+      <h3>Cupos Adicionales (anónimo)</h3>
+      <div class="resumen-grid">
+        <div class="resumen-card">
+          <span class="resumen-label">Total de Citas:</span>
+          <span class="resumen-valor">{{ datosAdicionales.totalCitas }}</span>
+        </div>
+        <div class="resumen-card">
+          <span class="resumen-label">Normales:</span>
+          <span class="resumen-valor">{{ datosAdicionales.totalNormales }}</span>
+        </div>
+        <div class="resumen-card destacado">
+          <span class="resumen-label">Adicionales:</span>
+          <span class="resumen-valor">{{ datosAdicionales.totalAdicionales }}</span>
+        </div>
+        <div class="resumen-card">
+          <span class="resumen-label">Promedio diario (antes):</span>
+          <span class="resumen-valor">{{ datosAdicionales.promedioDiarioAntes }}</span>
+        </div>
+        <div class="resumen-card">
+          <span class="resumen-label">Promedio diario (después):</span>
+          <span class="resumen-valor">{{ datosAdicionales.promedioDiarioDespues }}</span>
+        </div>
+        <div class="resumen-card destacado">
+          <span class="resumen-label">Incremento:</span>
+          <span class="resumen-valor">{{ datosAdicionales.incrementoPorcentual }}%</span>
+        </div>
+      </div>
+
+      <h4>Por médico (anónimo)</h4>
+      <div class="chart-box"><canvas id="chartAdicionalesMedicos"></canvas></div>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Médico</th>
+              <th>Total Citas</th>
+              <th>Normales</th>
+              <th>Adicionales</th>
+              <th>Promedio Diario Adic.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let med of datosAdicionales.porMedico; let i = index">
+              <td>{{ nombreAnonimo(i) }}</td>
+              <td>{{ med.totalCitas }}</td>
+              <td>{{ med.citasNormales }}</td>
+              <td>{{ med.citasAdicionales }}</td>
+              <td>{{ med.promedioDiarioAdicionales }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Por especialidad</h4>
+      <div class="chart-box"><canvas id="chartAdicionalesEspecialidad"></canvas></div>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Especialidad</th>
+              <th>Total Citas</th>
+              <th>Normales</th>
+              <th>Adicionales</th>
+              <th>Promedio Diario Adic.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let esp of datosAdicionales.porEspecialidad">
+              <td>{{ esp.nombreEspecialidad }}</td>
+              <td>{{ esp.totalCitas }}</td>
+              <td>{{ esp.citasNormales }}</td>
+              <td>{{ esp.citasAdicionales }}</td>
+              <td>{{ esp.promedioDiarioAdicionales }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Antes vs después del corte ({{ datosAdicionales.fechaCorte }})</h4>
+      <div class="chart-box"><canvas id="chartAdicionalesComparativa"></canvas></div>
     </div>
 
     <!-- Mensaje cuando no hay datos -->

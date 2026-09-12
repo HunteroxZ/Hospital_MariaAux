@@ -19,4 +19,5 @@ public class CitaMedicoDTO {
 
     private Long idPaciente;
     private Long idEspecialidad;
+    private Boolean esAdicional;
 }

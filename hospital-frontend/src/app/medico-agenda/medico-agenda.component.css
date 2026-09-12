@@ -8,6 +8,116 @@
   justify-content: center; 
 }
 
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+
+.week-btn {
+  background: #e8f4f8;
+  border: 1px solid #3498db;
+  color: #1a5276;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.week-btn.today {
+  background: #3498db;
+  color: white;
+}
+
+.week-btn:hover {
+  background: #d6eaf8;
+}
+
+.week-btn.today:hover {
+  background: #2980b9;
+}
+
+.week-label {
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 15px;
+  min-width: 180px;
+  text-align: center;
+}
+
+.week-strip {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.day-cell {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 6px;
+  min-width: 78px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.day-cell:hover:not(.disabled) {
+  border-color: #3498db;
+}
+
+.day-cell.selected {
+  border-color: #0d6efd;
+  background: #e8f4f8;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.25);
+}
+
+.day-cell.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #f2f3f4;
+}
+
+.day-cell.off:not(.selected) {
+  border-style: dashed;
+}
+
+.day-name {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 600;
+}
+
+.day-num {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.day-count {
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  background: #198754;
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+.day-off {
+  font-size: 11px;
+  color: #999;
+  font-style: italic;
+}
+
 .date-selector label {
   font-weight: 600;
   color: #555;
@@ -41,9 +151,250 @@
 
 .action-button.view { color: #0d6efd; } 
 .action-button.attend { color: #198754; } 
+.action-button.add { 
+  background: #198754; 
+  color: white; 
+  padding: 8px 16px; 
+  border-radius: 4px; 
+  font-size: 14px;
+  opacity: 1;
+}
+.action-button.add:hover { background: #157347; }
+.action-button.cancel { color: #dc3545; }
 
 
 .status-pendiente { color: #fd7e14; font-weight: bold;}
 .status-confirmada { color: #198754; font-weight: bold;}
 .status-atendida { color: #6c757d; }
 .status-cancelada { color: #dc3545; text-decoration: line-through;}
+
+.badge-adicional {
+  display: inline-block;
+  background: #d1e7dd;
+  border: 1px solid #198754;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 12px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.cupos-existente {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.cupos-existente h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.cupos-existente ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.cupos-existente li {
+  margin-bottom: 5px;
+  color: #198754;
+  font-weight: 500;
+}
+
+.mensaje {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.mensaje.error {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.mensaje.success {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+}
+
+.modal-footer .action-button {
+  font-size: 14px;
+  padding: 8px 16px;
+}
+
+.adicionales-section {
+  margin-top: 10px;
+}
+
+.adicionales-section h3 {
+  color: #146c43;
+}
+
+.cupos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.cupo-card {
+  background: #d1e7dd;
+  border: 2px solid #198754;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 150px;
+  position: relative;
+}
+
+.cupo-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px;
+  opacity: 0.6;
+}
+
+.cupo-delete:hover {
+  opacity: 1;
+}
+
+.cupo-card.reservado {
+  background: #fff3cd;
+  border-color: #ffc107;
+}
+
+.cupo-hora {
+  font-weight: bold;
+  color: #0f5132;
+  font-size: 15px;
+}
+
+.cupo-card.reservado .cupo-hora {
+  color: #664d03;
+}
+
+.cupo-esp {
+  font-size: 13px;
+  color: #333;
+}
+
+.cupo-estado {
+  font-size: 12px;
+  font-weight: bold;
+  color: #146c43;
+}
+
+.cupo-card.reservado .cupo-estado {
+  color: #997404;
+}
+
+.color-index {
+  margin-top: 10px;
+}
+
+.index-item {
+  margin-right: 15px;
+  font-size: 14px;
+}
+
+.color-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.adicional-dot {
+  background: #198754;
+}

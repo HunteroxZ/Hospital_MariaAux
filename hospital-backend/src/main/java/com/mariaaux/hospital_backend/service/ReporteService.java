@@ -1,16 +1,36 @@
 package com.mariaaux.hospital_backend.service;
 
-import com.mariaaux.hospital_backend.dto.Reportes.*;
-import com.mariaaux.hospital_backend.model.*;
-import com.mariaaux.hospital_backend.repository.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.mariaaux.hospital_backend.dto.Reportes.AdicionalPorEspecialidadDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.AdicionalPorMedicoDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReporteAdicionalesDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReporteCitasDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReporteIngresoEspecialidadDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReporteIngresoMedicoDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReporteIngresosGeneralDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReporteMedicoDTO;
+import com.mariaaux.hospital_backend.dto.Reportes.ReportePacienteDTO;
+import com.mariaaux.hospital_backend.model.Cita;
+import com.mariaaux.hospital_backend.model.Especialidad;
+import com.mariaaux.hospital_backend.model.EstadoCita;
+import com.mariaaux.hospital_backend.model.Medico;
+import com.mariaaux.hospital_backend.model.Paciente;
+import com.mariaaux.hospital_backend.repository.CitaRepository;
+import com.mariaaux.hospital_backend.repository.EspecialidadRepository;
+import com.mariaaux.hospital_backend.repository.MedicoEspecialidadRepository;
+import com.mariaaux.hospital_backend.repository.MedicoRepository;
+import com.mariaaux.hospital_backend.repository.PacienteRepository;
 
 @Service
 public class ReporteService {
@@ -245,5 +265,74 @@ public class ReporteService {
             .filter(Objects::nonNull)
             .sorted(Comparator.comparing(ReporteIngresoMedicoDTO::getIngresoTotal).reversed())
             .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ReporteAdicionalesDTO generarReporteAdicionales(LocalDate desde, LocalDate hasta, LocalDate fechaCorte) {
+        if (desde.isAfter(hasta)) {
+            throw new RuntimeException("La fecha de inicio no puede ser mayor que la fecha fin.");
+        }
+        LocalDate corte = (fechaCorte != null) ? fechaCorte
+            : desde.plusDays(java.time.temporal.ChronoUnit.DAYS.between(desde, hasta) / 2);
+        if (corte.isBefore(desde)) corte = desde;
+        if (corte.isAfter(hasta)) corte = hasta;
+        final LocalDate corteFinal = corte;
+
+        List<Cita> citas = citaRepository.findByFechaBetween(desde, hasta);
+        long diasTotales = Math.max(1, java.time.temporal.ChronoUnit.DAYS.between(desde, hasta) + 1);
+
+        Map<Long, List<Cita>> porMedico = citas.stream()
+            .collect(Collectors.groupingBy(Cita::getIdMedico));
+        List<AdicionalPorMedicoDTO> medicos = porMedico.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .map(entry -> {
+                long total = entry.getValue().size();
+                long adic = entry.getValue().stream().filter(c -> Boolean.TRUE.equals(c.getEsAdicional())).count();
+                return new AdicionalPorMedicoDTO(
+                    entry.getKey(), total, total - adic, adic,
+                    redondear((double) adic / diasTotales)
+                );
+            })
+            .collect(Collectors.toList());
+
+        Map<Long, List<Cita>> porEsp = citas.stream()
+            .collect(Collectors.groupingBy(Cita::getIdEspecialidad));
+        List<AdicionalPorEspecialidadDTO> especialidades = porEsp.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .map(entry -> {
+                Especialidad esp = especialidadRepository.findById(entry.getKey()).orElse(null);
+                long total = entry.getValue().size();
+                long adic = entry.getValue().stream().filter(c -> Boolean.TRUE.equals(c.getEsAdicional())).count();
+                return new AdicionalPorEspecialidadDTO(
+                    entry.getKey(),
+                    esp != null ? esp.getNombre() : "Desconocida",
+                    total, total - adic, adic,
+                    redondear((double) adic / diasTotales)
+                );
+            })
+            .collect(Collectors.toList());
+
+        long diasAntes = Math.max(0, java.time.temporal.ChronoUnit.DAYS.between(desde, corteFinal));
+        long diasDespues = Math.max(1, java.time.temporal.ChronoUnit.DAYS.between(corteFinal, hasta) + 1);
+        long adicAntes = citas.stream()
+            .filter(c -> c.getFecha().isBefore(corteFinal) && Boolean.TRUE.equals(c.getEsAdicional())).count();
+        long adicDespues = citas.stream()
+            .filter(c -> !c.getFecha().isBefore(corteFinal) && Boolean.TRUE.equals(c.getEsAdicional())).count();
+        double promAntes = diasAntes > 0 ? redondear((double) adicAntes / diasAntes) : 0.0;
+        double promDespues = redondear((double) adicDespues / diasDespues);
+        double incremento = promAntes > 0 ? redondear((promDespues - promAntes) / promAntes * 100)
+            : (promDespues > 0 ? 100.0 : 0.0);
+
+        long totalAdic = citas.stream().filter(c -> Boolean.TRUE.equals(c.getEsAdicional())).count();
+        return new ReporteAdicionalesDTO(
+            desde, hasta, corteFinal,
+            (long) citas.size(), (long) citas.size() - totalAdic, totalAdic,
+            promAntes, promDespues, incremento,
+            medicos, especialidades
+        );
+    }
+
+    private double redondear(double valor) {
+        return Math.round(valor * 100.0) / 100.0;
     }
 }

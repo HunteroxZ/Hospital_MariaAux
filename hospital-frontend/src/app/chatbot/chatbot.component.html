@@ -1,0 +1,57 @@
+<div class="chatbot-container" *ngIf="esPaciente">
+  <button class="chatbot-bubble" (click)="toggleChat()" [class.abierto]="abierto">
+    <img *ngIf="!abierto" src="images/chatbot-robot.svg" alt="Chat" class="bubble-icon">
+    <span *ngIf="abierto">&times;</span>
+  </button>
+
+  <div class="chatbot-ventana" *ngIf="abierto">
+    <div class="chatbot-header">
+      <div class="chatbot-logo">
+        <img src="images/chatbot-robot.svg" alt="Chatbot" width="36" height="36">
+      </div>
+      <div class="chatbot-header-texto">
+        <h3>Asistente Virtual</h3>
+        <span class="chatbot-subtitle">Sistema de Gestion Hospitalaria</span>
+      </div>
+    </div>
+
+    <div class="chatbot-mensajes" #chatMessages (click)="scrollAlFinal()">
+      <div *ngFor="let msg of mensajes"
+           [class.mensaje-bot]="msg.esBot"
+           [class.mensaje-usuario]="!msg.esBot">
+        <div class="avatar" *ngIf="msg.esBot">
+          <img src="images/chatbot-robot.svg" alt="Bot" width="20" height="20">
+        </div>
+        <div class="mensaje-burbuja">
+          <div class="mensaje-texto" [innerHTML]="formatearTexto(msg.texto)"></div>
+        </div>
+      </div>
+
+      <div *ngIf="cargando" class="mensaje-bot">
+        <div class="avatar">
+          <img src="images/chatbot-robot.svg" alt="Bot" width="20" height="20">
+        </div>
+        <div class="mensaje-burbuja typing">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chatbot-input">
+      <input type="text"
+             #chatInput
+             [(ngModel)]="mensajeInput"
+             (keypress)="onKeyPress($event)"
+             (focus)="scrollAlFinal()"
+             (click)="scrollAlFinal()"
+             placeholder="Escriba su mensaje..."
+             [disabled]="cargando || !idPaciente">
+      <button (click)="enviarMensaje()"
+              [disabled]="!mensajeInput.trim() || cargando || !idPaciente">
+        &#10148;
+      </button>
+    </div>
+  </div>
+</div>

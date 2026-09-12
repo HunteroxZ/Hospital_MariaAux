@@ -71,4 +71,25 @@ export class ReporteService {
   descargarReporteMedicosPDF(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/medicos/pdf`, { responseType: 'blob' });
   }
+
+
+  obtenerReporteAdicionales(fechaInicio: string, fechaFin: string, fechaCorte?: string): Observable<any> {
+    let params = new HttpParams()
+      .set('fechaInicio', fechaInicio)
+      .set('fechaFin', fechaFin);
+
+    if (fechaCorte) params = params.set('fechaCorte', fechaCorte);
+
+    return this.http.get<any>(`${this.apiUrl}/adicionales`, { params });
+  }
+
+  descargarReporteAdicionalesPDF(fechaInicio: string, fechaFin: string, fechaCorte?: string): Observable<Blob> {
+    let params = new HttpParams()
+      .set('fechaInicio', fechaInicio)
+      .set('fechaFin', fechaFin);
+
+    if (fechaCorte) params = params.set('fechaCorte', fechaCorte);
+
+    return this.http.get(`${this.apiUrl}/adicionales/pdf`, { params, responseType: 'blob' });
+  }
 }

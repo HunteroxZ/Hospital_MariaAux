@@ -9,6 +9,7 @@ import com.mariaaux.hospital_backend.repository.PacienteRepository;
 import com.mariaaux.hospital_backend.repository.MedicoRepository;
 import com.mariaaux.hospital_backend.repository.EspecialidadRepository;
 import com.mariaaux.hospital_backend.repository.DisponibilidadMedicoRepository;
+import com.mariaaux.hospital_backend.repository.CupoAdicionalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.DayOfWeek; 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Comparator; 
 
@@ -40,6 +42,9 @@ public class CitaService {
     @Autowired
     private DisponibilidadMedicoRepository disponibilidadMedicoRepository;
 
+    @Autowired
+    private CupoAdicionalRepository cupoAdicionalRepository;
+
     @Transactional
     public Cita registrarCita(RegistrarCitaRequest request) {
 
@@ -58,6 +63,13 @@ public class CitaService {
         LocalTime horaCita = request.getHora();
         Long idMedico = request.getIdMedico();
         Long idEspecialidad = request.getIdEspecialidad();
+
+        if (fechaCita.isBefore(LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede reservar en una fecha pasada.");
+        }
+        if (fechaCita.isEqual(LocalDate.now()) && !horaCita.isAfter(LocalTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La hora seleccionada ya pasó. Elija un horario posterior a la hora actual.");
+        }
 
         DiaSemana diaSemanaEnum = traducirDiaSemana(fechaCita.getDayOfWeek());
 
@@ -80,8 +92,15 @@ public class CitaService {
             }
         }
 
+        boolean esReservaAdicional = false;
         if (!horarioValido) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El médico no atiende en el día u hora seleccionados para esa especialidad. Verifique la disponibilidad.");
+            esReservaAdicional = cupoAdicionalRepository
+                    .findByIdMedicoAndIdEspecialidadAndFechaAndDisponibleTrue(idMedico, idEspecialidad, fechaCita)
+                    .stream()
+                    .anyMatch(c -> c.getHoraInicio().equals(horaCita));
+            if (!esReservaAdicional) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El médico no atiende en el día u hora seleccionados para esa especialidad. Verifique la disponibilidad.");
+            }
         }
 
         if (citaRepository.existsByIdPacienteAndFecha(request.getIdPaciente(), request.getFecha())) {
@@ -102,8 +121,21 @@ public class CitaService {
         nuevaCita.setHora(request.getHora());
         nuevaCita.setMotivoConsulta(request.getMotivoConsulta());
         nuevaCita.setSintomas(request.getSintomas());
+        nuevaCita.setEsAdicional(esReservaAdicional);
 
-        return citaRepository.save(nuevaCita);
+        Cita citaGuardada = citaRepository.save(nuevaCita);
+
+        cupoAdicionalRepository
+                .findByIdMedicoAndIdEspecialidadAndFechaAndDisponibleTrue(idMedico, idEspecialidad, fechaCita)
+                .stream()
+                .filter(c -> c.getHoraInicio().equals(horaCita))
+                .findFirst()
+                .ifPresent(cupo -> {
+                    cupo.setDisponible(false);
+                    cupoAdicionalRepository.save(cupo);
+                });
+
+        return citaGuardada;
     }
 
 
@@ -134,12 +166,13 @@ public class CitaService {
         Cita cita = citaRepository.findById(idCita)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + idCita));
 
- 
+
         if (cita.getEstado() == EstadoCita.atendida || cita.getEstado() == EstadoCita.cancelada || cita.getEstado() == EstadoCita.no_presentado) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El estado actual de la cita no permite ser marcada como atendida.");
         }
 
         cita.setEstado(EstadoCita.atendida);
+        cita.setHoraFinReal(LocalTime.now());
         return citaRepository.save(cita);
     }
 
@@ -159,6 +192,7 @@ public class CitaService {
         }
 
         cita.setEstado(EstadoCita.no_presentado);
+        cita.setHoraFinReal(cita.getHora());
         return citaRepository.save(cita);
     }
 
@@ -194,10 +228,31 @@ public class CitaService {
         }
         List<Cita> citasExistentes = citaRepository.findByIdMedicoAndFecha(idMedico, fecha);
         return citasExistentes.stream()
-                              .map(Cita::getHora)
-                              .collect(Collectors.toList());
+                               .filter(c -> c.getEstado() != EstadoCita.cancelada)
+                               .map(Cita::getHora)
+                               .collect(Collectors.toList());
     }
 
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> obtenerConteoSemanalPorMedico(Long idMedico, LocalDate inicio) {
+        if (!medicoRepository.existsById(idMedico)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Médico no encontrado con ID: " + idMedico);
+        }
+        LocalDate fin = inicio.plusDays(6);
+        List<Cita> citas = citaRepository.findByIdMedicoAndFechaBetween(idMedico, inicio, fin);
+        Map<LocalDate, Long> conteo = citas.stream()
+            .collect(Collectors.groupingBy(Cita::getFecha, Collectors.counting()));
+        List<Map<String, Object>> resultado = new java.util.ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            LocalDate fecha = inicio.plusDays(i);
+            Map<String, Object> dia = new java.util.HashMap<>();
+            dia.put("fecha", fecha.toString());
+            dia.put("totalCitas", conteo.getOrDefault(fecha, 0L));
+            resultado.add(dia);
+        }
+        return resultado;
+    }
 
     @Transactional(readOnly = true)
     public List<CitaMedicoDTO> obtenerCitasPorMedicoYFecha(Long idMedico, LocalDate fecha) {
@@ -219,7 +274,8 @@ public class CitaService {
                     cita.getMotivoConsulta(),
                     cita.getEstado(),
                     cita.getIdPaciente(),
-                    cita.getIdEspecialidad()
+                    cita.getIdEspecialidad(),
+                    cita.getEsAdicional() != null && cita.getEsAdicional()
                 );
             })
             .sorted(Comparator.comparing(CitaMedicoDTO::getHora))

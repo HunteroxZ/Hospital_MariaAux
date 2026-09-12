@@ -10,16 +10,23 @@ import com.mariaaux.hospital_backend.model.EstadoMedico;
 import com.mariaaux.hospital_backend.model.Especialidad;
 import com.mariaaux.hospital_backend.model.MedicoEspecialidad;
 import com.mariaaux.hospital_backend.model.MedicoEspecialidadId;
+import com.mariaaux.hospital_backend.model.CupoAdicional;
+import com.mariaaux.hospital_backend.model.DisponibilidadMedico;
 import com.mariaaux.hospital_backend.repository.MedicoRepository;
 import com.mariaaux.hospital_backend.repository.EspecialidadRepository;
 import com.mariaaux.hospital_backend.repository.MedicoEspecialidadRepository;
 import com.mariaaux.hospital_backend.repository.DisponibilidadMedicoRepository;
+import com.mariaaux.hospital_backend.repository.CupoAdicionalRepository;
+import com.mariaaux.hospital_backend.repository.CitaRepository;
+import com.mariaaux.hospital_backend.model.EstadoCita;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,7 +47,13 @@ public class MedicoService {
     private MedicoEspecialidadRepository medicoEspecialidadRepository;
     
     @Autowired
-    private DisponibilidadMedicoRepository disponibilidadMedicoRepository; 
+    private DisponibilidadMedicoRepository disponibilidadMedicoRepository;
+
+    @Autowired
+    private CupoAdicionalRepository cupoAdicionalRepository; 
+    
+    @Autowired
+    private CitaRepository citaRepository;
     
 
     
@@ -203,5 +216,149 @@ public class MedicoService {
                                  medico.getNombres(),
                                  medico.getApellidos()))
                          .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<CupoAdicional> habilitarCuposAdicionales(Long idMedico, Long idEspecialidad, LocalDate fecha, int cantidadCupos) {
+        if (!medicoRepository.existsById(idMedico)) {
+            throw new RuntimeException("Médico no encontrado con ID: " + idMedico);
+        }
+        if (!especialidadRepository.existsById(idEspecialidad)) {
+            throw new RuntimeException("Especialidad no encontrada con ID: " + idEspecialidad);
+        }
+
+        List<DisponibilidadMedico> disponibilidades = disponibilidadMedicoRepository
+            .findByIdMedicoAndIdEspecialidadOrderByDiaSemanaAscHoraInicioAsc(idMedico, idEspecialidad);
+
+        if (disponibilidades.isEmpty()) {
+            throw new RuntimeException("El médico no tiene horarios configurados para esta especialidad.");
+        }
+
+        java.time.DayOfWeek diaSemanaJava = fecha.getDayOfWeek();
+        if (diaSemanaJava == java.time.DayOfWeek.SUNDAY) {
+            throw new RuntimeException("No se admiten cupos adicionales en domingo.");
+        }
+        String nombreDia = obtenerNombreDia(diaSemanaJava);
+
+        List<DisponibilidadMedico> bloquesDelDia = disponibilidades.stream()
+            .filter(d -> d.getDiaSemana().name().equalsIgnoreCase(nombreDia))
+            .sorted(java.util.Comparator.comparing(DisponibilidadMedico::getHoraInicio))
+            .collect(Collectors.toList());
+
+        if (bloquesDelDia.isEmpty()) {
+            throw new RuntimeException("El médico no atiende los " + nombreDia + " para esta especialidad.");
+        }
+
+        long cuposExistentes = cupoAdicionalRepository.findByIdMedicoAndFecha(idMedico, fecha).stream()
+            .filter(c -> c.getIdEspecialidad().equals(idEspecialidad))
+            .count();
+        if (cuposExistentes >= 2) {
+            throw new RuntimeException("Ya se alcanzó el máximo de 2 adicionales por día.");
+        }
+        int maxPermitidos = (int) Math.min(cantidadCupos, 2 - cuposExistentes);
+
+        List<LocalTime[]> intervalosOcupados = new java.util.ArrayList<>();
+        List<com.mariaaux.hospital_backend.model.Cita> citasFecha =
+            citaRepository.findByIdMedicoAndFecha(idMedico, fecha).stream()
+                .filter(c -> c.getEstado() != EstadoCita.cancelada)
+                .collect(Collectors.toList());
+        LocalTime ultimoFin = null;
+        for (com.mariaaux.hospital_backend.model.Cita c : citasFecha) {
+            LocalTime finEfectivo = c.getHora().plusMinutes(20);
+            if ((c.getEstado() == EstadoCita.atendida || c.getEstado() == EstadoCita.no_presentado)
+                    && c.getHoraFinReal() != null && c.getHoraFinReal().isBefore(finEfectivo)) {
+                finEfectivo = c.getHoraFinReal().isBefore(c.getHora()) ? c.getHora() : c.getHoraFinReal();
+            }
+            if (finEfectivo.isAfter(c.getHora())) {
+                intervalosOcupados.add(new LocalTime[]{c.getHora(), finEfectivo});
+            }
+            if (ultimoFin == null || finEfectivo.isAfter(ultimoFin)) {
+                ultimoFin = finEfectivo;
+            }
+        }
+        for (CupoAdicional cupoExistente : cupoAdicionalRepository.findByIdMedicoAndFecha(idMedico, fecha)) {
+            intervalosOcupados.add(new LocalTime[]{cupoExistente.getHoraInicio(), cupoExistente.getHoraFin()});
+            if (ultimoFin == null || cupoExistente.getHoraFin().isAfter(ultimoFin)) {
+                ultimoFin = cupoExistente.getHoraFin();
+            }
+        }
+
+        List<CupoAdicional> nuevosCupos = new java.util.ArrayList<>();
+        LocalTime puntoPartida = ultimoFin;
+        for (DisponibilidadMedico bloque : bloquesDelDia) {
+            if (nuevosCupos.size() >= maxPermitidos) break;
+            LocalTime s = bloque.getHoraInicio();
+            if (puntoPartida != null && puntoPartida.isAfter(s)) {
+                s = puntoPartida;
+            }
+            while (nuevosCupos.size() < maxPermitidos && !s.plusMinutes(10).isAfter(bloque.getHoraFin())) {
+                LocalTime finSlot = s.plusMinutes(10);
+                if (!hayTraslape(intervalosOcupados, s, finSlot)) {
+                    CupoAdicional cupo = new CupoAdicional();
+                    cupo.setIdMedico(idMedico);
+                    cupo.setIdEspecialidad(idEspecialidad);
+                    cupo.setFecha(fecha);
+                    cupo.setHoraInicio(s);
+                    cupo.setHoraFin(finSlot);
+                    cupo.setDisponible(true);
+                    nuevosCupos.add(cupoAdicionalRepository.save(cupo));
+                    intervalosOcupados.add(new LocalTime[]{s, finSlot});
+                }
+                s = finSlot;
+            }
+            puntoPartida = null;
+        }
+
+        if (nuevosCupos.isEmpty()) {
+            throw new RuntimeException("La jornada ya está completa, no hay espacio para adicionales.");
+        }
+
+        return nuevosCupos;
+    }
+
+    private boolean hayTraslape(List<LocalTime[]> intervalos, LocalTime inicio, LocalTime fin) {
+        for (LocalTime[] iv : intervalos) {
+            if (inicio.isBefore(iv[1]) && iv[0].isBefore(fin)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Transactional(readOnly = true)
+    public List<CupoAdicional> obtenerCuposAdicionales(Long idMedico, Long idEspecialidad, LocalDate fecha) {
+        return cupoAdicionalRepository
+            .findByIdMedicoAndIdEspecialidadAndFechaAndDisponibleTrue(idMedico, idEspecialidad, fecha);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CupoAdicional> obtenerCuposAdicionalesPorFecha(Long idMedico, LocalDate fecha) {
+        return cupoAdicionalRepository.findByIdMedicoAndFecha(idMedico, fecha);
+    }
+
+    @Transactional
+    public void eliminarCupoAdicional(Long idMedico, Long idCupo) {
+        CupoAdicional cupo = cupoAdicionalRepository.findById(idCupo)
+            .orElseThrow(() -> new RuntimeException("Cupo no encontrado."));
+        if (!cupo.getIdMedico().equals(idMedico)) {
+            throw new RuntimeException("El cupo no pertenece a este médico.");
+        }
+        if (!cupo.getDisponible()) {
+            throw new RuntimeException("No se puede eliminar: el cupo ya fue reservado.");
+        }
+        cupoAdicionalRepository.delete(cupo);
+    }
+
+    private String obtenerNombreDia(java.time.DayOfWeek diaSemana) {
+        switch (diaSemana) {
+            case MONDAY: return "lunes";
+            case TUESDAY: return "martes";
+            case WEDNESDAY: return "miercoles";
+            case THURSDAY: return "jueves";
+            case FRIDAY: return "viernes";
+            case SATURDAY: return "sabado";
+            case SUNDAY: return "domingo";
+            default: return "";
+        }
     }
 }

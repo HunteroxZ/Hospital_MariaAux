@@ -2,10 +2,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { RecepcionistaService } from '../../services/recepcionista.service';
 import { CitaPacienteRecepcionista, PagoRequest } from '../../models/recepcionista.model';
 import { MenuPagoComponent } from "../menu-pago/menu-pago.component";
+import { environment } from '../../../environments/environment';
+
+interface SlotHorario {
+  hora: string;
+  disponible: boolean;
+  esAdicional: boolean;
+  pasada: boolean;
+}
 
 @Component({
   selector: 'app-recepcionista-dashboard',
@@ -24,8 +34,23 @@ export class RecepcionistaDashboardComponent implements OnInit {
   mostrarMenuPago: boolean = false;
   mostrarModalTicketSIS: boolean = false;
 
+  private apiUrlBase = environment.apiUrl;
+  especialidadesHorario: any[] = [];
+  medicosHorario: any[] = [];
+  idEspHorario: number | null = null;
+  idMedicoHorario: number | null = null;
+  fechaHorario: string = '';
+  slotsHorario: SlotHorario[] = [];
+  isLoadingHorarios: boolean = false;
+  errorHorarios: string = '';
+
+  semanaInicio: string = '';
+  diasDisponibles: any[] = [];
+  private disponibilidadMedico: any[] = [];
+
   constructor(
     private recepcionistaService: RecepcionistaService,
+    private http: HttpClient,
     private router: Router
   ) {}
 
@@ -34,6 +59,7 @@ export class RecepcionistaDashboardComponent implements OnInit {
     if (sesion) {
       this.nombreRecepcionista = `${sesion.nombres} ${sesion.apellidos}`;
     }
+    this.cargarEspecialidadesHorario();
   }
 
   buscarCita(): void {
@@ -97,21 +123,18 @@ export class RecepcionistaDashboardComponent implements OnInit {
   imprimirTicketSIS(): void {
       if (!this.citaSeleccionada) return;
 
-      const ventana = window.open('', '_blank');
-      if (!ventana) {
-        console.error('No se pudo abrir ventana de impresión');
-        return;
-      }
-
       const contenido = this.generarHTMLTicketSIS();
-      ventana.document.write(contenido);
-      ventana.document.close();
-      
-      setTimeout(() => {
-        ventana.print();
-        ventana.close();
-        this.mostrarModalTicketSIS = false;
-      }, 500);
+      try {
+        const blob = new Blob([contenido], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const ventana = window.open(url, '_blank');
+        if (!ventana) {
+          alert('Permita las ventanas emergentes para ver el ticket.');
+        }
+      } catch (e) {
+        console.error('No se pudo abrir el ticket:', e);
+      }
+      this.mostrarModalTicketSIS = false;
 
       // Procesar el pago SIS en el backend
       const pagoRequest: PagoRequest = {
@@ -129,8 +152,7 @@ export class RecepcionistaDashboardComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al procesar ticket SIS:', error);
-          // Aun así, actualizar la lista
-          this.cerrarMenuPago();
+          this.errorMessage = error.error?.error || 'Error al procesar ticket SIS.';
         }
       });
   }
@@ -148,6 +170,9 @@ export class RecepcionistaDashboardComponent implements OnInit {
       <head>
         <title>Ticket de Cita SIS</title>
         <style>
+          @media print {
+            .no-print { display: none !important; }
+          }
           body { 
             font-family: Arial, sans-serif; 
             padding: 20px; 
@@ -182,7 +207,7 @@ export class RecepcionistaDashboardComponent implements OnInit {
       </head>
       <body>
         <div class="header">
-          <h2>HOSPITAL MARÍA AUXILIADORA</h2>
+          <h2>SISTEMA DE GESTIÓN HOSPITALARIA</h2>
           <h3>TICKET DE CITA</h3>
           <div class="sis-badge">PACIENTE SIS - COBERTURA TOTAL</div>
         </div>
@@ -204,6 +229,15 @@ export class RecepcionistaDashboardComponent implements OnInit {
         <p style="text-align: center; color: #666; margin-top: 30px;">
           Por favor, presente este ticket en el consultorio médico a la hora indicada
         </p>
+
+        <div class="no-print" style="text-align: center; margin-top: 20px; padding: 10px;">
+          <button onclick="window.print()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Imprimir
+          </button>
+          <button onclick="window.close()" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; margin-left: 10px; cursor: pointer;">
+            Cerrar
+          </button>
+        </div>
       </body>
       </html>
     `;
@@ -223,6 +257,220 @@ export class RecepcionistaDashboardComponent implements OnInit {
   cerrarSesion(): void {
     this.recepcionistaService.cerrarSesion();
     this.router.navigate(['/recepcionista/login']);
+  }
+
+  cargarEspecialidadesHorario(): void {
+    this.http.get<any[]>(`${this.apiUrlBase}/especialidades`).subscribe({
+      next: (data) => { this.especialidadesHorario = data; },
+      error: (err) => { console.error('Error al cargar especialidades:', err); }
+    });
+  }
+
+  onEspHorarioChange(): void {
+    this.medicosHorario = [];
+    this.idMedicoHorario = null;
+    this.slotsHorario = [];
+    this.errorHorarios = '';
+    this.diasDisponibles = [];
+    this.disponibilidadMedico = [];
+    this.fechaHorario = '';
+    if (!this.idEspHorario) return;
+    this.http.get<any[]>(`${this.apiUrlBase}/especialidades/${this.idEspHorario}/medicos`).subscribe({
+      next: (data) => { this.medicosHorario = data; },
+      error: (err) => {
+        console.error('Error al cargar médicos:', err);
+        this.errorHorarios = 'Error al cargar médicos.';
+      }
+    });
+  }
+
+  onHorarioFiltroChange(): void {
+    this.cargarHorariosMedico();
+  }
+
+  onMedicoHorarioChange(): void {
+    this.fechaHorario = '';
+    this.slotsHorario = [];
+    this.errorHorarios = '';
+    if (!this.idMedicoHorario) {
+      this.diasDisponibles = [];
+      return;
+    }
+    this.semanaInicio = this.obtenerLunes(this.getTodayDate());
+    this.http.get<any[]>(`${this.apiUrlBase}/medicos/${this.idMedicoHorario}/disponibilidad`).subscribe({
+      next: (data) => {
+        this.disponibilidadMedico = data || [];
+        this.construirDiasDisponibles();
+      },
+      error: (err) => {
+        console.error('Error al cargar disponibilidad:', err);
+        this.disponibilidadMedico = [];
+        this.construirDiasDisponibles();
+      }
+    });
+  }
+
+  obtenerLunes(fechaStr: string): string {
+    const f = new Date(fechaStr + 'T00:00:00');
+    const diff = (f.getDay() + 6) % 7;
+    f.setDate(f.getDate() - diff);
+    return this.toFechaStr(f);
+  }
+
+  toFechaStr(f: Date): string {
+    const y = f.getFullYear();
+    const m = (f.getMonth() + 1).toString().padStart(2, '0');
+    const d = f.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  nombreDiaCorto(fechaStr: string): string {
+    const nombres = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    return nombres[new Date(fechaStr + 'T00:00:00').getDay()];
+  }
+
+  construirDiasDisponibles(): void {
+    const nombresDias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+    const diasAtiende = new Set(
+      this.disponibilidadMedico
+        .filter(d => Number(d.idEspecialidad) === Number(this.idEspHorario))
+        .map(d => String(d.diaSemana).toLowerCase())
+    );
+    const hoy = this.getTodayDate();
+    const base = new Date(this.semanaInicio + 'T00:00:00');
+    this.diasDisponibles = [];
+    for (let i = 0; i < 7; i++) {
+      const f = new Date(base);
+      f.setDate(base.getDate() + i);
+      const fecha = this.toFechaStr(f);
+      const esDomingo = f.getDay() === 0;
+      const idx = (f.getDay() + 6) % 7;
+      this.diasDisponibles.push({
+        fecha,
+        nombre: this.nombreDiaCorto(fecha),
+        num: f.getDate(),
+        disponible: !esDomingo && fecha >= hoy && diasAtiende.has(nombresDias[idx])
+      });
+    }
+  }
+
+  seleccionarDia(dia: any): void {
+    if (!dia.disponible) return;
+    this.fechaHorario = dia.fecha;
+    this.cargarHorariosMedico();
+  }
+
+  semanaAnterior(): void {
+    const f = new Date(this.semanaInicio + 'T00:00:00');
+    f.setDate(f.getDate() - 7);
+    if (this.toFechaStr(f) < this.obtenerLunes(this.getTodayDate())) return;
+    this.semanaInicio = this.toFechaStr(f);
+    this.construirDiasDisponibles();
+  }
+
+  semanaSiguiente(): void {
+    const f = new Date(this.semanaInicio + 'T00:00:00');
+    f.setDate(f.getDate() + 7);
+    this.semanaInicio = this.toFechaStr(f);
+    this.construirDiasDisponibles();
+  }
+
+  cargarHorariosMedico(): void {
+    this.slotsHorario = [];
+    this.errorHorarios = '';
+    if (!this.idMedicoHorario || !this.fechaHorario) return;
+
+    const fechaObj = new Date(this.fechaHorario + 'T00:00:00');
+    const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+    const diaSemanaNombre = dias[fechaObj.getDay()];
+
+    if (diaSemanaNombre === 'domingo') {
+      this.errorHorarios = 'No hay citas disponibles los domingos.';
+      return;
+    }
+
+    this.isLoadingHorarios = true;
+
+    const getDisponibilidad = this.http.get<any[]>(`${this.apiUrlBase}/medicos/${this.idMedicoHorario}/disponibilidad`);
+    const getReservadas = this.http.get<string[]>(`${this.apiUrlBase}/citas/reservadas/${this.idMedicoHorario}/${this.fechaHorario}`);
+    const getAdicionales = this.http.get<any[]>(`${this.apiUrlBase}/medicos/${this.idMedicoHorario}/cupos-adicionales/fecha?fecha=${this.fechaHorario}`);
+
+    forkJoin([getDisponibilidad, getReservadas, getAdicionales]).subscribe({
+      next: ([disponibilidades, horasReservadas, cuposAdicionales]) => {
+        const horariosDelDia = disponibilidades.filter(d => d.diaSemana === diaSemanaNombre);
+        const slots: SlotHorario[] = [];
+
+        const cuposValidos = (cuposAdicionales || []).filter((c: any) => c.disponible);
+        const horasAdicionales = new Set(cuposValidos.map((c: any) => c.horaInicio.substring(0, 8)));
+
+        horariosDelDia.forEach(bloque => {
+          let inicio = this.parseHora(bloque.horaInicio);
+          const fin = this.parseHora(bloque.horaFin);
+          let finSlot = new Date(inicio.getTime() + 20 * 60000);
+          while (finSlot.getTime() <= fin.getTime()) {
+            const hora = this.formatHora(inicio);
+            if (!horasAdicionales.has(hora)) {
+              slots.push({ hora, disponible: !horasReservadas.includes(hora), esAdicional: false, pasada: this.esHoraPasada(hora, this.fechaHorario) });
+            }
+            inicio = new Date(finSlot.getTime());
+            finSlot = new Date(inicio.getTime() + 20 * 60000);
+          }
+        });
+
+        cuposValidos
+          .forEach(cupo => {
+            const hora = cupo.horaInicio.substring(0, 8);
+            if (!slots.some(s => s.hora === hora)) {
+              slots.push({ hora, disponible: !horasReservadas.includes(hora), esAdicional: true, pasada: this.esHoraPasada(hora, this.fechaHorario) });
+            }
+          });
+
+        slots.sort((a, b) => a.hora.localeCompare(b.hora));
+        this.slotsHorario = slots;
+
+        if (slots.length === 0) {
+          this.errorHorarios = `El médico no tiene horarios registrados para el ${diaSemanaNombre} ${this.fechaHorario}.`;
+        } else if (!slots.some(s => s.disponible)) {
+          this.errorHorarios = 'Todos los cupos para esta fecha ya están reservados.';
+        }
+        this.isLoadingHorarios = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar horarios:', err);
+        this.errorHorarios = 'Error al cargar los horarios del médico.';
+        this.isLoadingHorarios = false;
+      }
+    });
+  }
+
+  getTodayDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  private parseHora(timeString: string): Date {
+    const [hours, minutes, seconds] = timeString.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, seconds || 0, 0);
+    return date;
+  }
+
+  private formatHora(date: Date): string {
+    const h = date.getHours().toString().padStart(2, '0');
+    const m = date.getMinutes().toString().padStart(2, '0');
+    return `${h}:${m}:00`;
+  }
+
+  formatHoraCorta(hora: string): string {
+    return hora ? hora.substring(0, 5) : '';
+  }
+
+  esHoraPasada(hora: string, fecha: string): boolean {
+    if (!fecha || fecha !== this.getTodayDate()) return false;
+    const ahora = new Date();
+    const [h, m] = hora.split(':').map(Number);
+    const slotDate = new Date();
+    slotDate.setHours(h, m, 0, 0);
+    return slotDate.getTime() <= ahora.getTime();
   }
 
   get citaParaPago(): CitaPacienteRecepcionista | undefined {

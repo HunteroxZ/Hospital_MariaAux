@@ -282,19 +282,21 @@ export class MenuPagoComponent implements OnInit {
   }
 
   imprimirBoleta(): void {
-    const ventana = window.open('', '_blank');
-    if (!ventana) {
-      console.error('No se pudo abrir ventana de impresión');
+    const contenido = this.generarHTMLBoleta();
+    try {
+      const blob = new Blob([contenido], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const ventana = window.open(url, '_blank');
+      if (!ventana) {
+        alert('Permita las ventanas emergentes para ver el comprobante.');
+        return;
+      }
+    } catch (e) {
+      console.error('No se pudo abrir el comprobante:', e);
       return;
     }
 
-    const contenido = this.generarHTMLBoleta();
-    ventana.document.write(contenido);
-    ventana.document.close();
-    
     setTimeout(() => {
-      ventana.print();
-      ventana.close();
       this.pagoCompletado.emit();
       this.cerrarModal();
     }, 500);
@@ -490,8 +492,8 @@ export class MenuPagoComponent implements OnInit {
         </div>
         
         <div class="header">
-          <h2>HOSPITAL MARÍA AUXILIADORA</h2>
-          <p>Av. Miguel Iglesias 968, San Juan de Miraflores 15801</p>
+          <h2>SISTEMA DE GESTIÓN HOSPITALARIA</h2>
+          <p>Dirección del Centro Médico</p>
           <h3>${tipoComprobante}</h3>
           <p><strong>N°:</strong> ${this.pagoResponse?.numeroComprobante || 'N/A'}</p>
         </div>

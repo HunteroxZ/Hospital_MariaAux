@@ -159,4 +159,42 @@ public class ReporteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/adicionales")
+    public ResponseEntity<?> obtenerReporteAdicionales(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaCorte) {
+        try {
+            ReporteAdicionalesDTO reporte = reporteService.generarReporteAdicionales(
+                fechaInicio, fechaFin, fechaCorte);
+            return ResponseEntity.ok(reporte);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al generar reporte: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/adicionales/pdf")
+    public ResponseEntity<byte[]> exportarReporteAdicionalesPDF(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaCorte) {
+        try {
+            ReporteAdicionalesDTO datos = reporteService.generarReporteAdicionales(
+                fechaInicio, fechaFin, fechaCorte);
+
+            byte[] pdfBytes = pdfService.generarPDFReporteAdicionales(datos);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.builder("attachment")
+                .filename("reporte_adicionales_" + LocalDate.now() + ".pdf")
+                .build());
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
