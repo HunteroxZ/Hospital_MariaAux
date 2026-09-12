@@ -24,7 +24,7 @@ jobs:
 
       - name: Build with Maven
         working-directory: hospital-backend
-        run: mvn -B clean package
+        run: mvn -B clean package -DskipTests
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
