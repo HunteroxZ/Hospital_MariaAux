@@ -27,9 +27,45 @@ jobs:
         working-directory: hospital-backend
         run: mvn -B clean package -DskipTests
 
-      - name: Deploy to Azure App Service
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: hospital-backend/target/*.jar
+      - name: Deploy JAR via Kudu API
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        run: |
+          JAR=$(ls hospital-backend/target/*.jar | head -n 1)
+          echo "Desplegando $JAR"
+          python3 - "$JAR" <<'EOF'
+          import os, re, sys, base64, urllib.request
+          xml = os.environ['PUBLISH_PROFILE']
+          bloques = re.findall(r'<publishProfile .*?/>', xml)
+          elegido = None
+          for b in bloques:
+              if 'publishMethod="ZipDeploy"' in b or 'publishMethod="MSDeploy"' in b:
+                  elegido = b
+                  if 'publishMethod="ZipDeploy"' in b:
+                      break
+          if not elegido:
+              print('ERROR: no se encontro perfil ZipDeploy/MSDeploy'); sys.exit(1)
+          def attr(nombre):
+              m = re.search(nombre + r'="([^"]+)"', elegido)
+              return m.group(1) if m else None
+          host, user, pwd = attr('publishUrl'), attr('userName'), attr('userPWD')
+          host = host.split(':')[0]
+          jar = sys.argv[1]
+          url = 'https://%s/api/publish?type=jar&async=true' % host
+          req = urllib.request.Request(url, method='POST')
+          req.add_header('Authorization', 'Basic ' + base64.b64encode(('%s:%s' % (user, pwd)).encode()).decode())
+          req.add_header('Content-Type', 'application/octet-stream')
+          with open(jar, 'rb') as f:
+              data = f.read()
+          try:
+              with urllib.request.urlopen(req, data=data, timeout=300) as r:
+                  print('STATUS:', r.status)
+                  print(r.read().decode()[:2000])
+          except Exception as e:
+              print('ERROR:', e)
+              try:
+                  print(e.read().decode()[:2000])
+              except Exception:
+                  pass
+              sys.exit(1)
+          EOF
