@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'hospital-backend/**'
+      - '.github/workflows/backend-azure.yml'
   workflow_dispatch:
 
 jobs:
