@@ -152,15 +152,11 @@
       <div class="filtros-grid">
         <div class="form-group">
           <label>Fecha Inicio:</label>
-          <input type="date" [(ngModel)]="filtrosAdicionales.fechaInicio" />
+          <input type="date" [(ngModel)]="filtrosAdicionales.fechaInicio" lang="es" />
         </div>
         <div class="form-group">
           <label>Fecha Fin:</label>
-          <input type="date" [(ngModel)]="filtrosAdicionales.fechaFin" />
-        </div>
-        <div class="form-group">
-          <label>Fecha de Corte (antes/después):</label>
-          <input type="date" [(ngModel)]="filtrosAdicionales.fechaCorte" />
+          <input type="date" [(ngModel)]="filtrosAdicionales.fechaFin" lang="es" />
         </div>
       </div>
       <div class="acciones">
@@ -206,13 +202,13 @@
           <tbody>
             <tr *ngFor="let cita of datosCitas">
               <td>{{ cita.idCita }}</td>
-              <td>{{ cita.fecha }}</td>
+              <td>{{ formatoFecha(cita.fecha) }}</td>
               <td>{{ cita.hora }}</td>
-              <td>{{ cita.nombrePaciente }}</td>
+              <td class="capitalizar">{{ cita.nombrePaciente }}</td>
               <td>{{ cita.dniPaciente }}</td>
-              <td>{{ cita.nombreMedico }}</td>
-              <td>{{ cita.especialidad }}</td>
-              <td><span [class]="'badge badge-' + cita.estado">{{ cita.estado }}</span></td>
+              <td class="capitalizar">{{ cita.nombreMedico }}</td>
+              <td class="capitalizar">{{ cita.especialidad }}</td>
+              <td><span [class]="'badge badge-' + cita.estado" class="capitalizar">{{ cita.estado }}</span></td>
               <td>S/ {{ cita.precio }}</td>
             </tr>
           </tbody>
@@ -252,7 +248,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let esp of datosIngresos.ingresosPorEspecialidad">
-              <td>{{ esp.nombreEspecialidad }}</td>
+              <td class="capitalizar">{{ esp.nombreEspecialidad }}</td>
               <td>{{ esp.totalCitas }}</td>
               <td>{{ esp.citasAtendidas }}</td>
               <td>S/ {{ esp.precioUnitario }}</td>
@@ -283,7 +279,7 @@
           <tbody>
             <tr *ngFor="let pac of datosPacientes">
               <td>{{ pac.idPaciente }}</td>
-              <td>{{ pac.nombreCompleto }}</td>
+              <td class="capitalizar">{{ pac.nombreCompleto }}</td>
               <td>{{ pac.dni }}</td>
               <td>{{ pac.edad }}</td>
               <td>{{ pac.sexo }}</td>
@@ -316,7 +312,7 @@
           <tbody>
             <tr *ngFor="let med of datosMedicos">
               <td>{{ med.idMedico }}</td>
-              <td>{{ med.nombreCompleto }}</td>
+              <td class="capitalizar">{{ med.nombreCompleto }}</td>
               <td>{{ med.dni }}</td>
               <td>{{ med.codigoColegiatura }}</td>
               <td>{{ med.correo }}</td>
@@ -346,16 +342,28 @@
           <span class="resumen-valor">{{ datosAdicionales.totalAdicionales }}</span>
         </div>
         <div class="resumen-card">
-          <span class="resumen-label">Promedio diario (antes):</span>
+          <span class="resumen-label">Promedio diario citas (antes de adicionales):</span>
           <span class="resumen-valor">{{ datosAdicionales.promedioDiarioAntes }}</span>
         </div>
         <div class="resumen-card">
-          <span class="resumen-label">Promedio diario (después):</span>
+          <span class="resumen-label">Promedio diario citas (con adicionales):</span>
           <span class="resumen-valor">{{ datosAdicionales.promedioDiarioDespues }}</span>
         </div>
+        <div class="resumen-card">
+          <span class="resumen-label">% citas adicionales:</span>
+          <span class="resumen-valor">{{ datosAdicionales.porcentajeCitasAdicionales }}%</span>
+        </div>
+        <div class="resumen-card">
+          <span class="resumen-label">Ingreso normales:</span>
+          <span class="resumen-valor">S/ {{ datosAdicionales.ingresoTotalNormales }}</span>
+        </div>
         <div class="resumen-card destacado">
-          <span class="resumen-label">Incremento:</span>
-          <span class="resumen-valor">{{ datosAdicionales.incrementoPorcentual }}%</span>
+          <span class="resumen-label">Ingreso adicionales:</span>
+          <span class="resumen-valor">S/ {{ datosAdicionales.ingresoTotalAdicionales }}</span>
+        </div>
+        <div class="resumen-card">
+          <span class="resumen-label">% ingreso adicional:</span>
+          <span class="resumen-valor">{{ datosAdicionales.porcentajeIngresoAdicional }}%</span>
         </div>
       </div>
 
@@ -369,7 +377,8 @@
               <th>Total Citas</th>
               <th>Normales</th>
               <th>Adicionales</th>
-              <th>Promedio Diario Adic.</th>
+              <th>S/ Normal</th>
+              <th>S/ Adicional</th>
             </tr>
           </thead>
           <tbody>
@@ -378,7 +387,8 @@
               <td>{{ med.totalCitas }}</td>
               <td>{{ med.citasNormales }}</td>
               <td>{{ med.citasAdicionales }}</td>
-              <td>{{ med.promedioDiarioAdicionales }}</td>
+              <td>S/ {{ med.ingresoNormales }}</td>
+              <td>S/ {{ med.ingresoAdicionales }}</td>
             </tr>
           </tbody>
         </table>
@@ -394,7 +404,8 @@
               <th>Total Citas</th>
               <th>Normales</th>
               <th>Adicionales</th>
-              <th>Promedio Diario Adic.</th>
+              <th>S/ Normal</th>
+              <th>S/ Adicional</th>
             </tr>
           </thead>
           <tbody>
@@ -403,13 +414,14 @@
               <td>{{ esp.totalCitas }}</td>
               <td>{{ esp.citasNormales }}</td>
               <td>{{ esp.citasAdicionales }}</td>
-              <td>{{ esp.promedioDiarioAdicionales }}</td>
+              <td>S/ {{ esp.ingresoNormales }}</td>
+              <td>S/ {{ esp.ingresoAdicionales }}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h4>Antes vs después del corte ({{ datosAdicionales.fechaCorte }})</h4>
+      <h4>Antes vs después de adicionales (desde {{ formatoFecha(datosAdicionales.fechaCorte) }})</h4>
       <div class="chart-box"><canvas id="chartAdicionalesComparativa"></canvas></div>
     </div>
 

@@ -73,7 +73,7 @@
       <tbody>
         <tr *ngFor="let medico of medicosFiltrados">
           <td>{{ medico.idMedico }}</td>
-          <td>{{ medico.nombres }} {{ medico.apellidos }}</td>
+          <td class="capitalizar">{{ medico.nombres }} {{ medico.apellidos }}</td>
           <td>{{ medico.dni }}</td>
           <td>{{ medico.codigoColegiatura }}</td>
           <td>{{ medico.correo }}</td>
@@ -296,7 +296,7 @@
     <div class="detalle-content">
       <div class="detalle-seccion">
         <h4>Información Personal</h4>
-        <p><strong>Nombre:</strong> {{ medicoSeleccionado.nombres }} {{ medicoSeleccionado.apellidos }}</p>
+        <p><strong>Nombre:</strong> <span class="capitalizar">{{ medicoSeleccionado.nombres }} {{ medicoSeleccionado.apellidos }}</span></p>
         <p><strong>DNI:</strong> {{ medicoSeleccionado.dni }}</p>
         <p><strong>Fecha de Nacimiento:</strong> {{ medicoSeleccionado.fechaNacimiento || 'No especificada' }}</p>
         <p><strong>Edad:</strong> {{ medicoSeleccionado.edad || 'N/A' }} años</p>

@@ -18,6 +18,17 @@ public class HistoriaMedicaController {
 
     @Autowired
     private HistoriaMedicaService historialService;
+
+    private static String mensajeError(RuntimeException e) {
+        if (e instanceof org.springframework.web.server.ResponseStatusException rse) {
+            String razon = rse.getReason();
+            if (razon != null && !razon.isBlank()) {
+                return razon;
+            }
+        }
+        String msg = e.getMessage() != null ? e.getMessage() : "Error en la operación.";
+        return msg.replaceAll("^[0-9]{3} [A-Z_ ]+ \"|\"$", "");
+    }
     
     @PostMapping
     public ResponseEntity<?> registrarNuevaEntrada(@Valid @RequestBody RegistrarHistoriaRequest request) {
@@ -30,7 +41,7 @@ public class HistoriaMedicaController {
             HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                  (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                  HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al registrar el historial."));
         }
@@ -45,7 +56,7 @@ public class HistoriaMedicaController {
              HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                   (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                   HttpStatus.NOT_FOUND;
-             return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+             return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al obtener el historial."));
         }
@@ -62,7 +73,7 @@ public class HistoriaMedicaController {
             HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                  (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                  HttpStatus.NOT_FOUND;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body(Map.of("error", "Error interno al buscar el historial."));

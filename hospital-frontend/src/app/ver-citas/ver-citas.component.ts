@@ -64,4 +64,12 @@ export class VerCitasComponent implements OnInit {
   formatHora(hora: string): string {
     return hora ? hora.substring(0, 5) : ''; 
   }
+  formatoEstado(estado: string): string {
+    return estado ? estado.replace(/_/g, ' ') : '';
+  }
+  formatoFecha(fecha: string): string {
+    if (!fecha || !fecha.includes('-')) return fecha || '';
+    const [y, m, d] = fecha.substring(0, 10).split('-');
+    return `${d}/${m}/${y}`;
+  }
 }

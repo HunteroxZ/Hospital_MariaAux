@@ -778,3 +778,7 @@ form {
   }
 }
 
+.capitalizar {
+  text-transform: capitalize;
+}
+

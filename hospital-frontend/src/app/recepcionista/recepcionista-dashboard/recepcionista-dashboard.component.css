@@ -47,10 +47,12 @@
   gap: 15px;
   margin-bottom: 20px;
   align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .input-group {
-  flex: 1;
+  flex: 1 1 280px;
+  min-width: 0;
 }
 
 .input-group label {
@@ -66,9 +68,12 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1em;
+  box-sizing: border-box;
 }
 
 .btn-buscar {
+  flex: 0 0 auto;
+  align-self: flex-end;
   background-color: #3498db;
   color: white;
   border: none;
@@ -122,6 +127,10 @@
 .cita-info p {
   margin: 8px 0;
   color: #555;
+}
+
+.capitalizar {
+  text-transform: capitalize;
 }
 
 .cita-info .precio {
@@ -467,6 +476,36 @@
   text-decoration: line-through;
 }
 
+.slot-click.disponible,
+.slot-click.adicional {
+  cursor: pointer;
+}
+
+.slot-click.disponible:hover,
+.slot-click.adicional:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.slot.selected {
+  background: #2c3e50;
+  border-color: #2c3e50;
+  color: white;
+}
+
+.reserva-box {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px dashed #bbb;
+}
+
+.reserva-box .aviso-reserva {
+  color: #7e5109;
+  font-weight: 600;
+}
+
 .slots-legend {
   margin-top: 10px;
 }
@@ -490,3 +529,46 @@
 .reservado-dot { background: #f1c40f; }
 .adicional-dot { background: #198754; }
 .pasada-dot { background: #aab7b8; }
+
+.confirm-registro {
+  background: #e8f4f8;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin: 15px 0;
+}
+
+.confirm-registro p {
+  color: #1a5276;
+  margin: 0 0 10px 0;
+}
+
+.confirm-registro .acciones-section {
+  margin-top: 10px;
+}
+
+.modal-body h2 {
+  color: #2c3e50;
+  margin-top: 0;
+}
+
+.modal-body .input-group {
+  margin-bottom: 12px;
+}
+
+.modal-body .input-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #363636;
+}
+
+.modal-body .input-group input,
+.modal-body .input-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box;
+}

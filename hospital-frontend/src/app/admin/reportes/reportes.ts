@@ -37,8 +37,7 @@ export class Reportes implements OnInit, OnDestroy {
 
   filtrosAdicionales = {
     fechaInicio: this.obtenerFechaInicioPorDefecto(),
-    fechaFin: this.obtenerFechaHoy(),
-    fechaCorte: ''
+    fechaFin: this.obtenerFechaHoy()
   };
 
 
@@ -279,8 +278,7 @@ export class Reportes implements OnInit, OnDestroy {
 
     this.reporteService.obtenerReporteAdicionales(
       this.filtrosAdicionales.fechaInicio,
-      this.filtrosAdicionales.fechaFin,
-      this.filtrosAdicionales.fechaCorte || undefined
+      this.filtrosAdicionales.fechaFin
     ).subscribe({
       next: (data) => {
         this.datosAdicionales = data;
@@ -303,8 +301,7 @@ export class Reportes implements OnInit, OnDestroy {
     this.loading = true;
     this.reporteService.descargarReporteAdicionalesPDF(
       this.filtrosAdicionales.fechaInicio,
-      this.filtrosAdicionales.fechaFin,
-      this.filtrosAdicionales.fechaCorte || undefined
+      this.filtrosAdicionales.fechaFin
     ).subscribe({
       next: (blob) => {
         this.descargarArchivo(blob, 'reporte_adicionales.pdf');
@@ -322,6 +319,12 @@ export class Reportes implements OnInit, OnDestroy {
 
   nombreAnonimo(index: number): string {
     return `Médico ${index + 1}`;
+  }
+
+  formatoFecha(fecha: string): string {
+    if (!fecha || !fecha.includes('-')) return fecha || '';
+    const [y, m, d] = fecha.substring(0, 10).split('-');
+    return `${d}/${m}/${y}`;
   }
 
   private destruirChartsAdicionales(): void {
@@ -371,12 +374,12 @@ export class Reportes implements OnInit, OnDestroy {
       this.chartsAdicionales.push(new Chart(canvasComp, {
         type: 'bar',
         data: {
-          labels: ['Antes del corte', 'Después del corte'],
+          labels: ['Antes de adicionales', 'Con adicionales'],
           datasets: [
-            { label: 'Promedio diario de adicionales', data: [this.datosAdicionales.promedioDiarioAntes, this.datosAdicionales.promedioDiarioDespues], backgroundColor: ['#f39c12', '#27ae60'] }
+            { label: 'Promedio diario de citas', data: [this.datosAdicionales.promedioDiarioAntes, this.datosAdicionales.promedioDiarioDespues], backgroundColor: ['#f39c12', '#27ae60'] }
           ]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Promedio diario antes vs después' } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Promedio diario de citas (ventanas de 7 días)' } } }
       }));
     }
   }

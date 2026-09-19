@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router'; 
 import { MedicoAuthService } from '../auth/medico-auth.service';
 import { environment } from '../../environments/environment';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-medico-agenda',
@@ -39,6 +40,7 @@ export class MedicoAgendaComponent implements OnInit {
   cuposAdicionalesFecha: any[] = [];
   isLoadingAdicionales = false;
   mensajeAdicionales = '';
+  jornadaLlena = false;
 
   constructor(
     private http: HttpClient,
@@ -105,13 +107,65 @@ export class MedicoAgendaComponent implements OnInit {
     });
 
     this.cargarCuposAdicionalesFecha();
+    this.verificarJornadaLlena();
+  }
+
+  verificarJornadaLlena(): void {
+    this.jornadaLlena = false;
+    if (!this.idMedicoLogueado || !this.fechaSeleccionada) return;
+
+    const fechaObj = new Date(this.fechaSeleccionada + 'T00:00:00');
+    const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+    const diaSemanaNombre = dias[fechaObj.getDay()];
+    if (diaSemanaNombre === 'domingo') return;
+
+    forkJoin([
+      this.http.get<any[]>(`${this.apiUrlBase}${this.idMedicoLogueado}/disponibilidad`),
+      this.http.get<string[]>(`${environment.apiUrl}/citas/reservadas/${this.idMedicoLogueado}/${this.fechaSeleccionada}`)
+    ]).subscribe({
+      next: ([disponibilidades, horasReservadas]) => {
+        const bloques = (disponibilidades || []).filter(d => d.diaSemana === diaSemanaNombre);
+        if (bloques.length === 0) return;
+        const reservadas = new Set((horasReservadas || []).map(h => h.substring(0, 5)));
+        let llena = true;
+        for (const b of bloques) {
+          let act = this.parseHoraStr(b.horaInicio);
+          const fin = this.parseHoraStr(b.horaFin);
+          while (this.addMin(act, 20) <= fin) {
+            if (!reservadas.has(this.toHoraStr(act))) {
+              llena = false;
+              break;
+            }
+            act = this.addMin(act, 20);
+          }
+          if (!llena) break;
+        }
+        this.jornadaLlena = llena;
+      },
+      error: (err) => console.error('Error al verificar jornada:', err)
+    });
+  }
+
+  private parseHoraStr(hora: string): number {
+    const [h, m] = hora.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  private addMin(mins: number, add: number): number {
+    return mins + add;
+  }
+
+  private toHoraStr(mins: number): string {
+    const h = Math.floor(mins / 60).toString().padStart(2, '0');
+    const m = (mins % 60).toString().padStart(2, '0');
+    return `${h}:${m}`;
   }
 
   get puedeHabilitarAdicionales(): boolean {
     if (this.citasDelDia.length === 0) return false;
     const algunaAtendida = this.citasDelDia.some(c => c.estado === 'atendida' || c.estado === 'no_presentado');
     const pendientes = this.citasDelDia.some(c => c.estado === 'pendiente' || c.estado === 'confirmada');
-    return algunaAtendida && !pendientes && this.cuposAdicionalesFecha.length < 2;
+    return algunaAtendida && !pendientes && this.jornadaLlena && this.cuposAdicionalesFecha.length < 2;
   }
 
   cargarCuposAdicionalesFecha(): void {
@@ -137,8 +191,9 @@ export class MedicoAgendaComponent implements OnInit {
   }
 
   esCupoReservado(cupo: any): boolean {
+    if (!cupo.disponible) return true;
     const horaCupo = this.formatHora(cupo.horaInicio);
-    return this.citasDelDia.some(cita => cita.estado !== 'cancelada' && this.formatHora(cita.hora) === horaCupo);
+    return this.citasDelDia.some(cita => cita.estado !== 'cancelada' && cita.esAdicional && this.formatHora(cita.hora) === horaCupo);
   }
 
   eliminarCupoAdicional(cupo: any): void {
@@ -212,7 +267,7 @@ export class MedicoAgendaComponent implements OnInit {
         this.cerrarModalAdicionales();
       },
       error: (err) => {
-        this.mensajeAdicionales = err.error?.error || err.message || 'Error al habilitar cupos.';
+        this.mensajeAdicionales = err.error?.error || 'Error al habilitar cupos.';
         this.isLoadingAdicionales = false;
       }
     });
@@ -354,5 +409,15 @@ export class MedicoAgendaComponent implements OnInit {
 
   formatHora(hora: string): string {
     return hora ? hora.substring(0, 5) : '';
+  }
+
+  formatoEstado(estado: string): string {
+    return estado ? estado.replace(/_/g, ' ') : '';
+  }
+
+  formatoFecha(fecha: string): string {
+    if (!fecha || !fecha.includes('-')) return fecha || '';
+    const [y, m, d] = fecha.substring(0, 10).split('-');
+    return `${d}/${m}/${y}`;
   }
 }

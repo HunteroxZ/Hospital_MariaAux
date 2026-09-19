@@ -104,6 +104,9 @@ public class ChatService {
         SINTOMAS_A_ESPECIALIDAD.put("tiembla", "Neurología");
         SINTOMAS_A_ESPECIALIDAD.put("parálisis", "Neurología");
         SINTOMAS_A_ESPECIALIDAD.put("paralisis", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("cabeza", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("cerebral", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("sien", "Neurología");
 
         // Gastroenterología
         SINTOMAS_A_ESPECIALIDAD.put("dolor abdominal", "Gastroenterología");
@@ -131,6 +134,7 @@ public class ChatService {
         SINTOMAS_A_ESPECIALIDAD.put("estrenimiento", "Gastroenterología");
         SINTOMAS_A_ESPECIALIDAD.put("acidez", "Gastroenterología");
         SINTOMAS_A_ESPECIALIDAD.put("reflujo", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("panza", "Gastroenterología");
         SINTOMAS_A_ESPECIALIDAD.put("hígado", "Gastroenterología");
         SINTOMAS_A_ESPECIALIDAD.put("higado", "Gastroenterología");
         SINTOMAS_A_ESPECIALIDAD.put("vesícula", "Gastroenterología");
@@ -287,6 +291,160 @@ public class ChatService {
         SINTOMAS_A_ESPECIALIDAD.put("falta de apetito", "Medicina General");
         SINTOMAS_A_ESPECIALIDAD.put("no tengo hambre", "Medicina General");
         SINTOMAS_A_ESPECIALIDAD.put("no quiero comer", "Medicina General");
+
+        // Sinónimos adicionales frecuentes
+        SINTOMAS_A_ESPECIALIDAD.put("gripe", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("resfriado", "Neumología");
+        SINTOMAS_A_ESPECIALIDAD.put("resfrio", "Neumología");
+        SINTOMAS_A_ESPECIALIDAD.put("estornudos", "Neumología");
+        SINTOMAS_A_ESPECIALIDAD.put("estornudo", "Neumología");
+        SINTOMAS_A_ESPECIALIDAD.put("alergia", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("golpe", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("caida", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("caída", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("moreton", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("moretón", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("presion baja", "Cardiología");
+        SINTOMAS_A_ESPECIALIDAD.put("presión baja", "Cardiología");
+        SINTOMAS_A_ESPECIALIDAD.put("diabetes", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("azucar alta", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("azúcar alta", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("colesterol", "Cardiología");
+        SINTOMAS_A_ESPECIALIDAD.put("dolor menstrual", "Ginecología");
+        SINTOMAS_A_ESPECIALIDAD.put("colico menstrual", "Ginecología");
+        SINTOMAS_A_ESPECIALIDAD.put("cansancio en ninos", "Pediatría");
+
+        // Pediatría: diminutivos y formas familiares
+        SINTOMAS_A_ESPECIALIDAD.put("pequena", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("pequeña", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("pequeno", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("pequeño", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("peque", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("nene", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("nena", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("hijito", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("hijita", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("chiquito", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("chiquita", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("lactante", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("adolescente", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("wawa", "Pediatría");
+        SINTOMAS_A_ESPECIALIDAD.put("guagua", "Pediatría");
+
+        // Formas narrativas y variantes comunes
+        SINTOMAS_A_ESPECIALIDAD.put("se me duerme", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("se me adormece", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("entumecimiento", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("cabesa", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("mareado", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("mareada", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("cuerpo", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("escalofrios", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("escalofríos", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("hinchazon", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("hinchazón", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("deshidratacion", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("deshidratación", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("anemia", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("obesidad", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("sobrepeso", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("tiroides", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("muela", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("diente", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("encia", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("autismo", "Psiquiatría");
+        SINTOMAS_A_ESPECIALIDAD.put("autista", "Psiquiatría");
+
+        // Respiratorio / digestivo extra
+        SINTOMAS_A_ESPECIALIDAD.put("flema", "Neumología");
+        SINTOMAS_A_ESPECIALIDAD.put("gases", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("colico", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("cólico", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("parasitos", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("parásitos", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("lombrices", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("hemorroides", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("empacho", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("estrenido", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("cistitis", "Urología");
+
+        // Piel extra
+        SINTOMAS_A_ESPECIALIDAD.put("granos", "Dermatología");
+        SINTOMAS_A_ESPECIALIDAD.put("manchas", "Dermatología");
+        SINTOMAS_A_ESPECIALIDAD.put("sarpullido", "Dermatología");
+        SINTOMAS_A_ESPECIALIDAD.put("picadura", "Dermatología");
+        SINTOMAS_A_ESPECIALIDAD.put("quemadura", "Dermatología");
+        SINTOMAS_A_ESPECIALIDAD.put("cortada", "Dermatología");
+
+        // Traumatología extra
+        SINTOMAS_A_ESPECIALIDAD.put("tobillo", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("muneca", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("muñeca", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("codo", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("hombro", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("cuello", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("torticolis", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("cintura", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("esguince", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("desgarro", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("luxacion", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("luxación", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("calambre", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("calambres", "Traumatología");
+
+        // Otorrino extra
+        SINTOMAS_A_ESPECIALIDAD.put("ronquidos", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("afonia", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("afonía", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("zumbido", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("pitidos", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("pitido", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("tragar", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("zumban", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("oigo", "Otorrinolaringología");
+        SINTOMAS_A_ESPECIALIDAD.put("veo doble", "Oftalmología");
+        SINTOMAS_A_ESPECIALIDAD.put("vista nublada", "Oftalmología");
+        SINTOMAS_A_ESPECIALIDAD.put("cojeo", "Traumatología");
+        SINTOMAS_A_ESPECIALIDAD.put("rengueo", "Traumatología");
+
+        // Casos trampa de jurado
+        SINTOMAS_A_ESPECIALIDAD.put("cavesa", "Neurología");
+        SINTOMAS_A_ESPECIALIDAD.put("arterial", "Cardiología");
+        SINTOMAS_A_ESPECIALIDAD.put("dengue", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("covid", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("coronavirus", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("duermo", "Psiquiatría");
+        SINTOMAS_A_ESPECIALIDAD.put("triste", "Psiquiatría");
+        SINTOMAS_A_ESPECIALIDAD.put("tristeza", "Psiquiatría");
+        SINTOMAS_A_ESPECIALIDAD.put("vomite", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("vomité", "Gastroenterología");
+        SINTOMAS_A_ESPECIALIDAD.put("hincha", "Medicina General");
+        SINTOMAS_A_ESPECIALIDAD.put("hinchan", "Medicina General");
+    }
+
+    private static final Map<String, String> BANDERAS_ROJAS = new HashMap<>();
+    static {
+        BANDERAS_ROJAS.put("dolor en el pecho", "dolor de pecho");
+        BANDERAS_ROJAS.put("dolor de pecho", "dolor de pecho");
+        BANDERAS_ROJAS.put("no puede respirar", "dificultad grave para respirar");
+        BANDERAS_ROJAS.put("no puedo respirar", "dificultad grave para respirar");
+        BANDERAS_ROJAS.put("se desmaya", "desmayo");
+        BANDERAS_ROJAS.put("desmayo", "desmayo");
+        BANDERAS_ROJAS.put("convulsion", "convulsiones");
+        BANDERAS_ROJAS.put("convulsión", "convulsiones");
+        BANDERAS_ROJAS.put("paralisis", "parálisis");
+        BANDERAS_ROJAS.put("parálisis", "parálisis");
+    }
+
+    private String detectarBanderaRoja(String sintomas) {
+        String normalizado = normalizarTexto(sintomas);
+        for (Map.Entry<String, String> entry : BANDERAS_ROJAS.entrySet()) {
+            String clave = normalizarTexto(entry.getKey());
+            if (tieneMencionValida(normalizado, clave)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     public ChatResponse procesarMensaje(Long idPaciente, String mensaje) {
@@ -504,7 +662,12 @@ public class ChatService {
             return menu("No hay médicos disponibles para " + especialidadSugerida + ".");
         }
 
-        StringBuilder sb = new StringBuilder("Basado en sus síntomas, le recomiendo la especialidad de **" + especialidadSugerida + "**.\n\n");
+        StringBuilder sb = new StringBuilder();
+        String banderaDiag = detectarBanderaRoja((String) datos.get("sintomas"));
+        if (banderaDiag != null) {
+            sb.append("ATENCION: su sintoma (").append(banderaDiag).append(") podria requerir atencion inmediata. Si es grave, acuda a emergencias.\n\n");
+        }
+        sb.append("Basado en sus síntomas, le recomiendo la especialidad de **" + especialidadSugerida + "**.\n\n");
         sb.append("Medicos disponibles:\n\n");
         for (int i = 0; i < medicosOk.size(); i++) {
             Medico m = medicosOk.get(i);
@@ -732,13 +895,101 @@ public class ChatService {
         return normalized.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     }
 
+    private static final java.util.Set<String> TERMINOS_INFANTILES = new java.util.HashSet<>(java.util.Arrays.asList(
+        "pequena", "pequeno", "peque", "nene", "nena", "hijito", "hijita",
+        "chiquito", "chiquita", "lactante", "adolescente", "bebe", "nino",
+        "nina", "infantil", "mi hijo", "mi hija"
+    ));
+
+    private static final Map<String, String> PARTES_CUERPO = new HashMap<>();
+    static {
+        PARTES_CUERPO.put("cabeza", "Neurología");
+        PARTES_CUERPO.put("espalda", "Traumatología");
+        PARTES_CUERPO.put("rodilla", "Traumatología");
+        PARTES_CUERPO.put("columna", "Traumatología");
+        PARTES_CUERPO.put("cuello", "Traumatología");
+        PARTES_CUERPO.put("cintura", "Traumatología");
+        PARTES_CUERPO.put("hombro", "Traumatología");
+        PARTES_CUERPO.put("tobillo", "Traumatología");
+        PARTES_CUERPO.put("muneca", "Traumatología");
+        PARTES_CUERPO.put("codo", "Traumatología");
+        PARTES_CUERPO.put("hueso", "Traumatología");
+        PARTES_CUERPO.put("pecho", "Cardiología");
+        PARTES_CUERPO.put("corazon", "Cardiología");
+        PARTES_CUERPO.put("estomago", "Gastroenterología");
+        PARTES_CUERPO.put("barriga", "Gastroenterología");
+        PARTES_CUERPO.put("panza", "Gastroenterología");
+        PARTES_CUERPO.put("higado", "Gastroenterología");
+        PARTES_CUERPO.put("garganta", "Otorrinolaringología");
+        PARTES_CUERPO.put("oido", "Otorrinolaringología");
+        PARTES_CUERPO.put("nariz", "Otorrinolaringología");
+        PARTES_CUERPO.put("ojo", "Oftalmología");
+        PARTES_CUERPO.put("vista", "Oftalmología");
+        PARTES_CUERPO.put("rinon", "Urología");
+        PARTES_CUERPO.put("vejiga", "Urología");
+        PARTES_CUERPO.put("prostata", "Urología");
+        PARTES_CUERPO.put("ovario", "Ginecología");
+        PARTES_CUERPO.put("utero", "Ginecología");
+        PARTES_CUERPO.put("piel", "Dermatología");
+        PARTES_CUERPO.put("pulmon", "Neumología");
+        PARTES_CUERPO.put("muela", "Medicina General");
+        PARTES_CUERPO.put("diente", "Medicina General");
+    }
+
+    private static final java.util.Set<String> VERBOS_DOLOR = new java.util.HashSet<>(java.util.Arrays.asList(
+        "duele", "dolor", "molest", "arde", "punz", "escuece", "escose"
+    ));
+
+    private boolean cercaVerboDolor(String[] tokens, String parteNorm) {
+        java.util.List<Integer> idxVerbos = new java.util.ArrayList<>();
+        java.util.List<Integer> idxParte = new java.util.ArrayList<>();
+        for (int i = 0; i < tokens.length; i++) {
+            for (String v : VERBOS_DOLOR) {
+                if (tokens[i].contains(v)) { idxVerbos.add(i); break; }
+            }
+            if (tokens[i].contains(parteNorm)) idxParte.add(i);
+        }
+        for (int iv : idxVerbos) {
+            for (int ip : idxParte) {
+                if (Math.abs(iv - ip) <= 6) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean estaNegado(String textoNormalizado, int indiceInicio) {
+        String previo = textoNormalizado.substring(Math.max(0, indiceInicio - 25), indiceInicio);
+        return previo.matches(".*\\b(no|ni|sin|nunca|jamas)\\b\\W*");
+    }
+
+    private boolean tieneMencionValida(String textoNormalizado, String claveNormalizada) {
+        int idx = textoNormalizado.indexOf(claveNormalizada);
+        while (idx >= 0) {
+            if (!estaNegado(textoNormalizado, idx)) {
+                return true;
+            }
+            idx = textoNormalizado.indexOf(claveNormalizada, idx + 1);
+        }
+        return false;
+    }
+
     private String analizarSintomas(String sintomas) {
         String sintomasNormalizado = normalizarTexto(sintomas);
         Map<String, Integer> conteoEspecialidades = new HashMap<>();
 
         for (Map.Entry<String, String> entry : SINTOMAS_A_ESPECIALIDAD.entrySet()) {
             String claveNormalizada = normalizarTexto(entry.getKey());
-            if (sintomasNormalizado.contains(claveNormalizada)) {
+            if (tieneMencionValida(sintomasNormalizado, claveNormalizada)) {
+                String especialidad = entry.getValue();
+                int peso = TERMINOS_INFANTILES.contains(claveNormalizada) ? 2 : 1;
+                conteoEspecialidades.put(especialidad, conteoEspecialidades.getOrDefault(especialidad, 0) + peso);
+            }
+        }
+
+        String[] tokens = sintomasNormalizado.split("\\s+");
+        for (Map.Entry<String, String> entry : PARTES_CUERPO.entrySet()) {
+            if (tieneMencionValida(sintomasNormalizado, entry.getKey())
+                    && cercaVerboDolor(tokens, entry.getKey())) {
                 String especialidad = entry.getValue();
                 conteoEspecialidades.put(especialidad, conteoEspecialidades.getOrDefault(especialidad, 0) + 1);
             }
@@ -749,10 +1000,16 @@ public class ChatService {
         }
 
         String resultado;
-        if (conteoEspecialidades.size() > 1) {
-            resultado = "Medicina General";
-        } else {
+        if (conteoEspecialidades.size() == 1) {
             resultado = conteoEspecialidades.keySet().iterator().next();
+        } else {
+            List<Map.Entry<String, Integer>> ordenados = new ArrayList<>(conteoEspecialidades.entrySet());
+            ordenados.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+            if (ordenados.size() > 1 && ordenados.get(0).getValue().equals(ordenados.get(1).getValue())) {
+                resultado = "Medicina General";
+            } else {
+                resultado = ordenados.get(0).getKey();
+            }
         }
 
         return validarEspecialidadDisponible(resultado);
@@ -784,6 +1041,10 @@ public class ChatService {
                 datos.put("especialidadSugerida", especialidadSugerida);
                 estado.put("paso", Paso.SUGERIENDO_ESPECIALIDAD);
                 StringBuilder sb = new StringBuilder();
+                String banderaCambio = detectarBanderaRoja(msg);
+                if (banderaCambio != null) {
+                    sb.append("ATENCION: su sintoma (").append(banderaCambio).append(") podria requerir atencion inmediata. Si es grave, acuda a emergencias.\n\n");
+                }
                 sb.append("Basado en sus síntomas, le recomiendo consultar con la especialidad de **").append(especialidadSugerida).append("**.\n\n");
                 sb.append("Actualmente está seleccionando: ").append(especialidadActual).append("\n\n");
                 sb.append("¿Desea cambiar a la especialidad de ").append(especialidadSugerida).append("? (si/no)\n");

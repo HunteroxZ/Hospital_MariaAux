@@ -34,6 +34,9 @@
 .chatbot-bubble.abierto {
   background: linear-gradient(135deg, #e74c3c, #c0392b);
   box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+  font-size: 32px;
+  color: #ffffff;
+  line-height: 1;
 }
 
 .chatbot-ventana {
@@ -81,16 +84,25 @@
   height: 30px;
 }
 
+.chatbot-header-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .chatbot-header-texto h3 {
   margin: 0;
+  padding: 0;
   font-size: 15px;
   font-weight: 600;
+  text-align: left;
 }
 
 .chatbot-header-texto .chatbot-subtitle {
   font-size: 11px;
   opacity: 0.85;
   margin-top: 2px;
+  text-align: left;
 }
 
 .chatbot-mensajes {

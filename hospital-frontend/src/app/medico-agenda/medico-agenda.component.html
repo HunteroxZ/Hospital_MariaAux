@@ -47,10 +47,10 @@
       <tbody>
         <tr *ngFor="let cita of citasDelDia">
           <td>{{ formatHora(cita.hora) }} <span *ngIf="cita.esAdicional" class="badge-adicional" title="Cita adicional">➕</span></td>
-          <td>{{ cita.nombrePaciente }}</td>
-          <td>{{ cita.motivoConsulta }}</td>
+          <td class="capitalizar">{{ cita.nombrePaciente }}</td>
+          <td class="capitalizar">{{ cita.motivoConsulta }}</td>
           <td>
-            <span [ngClass]="'status-' + cita.estado">{{ cita.estado }}</span>
+            <span [ngClass]="'status-' + cita.estado" class="capitalizar">{{ formatoEstado(cita.estado) }}</span>
           </td>
           <td>
             <ng-container *ngIf="cita.estado === 'pendiente' || cita.estado === 'confirmada'">
@@ -58,7 +58,7 @@
                 <button class="action-button view" title="Ver Detalles/Historial"
                         (click)="verDetalles(cita.idCita, cita.idPaciente, cita.idEspecialidad)">📋</button>
                 
-                <button class="action-button attend" title="Marcar como Atendida"
+                <button *ngIf="cita.estado === 'confirmada'" class="action-button attend" title="Marcar como Atendida"
                         (click)="marcarComoAtendida(cita.idCita)">✔️</button>
 
                 <button class="action-button cancel" title="Marcar como No Presentado"
@@ -87,7 +87,7 @@
 
   <div *ngIf="cuposAdicionalesFecha.length > 0" class="adicionales-section">
     <hr>
-    <h3>➕ Cupos Adicionales Habilitados ({{ fechaSeleccionada }})</h3>
+    <h3>➕ Cupos Adicionales Habilitados ({{ formatoFecha(fechaSeleccionada) }})</h3>
     <div class="cupos-grid">
       <div *ngFor="let cupo of cuposAdicionalesFecha" class="cupo-card" [class.reservado]="esCupoReservado(cupo)">
         <span class="cupo-hora">{{ formatHora(cupo.horaInicio) }} - {{ formatHora(cupo.horaFin) }}</span>
@@ -117,7 +117,7 @@
     </div>
     <div class="modal-body">
       <p>¿Cuántos cupos adicionales desea abrir para el turno actual?</p>
-      <p><small>Se generan de 10 minutos (máx. 2 por día), en secuencia desde que terminó su última atención y sin pasar el fin de su jornada ({{ fechaSeleccionada }}).</small></p>
+      <p><small>Se habilitan en la cola de su jornada (últimos 20 min en 2 bloques de 10 min, máx. 2 por día; el 2do puede pasar su salida hasta 10 min) ({{ formatoFecha(fechaSeleccionada) }}).</small></p>
       
       <div class="form-group">
         <label for="especialidad">Especialidad:</label>

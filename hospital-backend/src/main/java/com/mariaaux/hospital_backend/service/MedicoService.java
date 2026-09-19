@@ -262,55 +262,49 @@ public class MedicoService {
             citaRepository.findByIdMedicoAndFecha(idMedico, fecha).stream()
                 .filter(c -> c.getEstado() != EstadoCita.cancelada)
                 .collect(Collectors.toList());
-        LocalTime ultimoFin = null;
         for (com.mariaaux.hospital_backend.model.Cita c : citasFecha) {
-            LocalTime finEfectivo = c.getHora().plusMinutes(20);
+            LocalTime finBloque = c.getHora().plusMinutes(20);
+            LocalTime finEfectivo = finBloque;
             if ((c.getEstado() == EstadoCita.atendida || c.getEstado() == EstadoCita.no_presentado)
-                    && c.getHoraFinReal() != null && c.getHoraFinReal().isBefore(finEfectivo)) {
-                finEfectivo = c.getHoraFinReal().isBefore(c.getHora()) ? c.getHora() : c.getHoraFinReal();
+                    && c.getHoraFinReal() != null
+                    && !c.getHoraFinReal().isBefore(c.getHora())
+                    && c.getHoraFinReal().isBefore(finBloque)) {
+                finEfectivo = c.getHoraFinReal();
             }
-            if (finEfectivo.isAfter(c.getHora())) {
-                intervalosOcupados.add(new LocalTime[]{c.getHora(), finEfectivo});
-            }
-            if (ultimoFin == null || finEfectivo.isAfter(ultimoFin)) {
-                ultimoFin = finEfectivo;
-            }
+            intervalosOcupados.add(new LocalTime[]{c.getHora(), finEfectivo});
         }
         for (CupoAdicional cupoExistente : cupoAdicionalRepository.findByIdMedicoAndFecha(idMedico, fecha)) {
             intervalosOcupados.add(new LocalTime[]{cupoExistente.getHoraInicio(), cupoExistente.getHoraFin()});
-            if (ultimoFin == null || cupoExistente.getHoraFin().isAfter(ultimoFin)) {
-                ultimoFin = cupoExistente.getHoraFin();
-            }
+        }
+
+        DisponibilidadMedico ultimoBloque = bloquesDelDia.get(bloquesDelDia.size() - 1);
+        LocalTime inicioCola = ultimoBloque.getHoraFin().minusMinutes(20);
+        if (inicioCola.isBefore(ultimoBloque.getHoraInicio())) {
+            inicioCola = ultimoBloque.getHoraInicio();
         }
 
         List<CupoAdicional> nuevosCupos = new java.util.ArrayList<>();
-        LocalTime puntoPartida = ultimoFin;
-        for (DisponibilidadMedico bloque : bloquesDelDia) {
-            if (nuevosCupos.size() >= maxPermitidos) break;
-            LocalTime s = bloque.getHoraInicio();
-            if (puntoPartida != null && puntoPartida.isAfter(s)) {
-                s = puntoPartida;
+        LocalTime topeSalida = ultimoBloque.getHoraFin().plusMinutes(10);
+        LocalTime s = inicioCola;
+        while (nuevosCupos.size() < maxPermitidos && !s.isAfter(ultimoBloque.getHoraFin())
+                && !s.plusMinutes(10).isAfter(topeSalida)) {
+            LocalTime finSlot = s.plusMinutes(10);
+            if (!hayTraslape(intervalosOcupados, s, finSlot)) {
+                CupoAdicional cupo = new CupoAdicional();
+                cupo.setIdMedico(idMedico);
+                cupo.setIdEspecialidad(idEspecialidad);
+                cupo.setFecha(fecha);
+                cupo.setHoraInicio(s);
+                cupo.setHoraFin(finSlot);
+                cupo.setDisponible(true);
+                nuevosCupos.add(cupoAdicionalRepository.save(cupo));
+                intervalosOcupados.add(new LocalTime[]{s, finSlot});
             }
-            while (nuevosCupos.size() < maxPermitidos && !s.plusMinutes(10).isAfter(bloque.getHoraFin())) {
-                LocalTime finSlot = s.plusMinutes(10);
-                if (!hayTraslape(intervalosOcupados, s, finSlot)) {
-                    CupoAdicional cupo = new CupoAdicional();
-                    cupo.setIdMedico(idMedico);
-                    cupo.setIdEspecialidad(idEspecialidad);
-                    cupo.setFecha(fecha);
-                    cupo.setHoraInicio(s);
-                    cupo.setHoraFin(finSlot);
-                    cupo.setDisponible(true);
-                    nuevosCupos.add(cupoAdicionalRepository.save(cupo));
-                    intervalosOcupados.add(new LocalTime[]{s, finSlot});
-                }
-                s = finSlot;
-            }
-            puntoPartida = null;
+            s = finSlot;
         }
 
         if (nuevosCupos.isEmpty()) {
-            throw new RuntimeException("La jornada ya está completa, no hay espacio para adicionales.");
+            throw new RuntimeException("La cola de la jornada está ocupada, no hay espacio para adicionales.");
         }
 
         return nuevosCupos;

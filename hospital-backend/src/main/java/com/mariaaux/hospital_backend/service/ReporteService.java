@@ -272,14 +272,28 @@ public class ReporteService {
         if (desde.isAfter(hasta)) {
             throw new RuntimeException("La fecha de inicio no puede ser mayor que la fecha fin.");
         }
-        LocalDate corte = (fechaCorte != null) ? fechaCorte
-            : desde.plusDays(java.time.temporal.ChronoUnit.DAYS.between(desde, hasta) / 2);
+        List<Cita> citas = citaRepository.findByFechaBetween(desde, hasta);
+        LocalDate corte = citas.stream()
+            .filter(c -> Boolean.TRUE.equals(c.getEsAdicional()))
+            .map(Cita::getFecha)
+            .min(LocalDate::compareTo)
+            .orElse(null);
+        if (corte == null) {
+            corte = (fechaCorte != null) ? fechaCorte
+                : desde.plusDays(java.time.temporal.ChronoUnit.DAYS.between(desde, hasta) / 2);
+        }
         if (corte.isBefore(desde)) corte = desde;
         if (corte.isAfter(hasta)) corte = hasta;
         final LocalDate corteFinal = corte;
 
-        List<Cita> citas = citaRepository.findByFechaBetween(desde, hasta);
         long diasTotales = Math.max(1, java.time.temporal.ChronoUnit.DAYS.between(desde, hasta) + 1);
+
+        Map<Long, java.math.BigDecimal> precioPorEsp = new java.util.HashMap<>();
+        java.util.function.Function<Long, java.math.BigDecimal> precioDe = idEsp ->
+            precioPorEsp.computeIfAbsent(idEsp, id -> {
+                Especialidad esp = especialidadRepository.findById(id).orElse(null);
+                return esp != null && esp.getPrecio() != null ? esp.getPrecio() : java.math.BigDecimal.ZERO;
+            });
 
         Map<Long, List<Cita>> porMedico = citas.stream()
             .collect(Collectors.groupingBy(Cita::getIdMedico));
@@ -288,9 +302,21 @@ public class ReporteService {
             .map(entry -> {
                 long total = entry.getValue().size();
                 long adic = entry.getValue().stream().filter(c -> Boolean.TRUE.equals(c.getEsAdicional())).count();
+                java.math.BigDecimal ingAdic = entry.getValue().stream()
+                    .filter(c -> c.getEstado() == EstadoCita.atendida && Boolean.TRUE.equals(c.getEsAdicional()))
+                    .map(c -> precioDe.apply(c.getIdEspecialidad()))
+                    .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                java.math.BigDecimal ingNorm = entry.getValue().stream()
+                    .filter(c -> c.getEstado() == EstadoCita.atendida && !Boolean.TRUE.equals(c.getEsAdicional()))
+                    .map(c -> precioDe.apply(c.getIdEspecialidad()))
+                    .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                java.math.BigDecimal ingTotal = ingNorm.add(ingAdic);
+                double porc = ingTotal.compareTo(java.math.BigDecimal.ZERO) > 0
+                    ? redondear(ingAdic.doubleValue() / ingTotal.doubleValue() * 100) : 0.0;
                 return new AdicionalPorMedicoDTO(
                     entry.getKey(), total, total - adic, adic,
-                    redondear((double) adic / diasTotales)
+                    redondear((double) adic / diasTotales),
+                    ingNorm, ingAdic, ingTotal, porc
                 );
             })
             .collect(Collectors.toList());
@@ -303,31 +329,63 @@ public class ReporteService {
                 Especialidad esp = especialidadRepository.findById(entry.getKey()).orElse(null);
                 long total = entry.getValue().size();
                 long adic = entry.getValue().stream().filter(c -> Boolean.TRUE.equals(c.getEsAdicional())).count();
+                java.math.BigDecimal ingAdic = entry.getValue().stream()
+                    .filter(c -> c.getEstado() == EstadoCita.atendida && Boolean.TRUE.equals(c.getEsAdicional()))
+                    .map(c -> precioDe.apply(c.getIdEspecialidad()))
+                    .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                java.math.BigDecimal ingNorm = entry.getValue().stream()
+                    .filter(c -> c.getEstado() == EstadoCita.atendida && !Boolean.TRUE.equals(c.getEsAdicional()))
+                    .map(c -> precioDe.apply(c.getIdEspecialidad()))
+                    .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                java.math.BigDecimal ingTotal = ingNorm.add(ingAdic);
+                double porc = ingTotal.compareTo(java.math.BigDecimal.ZERO) > 0
+                    ? redondear(ingAdic.doubleValue() / ingTotal.doubleValue() * 100) : 0.0;
                 return new AdicionalPorEspecialidadDTO(
                     entry.getKey(),
                     esp != null ? esp.getNombre() : "Desconocida",
                     total, total - adic, adic,
-                    redondear((double) adic / diasTotales)
+                    redondear((double) adic / diasTotales),
+                    ingNorm, ingAdic, ingTotal, porc
                 );
             })
             .collect(Collectors.toList());
 
-        long diasAntes = Math.max(0, java.time.temporal.ChronoUnit.DAYS.between(desde, corteFinal));
-        long diasDespues = Math.max(1, java.time.temporal.ChronoUnit.DAYS.between(corteFinal, hasta) + 1);
-        long adicAntes = citas.stream()
-            .filter(c -> c.getFecha().isBefore(corteFinal) && Boolean.TRUE.equals(c.getEsAdicional())).count();
-        long adicDespues = citas.stream()
-            .filter(c -> !c.getFecha().isBefore(corteFinal) && Boolean.TRUE.equals(c.getEsAdicional())).count();
-        double promAntes = diasAntes > 0 ? redondear((double) adicAntes / diasAntes) : 0.0;
-        double promDespues = redondear((double) adicDespues / diasDespues);
+        LocalDate inicioAntes = corteFinal.minusDays(7).isBefore(desde) ? desde : corteFinal.minusDays(7);
+        LocalDate finAntes = corteFinal.minusDays(1);
+        LocalDate inicioDespues = corteFinal;
+        LocalDate finDespues = corteFinal.plusDays(6).isAfter(hasta) ? hasta : corteFinal.plusDays(6);
+        long diasAntes = finAntes.isBefore(inicioAntes) ? 0
+            : java.time.temporal.ChronoUnit.DAYS.between(inicioAntes, finAntes) + 1;
+        long diasDespues = finDespues.isBefore(inicioDespues) ? 0
+            : java.time.temporal.ChronoUnit.DAYS.between(inicioDespues, finDespues) + 1;
+        long citasAntes = citas.stream()
+            .filter(c -> !c.getFecha().isBefore(inicioAntes) && !c.getFecha().isAfter(finAntes)).count();
+        long citasDespues = citas.stream()
+            .filter(c -> !c.getFecha().isBefore(inicioDespues) && !c.getFecha().isAfter(finDespues)).count();
+        double promAntes = diasAntes > 0 ? redondear((double) citasAntes / diasAntes) : 0.0;
+        double promDespues = diasDespues > 0 ? redondear((double) citasDespues / diasDespues) : 0.0;
         double incremento = promAntes > 0 ? redondear((promDespues - promAntes) / promAntes * 100)
             : (promDespues > 0 ? 100.0 : 0.0);
 
         long totalAdic = citas.stream().filter(c -> Boolean.TRUE.equals(c.getEsAdicional())).count();
+        double porcCitasAdic = !citas.isEmpty()
+            ? redondear((double) totalAdic / citas.size() * 100) : 0.0;
+        java.math.BigDecimal ingTotalAdic = citas.stream()
+            .filter(c -> c.getEstado() == EstadoCita.atendida && Boolean.TRUE.equals(c.getEsAdicional()))
+            .map(c -> precioDe.apply(c.getIdEspecialidad()))
+            .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        java.math.BigDecimal ingTotalNorm = citas.stream()
+            .filter(c -> c.getEstado() == EstadoCita.atendida && !Boolean.TRUE.equals(c.getEsAdicional()))
+            .map(c -> precioDe.apply(c.getIdEspecialidad()))
+            .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        java.math.BigDecimal ingTotal = ingTotalNorm.add(ingTotalAdic);
+        double porcIngresoAdic = ingTotal.compareTo(java.math.BigDecimal.ZERO) > 0
+            ? redondear(ingTotalAdic.doubleValue() / ingTotal.doubleValue() * 100) : 0.0;
         return new ReporteAdicionalesDTO(
             desde, hasta, corteFinal,
             (long) citas.size(), (long) citas.size() - totalAdic, totalAdic,
-            promAntes, promDespues, incremento,
+            promAntes, promDespues, incremento, porcCitasAdic,
+            ingTotalNorm, ingTotalAdic, ingTotal, porcIngresoAdic,
             medicos, especialidades
         );
     }

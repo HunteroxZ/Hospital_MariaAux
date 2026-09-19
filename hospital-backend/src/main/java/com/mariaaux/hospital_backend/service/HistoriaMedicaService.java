@@ -38,6 +38,10 @@ public class HistoriaMedicaService {
         if (cita.getEstado() == EstadoCita.atendida) {
              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta cita ya fue marcada como atendida y tiene un historial.");
         }
+
+        if (cita.getEstado() != EstadoCita.confirmada) {
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cita debe estar pagada (confirmada) antes de registrar el historial.");
+        }
         
         if (historiaMedicaRepository.findByIdCita(request.getIdCita()).isPresent()) {
              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya existe un historial registrado para esta cita.");

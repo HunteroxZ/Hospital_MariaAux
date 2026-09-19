@@ -168,6 +168,29 @@
 .status-atendida { color: #6c757d; }
 .status-cancelada { color: #dc3545; text-decoration: line-through;}
 
+.citas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.citas-table th,
+.citas-table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.citas-table th {
+  background: #f8f9fa;
+  color: #2c3e50;
+}
+
+.capitalizar {
+  text-transform: capitalize;
+}
+
 .badge-adicional {
   display: inline-block;
   background: #d1e7dd;

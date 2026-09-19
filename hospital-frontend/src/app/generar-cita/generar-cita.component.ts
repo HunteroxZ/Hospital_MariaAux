@@ -240,7 +240,7 @@ export class GenerarCitaComponent implements OnInit {
 
         const idEsp = Number(this.citaData.idEspecialidad);
         const cuposValidos = (cuposAdicionales || [])
-          .filter((c: any) => c.disponible && Number(c.idEspecialidad) === idEsp);
+          .filter((c: any) => Number(c.idEspecialidad) === idEsp);
         const horasAdicionales = new Set(cuposValidos.map((c: any) => c.horaInicio.substring(0, 8)));
 
         this.timeSlots = slotsGenerados
@@ -255,7 +255,8 @@ export class GenerarCitaComponent implements OnInit {
           const hora = cupo.horaInicio.substring(0, 8);
           if (!this.timeSlots.some(s => s.hora === hora)) {
             const pasada = this.esHoraPasada(hora, fechaSeleccionada);
-            this.timeSlots.push({ hora, disponible: !horasReservadas.includes(hora) && !pasada, esAdicional: true, pasada });
+            const libre = cupo.disponible && !horasReservadas.includes(hora) && !pasada;
+            this.timeSlots.push({ hora, disponible: libre, esAdicional: true, pasada });
           }
         });
         this.timeSlots.sort((a, b) => a.hora.localeCompare(b.hora));

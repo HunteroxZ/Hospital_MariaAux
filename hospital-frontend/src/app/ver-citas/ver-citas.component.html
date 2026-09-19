@@ -21,12 +21,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let cita of citas">
-          <td>{{ cita.fecha }}</td>
-          <td>{{ formatHora(cita.hora) }}</td> <td>{{ cita.nombreEspecialidad }}</td>
-          <td>Dr(a). {{ cita.nombreMedico }}</td>
-          <td>{{ cita.motivoConsulta }}</td>
+          <td>{{ formatoFecha(cita.fecha) }}</td>
+          <td>{{ formatHora(cita.hora) }} <td>{{ cita.nombreEspecialidad }}</td>
+          <td class="capitalizar">Dr(a). {{ cita.nombreMedico }}</td>
+          <td class="capitalizar">{{ cita.motivoConsulta }}</td>
           <td>
-            <span [ngClass]="'status-' + cita.estado">{{ cita.estado }}</span>
+            <span [ngClass]="'status-' + cita.estado" class="capitalizar">{{ formatoEstado(cita.estado) }}</span>
           </td>
         </tr>
       </tbody>

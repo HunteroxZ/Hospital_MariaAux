@@ -172,9 +172,9 @@ public class PDFService {
         title.setSpacingAfter(15);
         document.add(title);
         
-        PdfPTable table = new PdfPTable(8);
+        PdfPTable table = new PdfPTable(7);
         table.setWidthPercentage(100);
-        table.setWidths(new float[]{1, 3f, 1.5f, 1, 1, 2f, 1.5f, 1.5f});
+        table.setWidths(new float[]{1, 3f, 1.5f, 1, 2.5f, 2f, 1.5f});
         
         addTableHeader(table, "ID", "Nombre", "DNI", "Sexo", "Correo", "Teléfono", "Total Citas");
         
@@ -265,29 +265,40 @@ public class PDFService {
             "Total citas: " + datos.getTotalCitas() +
             " | Normales: " + datos.getTotalNormales() +
             " | Adicionales: " + datos.getTotalAdicionales() +
-            " | Promedio diario antes: " + datos.getPromedioDiarioAntes() +
-            " | Promedio diario después: " + datos.getPromedioDiarioDespues() +
-            " | Incremento: " + datos.getIncrementoPorcentual() + "%",
+            " | Promedio diario (antes de adicionales): " + datos.getPromedioDiarioAntes() +
+            " | Promedio diario (con adicionales): " + datos.getPromedioDiarioDespues() +
+            " | % citas adicionales: " + datos.getPorcentajeCitasAdicionales() + "%",
             FONT_NORMAL
         );
-        resumen.setSpacingAfter(15);
+        resumen.setSpacingAfter(5);
         document.add(resumen);
+
+        Paragraph ingresos = new Paragraph(
+            "Ingreso normales: S/ " + datos.getIngresoTotalNormales() +
+            " | Ingreso adicionales: S/ " + datos.getIngresoTotalAdicionales() +
+            " | Ingreso total: S/ " + datos.getIngresoTotal() +
+            " | % adicional: " + datos.getPorcentajeIngresoAdicional() + "%",
+            FONT_NORMAL
+        );
+        ingresos.setSpacingAfter(15);
+        document.add(ingresos);
 
         Paragraph h1 = new Paragraph("Por médico (anónimo)", FONT_SUBTITLE);
         h1.setSpacingAfter(5);
         document.add(h1);
 
-        PdfPTable tablaMedicos = new PdfPTable(5);
+        PdfPTable tablaMedicos = new PdfPTable(6);
         tablaMedicos.setWidthPercentage(100);
-        tablaMedicos.setWidths(new float[]{2f, 2f, 2f, 2f, 2.5f});
-        addTableHeader(tablaMedicos, "Médico", "Total Citas", "Normales", "Adicionales", "Promedio Diario Adic.");
+        tablaMedicos.setWidths(new float[]{2f, 1.5f, 1.5f, 2f, 2f, 2f});
+        addTableHeader(tablaMedicos, "Médico", "Total", "Normales", "Adicionales", "S/ Normal", "S/ Adicional");
         int i = 1;
         for (AdicionalPorMedicoDTO m : datos.getPorMedico()) {
             addTableCell(tablaMedicos, "Médico " + (i++));
             addTableCell(tablaMedicos, m.getTotalCitas().toString());
             addTableCell(tablaMedicos, m.getCitasNormales().toString());
             addTableCell(tablaMedicos, m.getCitasAdicionales().toString());
-            addTableCell(tablaMedicos, m.getPromedioDiarioAdicionales().toString());
+            addTableCell(tablaMedicos, "S/ " + m.getIngresoNormales());
+            addTableCell(tablaMedicos, "S/ " + m.getIngresoAdicionales());
         }
         document.add(tablaMedicos);
 
@@ -296,16 +307,17 @@ public class PDFService {
         h2.setSpacingAfter(5);
         document.add(h2);
 
-        PdfPTable tablaEsp = new PdfPTable(5);
+        PdfPTable tablaEsp = new PdfPTable(6);
         tablaEsp.setWidthPercentage(100);
-        tablaEsp.setWidths(new float[]{3f, 2f, 2f, 2f, 2.5f});
-        addTableHeader(tablaEsp, "Especialidad", "Total Citas", "Normales", "Adicionales", "Promedio Diario Adic.");
+        tablaEsp.setWidths(new float[]{2.5f, 1.5f, 1.5f, 2f, 2f, 2f});
+        addTableHeader(tablaEsp, "Especialidad", "Total", "Normales", "Adicionales", "S/ Normal", "S/ Adicional");
         for (AdicionalPorEspecialidadDTO e : datos.getPorEspecialidad()) {
             addTableCell(tablaEsp, e.getNombreEspecialidad());
             addTableCell(tablaEsp, e.getTotalCitas().toString());
             addTableCell(tablaEsp, e.getCitasNormales().toString());
             addTableCell(tablaEsp, e.getCitasAdicionales().toString());
-            addTableCell(tablaEsp, e.getPromedioDiarioAdicionales().toString());
+            addTableCell(tablaEsp, "S/ " + e.getIngresoNormales());
+            addTableCell(tablaEsp, "S/ " + e.getIngresoAdicionales());
         }
         document.add(tablaEsp);
 

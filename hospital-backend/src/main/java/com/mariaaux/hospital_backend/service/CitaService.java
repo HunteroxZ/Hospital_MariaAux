@@ -167,8 +167,8 @@ public class CitaService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + idCita));
 
 
-        if (cita.getEstado() == EstadoCita.atendida || cita.getEstado() == EstadoCita.cancelada || cita.getEstado() == EstadoCita.no_presentado) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El estado actual de la cita no permite ser marcada como atendida.");
+        if (cita.getEstado() != EstadoCita.confirmada) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cita debe estar pagada (confirmada) antes de marcarla como atendida.");
         }
 
         cita.setEstado(EstadoCita.atendida);

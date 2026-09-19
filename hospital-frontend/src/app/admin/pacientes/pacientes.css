@@ -678,4 +678,8 @@
   }
 }
 
+.capitalizar {
+  text-transform: capitalize;
+}
+
 

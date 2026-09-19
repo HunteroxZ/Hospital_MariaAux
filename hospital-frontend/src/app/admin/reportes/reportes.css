@@ -467,3 +467,7 @@
     padding: 8px;
   }
 }
+
+.capitalizar {
+  text-transform: capitalize;
+}

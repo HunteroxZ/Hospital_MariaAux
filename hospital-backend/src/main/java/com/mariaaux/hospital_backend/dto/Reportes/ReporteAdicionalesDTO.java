@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -20,6 +21,11 @@ public class ReporteAdicionalesDTO {
     private Double promedioDiarioAntes;
     private Double promedioDiarioDespues;
     private Double incrementoPorcentual;
+    private Double porcentajeCitasAdicionales;
+    private BigDecimal ingresoTotalNormales;
+    private BigDecimal ingresoTotalAdicionales;
+    private BigDecimal ingresoTotal;
+    private Double porcentajeIngresoAdicional;
     private List<AdicionalPorMedicoDTO> porMedico;
     private List<AdicionalPorEspecialidadDTO> porEspecialidad;
 }

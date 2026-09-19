@@ -33,6 +33,13 @@ export class RecepcionistaDashboardComponent implements OnInit {
   isLoading: boolean = false;
   mostrarMenuPago: boolean = false;
   mostrarModalTicketSIS: boolean = false;
+  mostrarRegistroRapido: boolean = false;
+  pacienteNoEncontrado: boolean = false;
+  isGuardandoPaciente: boolean = false;
+  errorRegistro: string = '';
+  registroRapido: any = {
+    dni: '', nombres: '', apellidos: '', sexo: 'M', fechaNacimiento: ''
+  };
 
   private apiUrlBase = environment.apiUrl;
   especialidadesHorario: any[] = [];
@@ -47,6 +54,13 @@ export class RecepcionistaDashboardComponent implements OnInit {
   semanaInicio: string = '';
   diasDisponibles: any[] = [];
   private disponibilidadMedico: any[] = [];
+
+  reservaPaciente: any = null;
+  slotSeleccionado: string | null = null;
+  motivoReserva: string = '';
+  sintomasReserva: string = '';
+  isGuardandoCita: boolean = false;
+  mensajeReserva: string = '';
 
   constructor(
     private recepcionistaService: RecepcionistaService,
@@ -72,6 +86,7 @@ export class RecepcionistaDashboardComponent implements OnInit {
     this.errorMessage = '';
     this.citasEncontradas = [];
     this.citaSeleccionada = null;
+    this.resolverPacienteReserva(this.dniBusqueda);
 
     this.recepcionistaService.buscarCitasPorDni(this.dniBusqueda).subscribe({
       next: (citas) => {
@@ -82,6 +97,9 @@ export class RecepcionistaDashboardComponent implements OnInit {
       },
       error: (error) => {
         this.errorMessage = error.error?.error || 'Error al buscar citas';
+        if ((this.errorMessage || '').includes('No se encontró ningún paciente')) {
+          this.pacienteNoEncontrado = true;
+        }
         this.isLoading = false;
       },
       complete: () => {
@@ -254,9 +272,154 @@ export class RecepcionistaDashboardComponent implements OnInit {
     }
   }
 
+  resolverPacienteReserva(dni: string): void {
+    if (!dni || dni.length !== 8) {
+      this.reservaPaciente = null;
+      return;
+    }
+    this.http.get<any[]>(`${this.apiUrlBase}/pacientes/info?dni=${dni}`).subscribe({
+      next: (data) => {
+        const p = (data || []).find((x: any) => x.dni === dni);
+        this.reservaPaciente = p
+          ? { idPaciente: p.idPaciente, nombre: p.nombre, dni: p.dni }
+          : null;
+      },
+      error: () => { this.reservaPaciente = null; }
+    });
+  }
+
+  seleccionarSlotReserva(slot: SlotHorario): void {
+    if (!slot.disponible || slot.pasada) return;
+    this.slotSeleccionado = slot.hora;
+  }
+
+  datosReservaListos(): boolean {
+    return !!this.reservaPaciente && !!this.idEspHorario && !!this.idMedicoHorario
+      && !!this.fechaHorario && !!this.slotSeleccionado;
+  }
+
+  confirmarReserva(): void {
+    if (!this.reservaPaciente) {
+      this.mensajeReserva = 'Ingrese y busque el DNI del paciente arriba antes de confirmar.';
+      return;
+    }
+    if (!this.datosReservaListos()) {
+      this.mensajeReserva = 'Seleccione paciente, especialidad, médico, fecha y hora.';
+      return;
+    }
+    if (!this.motivoReserva || !this.sintomasReserva) {
+      this.mensajeReserva = 'Ingrese motivo y síntomas.';
+      return;
+    }
+    this.isGuardandoCita = true;
+    this.mensajeReserva = '';
+
+    const body = {
+      idPaciente: this.reservaPaciente.idPaciente,
+      idEspecialidad: this.idEspHorario,
+      idMedico: this.idMedicoHorario,
+      fecha: this.fechaHorario,
+      hora: this.slotSeleccionado,
+      motivoConsulta: this.motivoReserva,
+      sintomas: this.sintomasReserva
+    };
+
+    this.http.post<any>(`${this.apiUrlBase}/citas`, body).subscribe({
+      next: (resp) => {
+        const medico = this.medicosHorario.find(m => m.idMedico === this.idMedicoHorario);
+        const esp = this.especialidadesHorario.find(e => e.idEspecialidad === this.idEspHorario);
+        this.citaSeleccionada = {
+          idCita: resp.idCita,
+          nombrePaciente: this.reservaPaciente.nombre,
+          dniPaciente: this.reservaPaciente.dni,
+          nombreMedico: medico ? `${medico.nombres} ${medico.apellidos}` : '',
+          especialidad: esp ? esp.nombre : '',
+          fecha: this.fechaHorario,
+          hora: this.slotSeleccionado!.substring(0, 5),
+          motivoConsulta: this.motivoReserva,
+          estado: 'pendiente',
+          precio: esp && esp.precio ? Number(esp.precio) : 0,
+          tieneSIS: false
+        };
+        this.isGuardandoCita = false;
+        this.mensajeReserva = 'Cita registrada. Proceda con el pago abajo.';
+        this.slotSeleccionado = null;
+        this.motivoReserva = '';
+        this.sintomasReserva = '';
+        this.cargarHorariosMedico();
+        if (this.citaSeleccionada && !this.citasEncontradas.some(c => c.idCita === this.citaSeleccionada!.idCita)) {
+          this.citasEncontradas = [this.citaSeleccionada, ...this.citasEncontradas];
+        }
+      },
+      error: (err) => {
+        this.mensajeReserva = err.error?.error || 'Error al registrar la cita.';
+        this.isGuardandoCita = false;
+      }
+    });
+  }
+
   cerrarSesion(): void {
     this.recepcionistaService.cerrarSesion();
     this.router.navigate(['/recepcionista/login']);
+  }
+
+  confirmarRegistroRapido(desea: boolean): void {
+    this.pacienteNoEncontrado = false;
+    if (desea) {
+      this.registroRapido = {
+        dni: this.dniBusqueda, nombres: '', apellidos: '',
+        sexo: 'M', fechaNacimiento: ''
+      };
+      this.errorRegistro = '';
+      this.errorMessage = '';
+      this.mostrarRegistroRapido = true;
+    } else {
+      this.errorMessage = '';
+    }
+  }
+
+  cerrarRegistroRapido(): void {
+    this.mostrarRegistroRapido = false;
+    this.errorRegistro = '';
+  }
+
+  guardarRegistroRapido(): void {
+    const r = this.registroRapido;
+    if (!r.nombres || !r.apellidos || !r.sexo || !r.fechaNacimiento) {
+      this.errorRegistro = 'Complete nombres, apellidos, sexo y fecha de nacimiento.';
+      return;
+    }
+    this.isGuardandoPaciente = true;
+    this.errorRegistro = '';
+
+    const body = {
+      dni: r.dni,
+      nombres: r.nombres,
+      apellidos: r.apellidos,
+      sexo: r.sexo,
+      correo: `${r.dni}@paciente.hospital`,
+      telefono: null,
+      fechaNacimiento: r.fechaNacimiento,
+      clave: r.dni
+    };
+
+    this.http.post<any>(`${this.apiUrlBase}/registro`, body).subscribe({
+      next: (resp) => {
+        this.isGuardandoPaciente = false;
+        this.mostrarRegistroRapido = false;
+        this.errorMessage = '';
+        this.reservaPaciente = {
+          idPaciente: resp.idPaciente,
+          nombre: `${r.nombres} ${r.apellidos}`,
+          dni: r.dni
+        };
+        alert('Cuenta creada con éxito. Usuario y contraseña: ' + r.dni);
+      },
+      error: (err) => {
+        this.errorRegistro = err.error?.error || 'Error al registrar paciente.';
+        this.isGuardandoPaciente = false;
+      }
+    });
   }
 
   cargarEspecialidadesHorario(): void {
@@ -400,7 +563,7 @@ export class RecepcionistaDashboardComponent implements OnInit {
         const horariosDelDia = disponibilidades.filter(d => d.diaSemana === diaSemanaNombre);
         const slots: SlotHorario[] = [];
 
-        const cuposValidos = (cuposAdicionales || []).filter((c: any) => c.disponible);
+        const cuposValidos = (cuposAdicionales || []);
         const horasAdicionales = new Set(cuposValidos.map((c: any) => c.horaInicio.substring(0, 8)));
 
         horariosDelDia.forEach(bloque => {
@@ -421,7 +584,9 @@ export class RecepcionistaDashboardComponent implements OnInit {
           .forEach(cupo => {
             const hora = cupo.horaInicio.substring(0, 8);
             if (!slots.some(s => s.hora === hora)) {
-              slots.push({ hora, disponible: !horasReservadas.includes(hora), esAdicional: true, pasada: this.esHoraPasada(hora, this.fechaHorario) });
+              const pasada = this.esHoraPasada(hora, this.fechaHorario);
+              const libre = cupo.disponible && !horasReservadas.includes(hora) && !pasada;
+              slots.push({ hora, disponible: libre, esAdicional: true, pasada });
             }
           });
 

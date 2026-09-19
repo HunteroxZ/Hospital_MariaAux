@@ -24,6 +24,17 @@ public class CitaController {
     @Autowired
     private CitaService citaService;
 
+    private static String mensajeError(RuntimeException e) {
+        if (e instanceof org.springframework.web.server.ResponseStatusException rse) {
+            String razon = rse.getReason();
+            if (razon != null && !razon.isBlank()) {
+                return razon.replaceAll("^[0-9]{3} [A-Z_ ]+ \"|\"$", "");
+            }
+        }
+        String msg = e.getMessage() != null ? e.getMessage() : "Error en la operación.";
+        return msg.replaceAll("^[0-9]{3} [A-Z_ ]+ \"|\"$", "");
+    }
+
     @PostMapping
     public ResponseEntity<?> registrarNuevaCita(@Valid @RequestBody RegistrarCitaRequest request) {
         try {
@@ -37,7 +48,7 @@ public class CitaController {
             HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                  (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                  HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
             
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al registrar la cita."));
@@ -54,7 +65,7 @@ public class CitaController {
             HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                  (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                  HttpStatus.NOT_FOUND;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
             
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al obtener las citas del paciente."));
@@ -74,7 +85,7 @@ public class CitaController {
             HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                  (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                  HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -95,7 +106,7 @@ public class CitaController {
             HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                  (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                  HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
             
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -114,7 +125,7 @@ public class CitaController {
             HttpStatus status = (e instanceof org.springframework.web.server.ResponseStatusException) ? 
                                  (HttpStatus)((org.springframework.web.server.ResponseStatusException) e).getStatusCode() : 
                                  HttpStatus.NOT_FOUND;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
       
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -129,7 +140,7 @@ public class CitaController {
         try {
             return ResponseEntity.ok(citaService.obtenerConteoSemanalPorMedico(idMedico, inicio));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", mensajeError(e)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body(Map.of("error", "Error interno al obtener conteo semanal."));

@@ -47,3 +47,7 @@
 .info-message { background-color: #e9ecef; color: #6c757d;} 
 .error-message { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7;} 
 
+.capitalizar {
+  text-transform: capitalize;
+}
+

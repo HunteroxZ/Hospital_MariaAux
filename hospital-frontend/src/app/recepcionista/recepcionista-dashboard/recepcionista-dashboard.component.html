@@ -33,6 +33,16 @@
           </div>
         }
 
+        @if (pacienteNoEncontrado) {
+          <div class="confirm-registro">
+            <p><strong>Paciente no encontrado, ¿desea crear un nuevo usuario?</strong></p>
+            <div class="acciones-section">
+              <button (click)="confirmarRegistroRapido(true)" class="btn-pagar">Sí</button>
+              <button (click)="confirmarRegistroRapido(false)" class="btn-cerrar-sesion">No</button>
+            </div>
+          </div>
+        }
+
         @if (tieneCitas) {
           <div class="citas-list">
             <h3>Citas Pendientes Encontradas:</h3>
@@ -42,12 +52,12 @@
                 [class.seleccionada]="esCitaSeleccionada(cita.idCita)"
                 (click)="seleccionarCita(cita)">
                 <div class="cita-info">
-                  <p><strong>Paciente:</strong> {{ cita.nombrePaciente }}</p>
+                  <p class="capitalizar"><strong>Paciente:</strong> {{ cita.nombrePaciente }}</p>
                   <p><strong>DNI:</strong> {{ cita.dniPaciente }}</p>
-                  <p><strong>Médico:</strong> {{ cita.nombreMedico }}</p>
-                  <p><strong>Especialidad:</strong> {{ cita.especialidad }}</p>
+                  <p class="capitalizar"><strong>Médico:</strong> {{ cita.nombreMedico }}</p>
+                  <p class="capitalizar"><strong>Especialidad:</strong> {{ cita.especialidad }}</p>
                   <p><strong>Fecha:</strong> {{ cita.fecha }} - {{ cita.hora }}</p>
-                  <p><strong>Motivo:</strong> {{ cita.motivoConsulta }}</p>
+                  <p class="capitalizar"><strong>Motivo:</strong> {{ cita.motivoConsulta }}</p>
                   <p class="precio"><strong>Precio:</strong> S/ {{ cita.precio | number:'1.2-2' }}</p>
                   
                   <!-- CHECKBOX SIS -->
@@ -138,11 +148,13 @@
         @if (slotsHorario.length > 0) {
           <div class="slots-grid">
             @for (slot of slotsHorario; track slot.hora) {
-              <div class="slot"
+              <div class="slot slot-click"
                 [class.disponible]="slot.disponible && !slot.esAdicional && !slot.pasada"
                 [class.reservado]="!slot.disponible && !slot.pasada"
                 [class.adicional]="slot.esAdicional && slot.disponible && !slot.pasada"
-                [class.pasada]="slot.pasada">
+                [class.pasada]="slot.pasada"
+                [class.selected]="slotSeleccionado === slot.hora"
+                (click)="seleccionarSlotReserva(slot)">
                 {{ formatHoraCorta(slot.hora) }}@if (slot.esAdicional && !slot.pasada) { ➕ }
               </div>
             }
@@ -153,6 +165,32 @@
             <span class="legend-item"><span class="legend-dot adicional-dot"></span> Adicional (Verde)</span>
             <span class="legend-item"><span class="legend-dot pasada-dot"></span> Hora pasada (Gris)</span>
           </div>
+
+          @if (slotSeleccionado) {
+            <div class="reserva-box">
+              @if (reservaPaciente) {
+                <p><strong>Reservando para:</strong> {{ reservaPaciente.nombre }} (DNI {{ reservaPaciente.dni }}) - {{ formatHoraCorta(slotSeleccionado) }}</p>
+              } @else {
+                <p class="aviso-reserva">Busque primero el DNI del paciente arriba (o créelo con registro rápido) para reservar.</p>
+              }
+              <div class="horarios-filtros">
+                <div class="input-group">
+                  <label for="motivoReserva">Motivo:</label>
+                  <input type="text" id="motivoReserva" [(ngModel)]="motivoReserva" placeholder="Motivo de la consulta" />
+                </div>
+                <div class="input-group">
+                  <label for="sintomasReserva">Síntomas:</label>
+                  <input type="text" id="sintomasReserva" [(ngModel)]="sintomasReserva" placeholder="Síntomas" />
+                </div>
+              </div>
+              @if (mensajeReserva) {
+                <div class="info-message">{{ mensajeReserva }}</div>
+              }
+              <button (click)="confirmarReserva()" [disabled]="isGuardandoCita" class="btn-pagar">
+                {{ isGuardandoCita ? 'Registrando...' : 'Confirmar Reserva' }}
+              </button>
+            </div>
+          }
         }
       </div>
     </div>
@@ -175,6 +213,48 @@
             <button (click)="imprimirTicketSIS()" class="btn-imprimir">
               Imprimir Ticket
             </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (mostrarRegistroRapido) {
+      <div class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h2>Registro Rápido de Paciente</h2>
+            <p>DNI: <strong>{{ registroRapido.dni }}</strong> (será su usuario y contraseña)</p>
+
+            <div class="input-group">
+              <label for="rrNombres">Nombres:</label>
+              <input type="text" id="rrNombres" [(ngModel)]="registroRapido.nombres" placeholder="Nombres" />
+            </div>
+            <div class="input-group">
+              <label for="rrApellidos">Apellidos:</label>
+              <input type="text" id="rrApellidos" [(ngModel)]="registroRapido.apellidos" placeholder="Apellidos" />
+            </div>
+            <div class="input-group">
+              <label for="rrSexo">Sexo:</label>
+              <select id="rrSexo" [(ngModel)]="registroRapido.sexo">
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="rrFechaNac">Fecha de nacimiento:</label>
+              <input type="date" id="rrFechaNac" [(ngModel)]="registroRapido.fechaNacimiento" />
+            </div>
+
+            @if (errorRegistro) {
+              <div class="error-message">{{ errorRegistro }}</div>
+            }
+
+            <div class="acciones-section">
+              <button (click)="cerrarRegistroRapido()" class="btn-cerrar-sesion">Cancelar</button>
+              <button (click)="guardarRegistroRapido()" [disabled]="isGuardandoPaciente" class="btn-pagar">
+                {{ isGuardandoPaciente ? 'Guardando...' : 'Crear Cuenta' }}
+              </button>
+            </div>
           </div>
         </div>
       </div>

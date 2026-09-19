@@ -80,7 +80,7 @@
         <tbody>
           <tr *ngFor="let paciente of pacientesPaginados; let i = index" [class.row-even]="i % 2 === 0">
             <td>{{ paciente.idPaciente }}</td>
-            <td class="nombre-col">{{ paciente.nombre }}</td>
+            <td class="nombre-col capitalizar">{{ paciente.nombre }}</td>
             <td>{{ paciente.dni }}</td>
             <td>{{ paciente.correoElectronico }}</td>
             <td>{{ paciente.telefono }}</td>
