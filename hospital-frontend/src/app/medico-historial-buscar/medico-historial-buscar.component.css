@@ -1,222 +1,64 @@
 /*app/medico-historial-buscar/medico-historial-buscar.component.css*/
-
-/*app/medico-historial-buscar/medico-historial-buscar.component.css*/
-
+:host { display: block; }
+.buscar-card.card-simple { max-width: 920px; padding: 0; overflow: hidden; border-radius: 18px; border: none; border-top: none; background: #fff; box-shadow: 0 14px 34px rgba(7, 52, 80, .12); }
+.buscar-band { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; background: linear-gradient(135deg, #073450 0%, #0a5c88 55%, #0e7ab5 100%); color: #fff; padding: 26px 28px; }
+.buscar-band .kicker { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: #bfe0f2; margin-bottom: 7px; }
+.buscar-band h2 { color: #fff !important; text-align: left !important; border: none !important; padding: 0 !important; margin: 0 0 6px !important; font-size: 1.45rem; }
+.buscar-band p { margin: 0; color: #d9ecf7; font-size: .92rem; }
+.buscar-ico { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); }
+.buscar-body { padding: 22px 24px 24px; }
+.kicker-navy { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: #0e7ab5; margin-bottom: 4px; }
+.result-title { color: #073450; text-align: left; font-size: 1.1rem; margin: 6px 0 16px; }
 /* === FORMULARIO DE BÚSQUEDA === */
-.search-form {
-  display: flex;
-  gap: 15px;
-  align-items: flex-start;
-  padding: 1.5rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.search-form .form-group {
-  flex-grow: 1;
-  margin-bottom: 0;
-}
-
-.search-form label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #363636;
-}
-
-.search-form input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 1em;
-}
-
-.search-form .btn {
-  padding: 12px 20px;
-  margin-top: 25px;
-}
-
+.search-form { display: flex; gap: 14px; align-items: flex-start; padding: 18px; background: #f2f7fb; border: 1.5px solid #dbe7ef; border-radius: 16px; margin-bottom: 6px; }
+.search-form .form-group { flex-grow: 1; margin-bottom: 0; }
+.search-form label { display: block; font-weight: 700; margin-bottom: 7px; color: #073450; font-size: .9rem; }
+.search-form input[type="text"] { width: 100%; padding: 12px 14px; border: 1.5px solid #dbe7ef; border-radius: 11px; box-sizing: border-box; font-size: 1rem; background: #fff; color: #073450; letter-spacing: .08em; }
+.search-form input[type="text"]:focus { outline: none; border-color: #0e7ab5; box-shadow: 0 0 0 3px rgba(14,122,181,.15); }
+.search-form .btn { padding: 12px 22px; margin-top: 28px; white-space: nowrap; }
 /* === SECCIÓN DE HISTORIAL === */
-.historial-previo h3 {
-  color: #333;
-  text-align: left;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #3498db;
-  font-size: 1.2rem;
-}
-
-/* ✅ CAMBIO PRINCIPAL: Eliminado max-height para mostrar todo el contenido */
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Mayor espacio entre tarjetas */
-  padding: 10px 0;
-  /* Removido: max-height y overflow-y */
-}
-
+.historial-previo h3 { color: #333; text-align: left; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #0e7ab5; font-size: 1.2rem; }
+.history-list { display: flex; flex-direction: column; gap: 16px; padding: 4px 2px; }
 /* === TARJETAS DE HISTORIAL === */
-.history-card {
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  background: white;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.history-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
-}
-
+.history-card { border: 1.5px solid #dbe7ef; border-radius: 16px; box-shadow: 0 10px 26px rgba(7, 52, 80, .1); overflow: hidden; background: white; transition: box-shadow 0.2s ease, transform 0.2s ease; }
+.history-card:hover { box-shadow: 0 14px 32px rgba(7, 52, 80, .16); transform: translateY(-2px); }
 /* === ENCABEZADO === */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #3498db;
-  padding: 12px 16px;
-  font-weight: 600;
-  color: white;
-  font-size: 0.95em;
-}
-
-.card-header strong {
-  font-weight: 700;
-}
-
+.card-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: linear-gradient(135deg, #073450, #0e7ab5); padding: 12px 16px; font-weight: 600; color: white; font-size: 0.92em; }
+.card-header strong { font-weight: 700; color: #fff; }
+.card-count-chip { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); }
 /* === CUERPO DE LA TARJETA === */
-.card-body {
-  padding: 20px;
-  line-height: 1.6;
-}
-
-.card-body h4 {
-  font-size: 1.05em;
-  font-weight: 700;
-  margin: 0 0 10px 0;
-  color: #2c3e50;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.card-body p {
-  margin-bottom: 12px;
-  color: #555;
-  font-size: 0.95em;
-}
-
-.card-body strong {
-  color: #2c3e50;
-  font-weight: 600;
-}
-
+.card-body { padding: 20px; line-height: 1.6; }
+.card-body h4 { font-size: .82em; font-weight: 800; margin: 0 0 8px 0; color: #0a5c88; padding-bottom: 8px; border-bottom: 1px solid #e6eef4; text-transform: uppercase; letter-spacing: .08em; }
+.card-body p { margin-bottom: 10px; color: #243642; font-size: 0.95em; }
+.card-body strong { color: #073450; font-weight: 700; }
 /* === CAMPOS OPCIONALES === */
-.optional-field {
-  font-size: 0.92em;
-  color: #444;
-  background-color: #f8f9fa;
-  border-left: 4px solid #3498db;
-  padding: 12px 15px;
-  border-radius: 4px;
-  margin: 15px 0;
-}
-
-.optional-field strong {
-  color: #2c3e50;
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 700;
-}
-
-.optional-field p {
-  margin: 0;
-  padding: 5px 0 0 0;
-  white-space: pre-wrap; /* Respeta saltos de línea */
-  word-wrap: break-word; /* Rompe palabras largas */
-  color: #555;
-  line-height: 1.5;
-}
-
+.optional-field { font-size: 0.92em; color: #444; background-color: #f2f7fb; border-left: 4px solid #0e7ab5; border-top: 1px solid #dbe7ef; border-right: 1px solid #dbe7ef; border-bottom: 1px solid #dbe7ef; padding: 12px 15px; border-radius: 0 10px 10px 0; margin: 12px 0; }
+.optional-field strong { color: #073450; display: block; margin-bottom: 5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; font-size: .8em; }
+.optional-field p { margin: 0; padding: 0; white-space: pre-wrap; word-wrap: break-word; color: #243642; line-height: 1.55; }
 /* === INFO DEL MÉDICO === */
-.medico-info-historial {
-  font-size: 0.88em;
-  color: #6c757d;
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: 1px dashed #dee2e6;
-  font-style: italic;
-  text-align: right;
-}
-
+.medico-info-historial { font-size: 0.85em; color: #5d6d7e; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #c6d3dd; font-style: italic; text-align: right; }
 /* === BOTONES === */
-.btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  transition: background-color 0.2s, transform 0.2s;
-  display: inline-block;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background-color: #3498db;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #2980b9;
-  transform: translateY(-1px);
-}
-
+.btn { padding: 12px 22px; border: none; border-radius: 11px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; transition: filter .12s, transform .12s; display: inline-block; font-size: .95rem; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-primary { background: linear-gradient(135deg, #0e7ab5, #0a5c88); color: white; box-shadow: 0 8px 20px rgba(14,122,181,.3); }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.07); transform: translateY(-1px); }
+.loading-message, .info-message, .error-message-global { border-radius: 12px; padding: 12px 16px; font-size: .92rem; }
+.loading-message { background: #e8f4f8; color: #0a5c88; border: 1px solid #bfe0f2; }
+.info-message { background: #eef4f8; color: #073450; border: 1px solid #dbe7ef; }
+.error-message-global { background: #fdecea; color: #8f1d1d; border: 1px solid #f5c6c2; font-weight: 600; }
+.buscar-back { text-align: center; }
+.buscar-back a { color: #0e7ab5; font-weight: 700; text-decoration: none; }
+.buscar-back a:hover { color: #0a5c88; text-decoration: underline; }
 /* === RESPONSIVE === */
-@media (max-width: 768px) {
-  .search-form {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .search-form .btn {
-    margin-top: 0;
-    width: 100%;
-  }
-
-  .card-header {
-    flex-direction: column;
-    gap: 5px;
-    text-align: center;
-  }
-
-  .card-body {
-    padding: 15px;
-  }
-
-  .history-list {
-    gap: 15px;
-  }
+@media (max-width: 720px) {
+  .buscar-body { padding: 16px 14px 18px; }
+  .buscar-band { padding: 20px 16px; flex-direction: column; }
+  .search-form { flex-direction: column; gap: 12px; }
+  .search-form .btn { margin-top: 0; width: 100%; }
+  .card-header { flex-direction: row; gap: 6px; font-size: .85em; }
+  .card-body { padding: 16px; }
+  .history-list { gap: 14px; }
 }
-
 /* === MEJORAS DE ACCESIBILIDAD === */
-.search-form input:focus {
-  outline: 2px solid #3498db;
-  outline-offset: 2px;
-  border-color: #3498db;
-}
-
-button:focus,
-a:focus {
-  outline: 2px solid #3498db;
-  outline-offset: 2px;
-}
+.search-form input:focus { outline: none; border-color: #0e7ab5; box-shadow: 0 0 0 3px rgba(14,122,181,.18); }
+button:focus-visible, a:focus-visible { outline: 2px solid #0e7ab5; outline-offset: 2px; }

@@ -1,11 +1,22 @@
-<div class="form-card">
-  <h2>Formulario de Registro</h2>
+<div class="form-card pac-reg">
+  <div class="pac-band">
+    <span class="pac-band-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M19 8v6M22 11h-6"/>
+      </svg>
+    </span>
+    <p class="pac-kicker">Portal del paciente</p>
+    <h2>Formulario de Registro</h2>
+    <p class="pac-sub">Crea tu cuenta para reservar citas en línea. Solo toma un minuto.</p>
+  </div>
 
   <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
 
-    <div>
+    <div class="pac-field">
       <label for="dni">DNI:</label>
-      <input type="text" id="dni" formControlName="dni" maxlength="8">
+      <input type="text" id="dni" formControlName="dni" maxlength="8" placeholder="8 dígitos numéricos" inputmode="numeric">
 
       @if (campoInvalido('dni')) {
         <div class="error-message">
@@ -18,42 +29,44 @@
         </div>
       }
     </div>
-    
-    <div>
-      <label for="nombres">Nombres:</label>
-      <input type="text" id="nombres" formControlName="nombres">
 
-      @if (campoInvalido('nombres')) {
-        <div class="error-message">
-          @if (obtenerError('nombres', 'required')) {
-            <small>Nombres es requerido.</small>
-          }
-          @if (obtenerError('nombres', 'pattern')) {
-            <small>Nombres solo puede contener letras.</small>
-          }
-        </div>
-      }
+    <div class="pac-grid">
+      <div class="pac-field">
+        <label for="nombres">Nombres:</label>
+        <input type="text" id="nombres" formControlName="nombres" placeholder="Tus nombres">
+
+        @if (campoInvalido('nombres')) {
+          <div class="error-message">
+            @if (obtenerError('nombres', 'required')) {
+              <small>Nombres es requerido.</small>
+            }
+            @if (obtenerError('nombres', 'pattern')) {
+              <small>Nombres solo puede contener letras.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="pac-field">
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" id="apellidos" formControlName="apellidos" placeholder="Tus apellidos">
+
+        @if (campoInvalido('apellidos')) {
+          <div class="error-message">
+            @if (obtenerError('apellidos', 'required')) {
+              <small>Apellidos es requerido.</small>
+            }
+            @if (obtenerError('apellidos', 'pattern')) {
+              <small>Apellidos solo puede contener letras.</small>
+            }
+          </div>
+        }
+      </div>
     </div>
 
-    <div>
-      <label for="apellidos">Apellidos:</label>
-      <input type="text" id="apellidos" formControlName="apellidos">
-
-      @if (campoInvalido('apellidos')) {
-        <div class="error-message">
-          @if (obtenerError('apellidos', 'required')) {
-            <small>Apellidos es requerido.</small>
-          }
-          @if (obtenerError('apellidos', 'pattern')) {
-            <small>Apellidos solo puede contener letras.</small>
-          }
-        </div>
-      }
-    </div>
-
-    <div>
+    <div class="pac-field">
       <label for="correo">Correo:</label>
-      <input type="email" id="correo" formControlName="correo">
+      <input type="email" id="correo" formControlName="correo" placeholder="usuario@dominio.com" autocomplete="email">
 
       @if (campoInvalido('correo')) {
         <div class="error-message">
@@ -67,42 +80,44 @@
       }
     </div>
 
-    <div>
-      <label for="clave">Contraseña:</label>
-      <input type="password" id="clave" formControlName="clave">
+    <div class="pac-grid">
+      <div class="pac-field">
+        <label for="clave">Contraseña:</label>
+        <input type="password" id="clave" formControlName="clave" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
 
-      @if (campoInvalido('clave')) {
-        <div class="error-message">
-          @if (obtenerError('clave', 'required')) {
-            <small>Contraseña es requerida.</small>
-          }
-          @if (obtenerError('clave', 'minlength')) {
-            <small>Debe tener al menos 6 caracteres.</small>
-          }
-        </div>
-      }
+        @if (campoInvalido('clave')) {
+          <div class="error-message">
+            @if (obtenerError('clave', 'required')) {
+              <small>Contraseña es requerida.</small>
+            }
+            @if (obtenerError('clave', 'minlength')) {
+              <small>Debe tener al menos 6 caracteres.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="pac-field">
+        <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+        <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento">
+
+        @if (campoInvalido('fechaNacimiento')) {
+          <div class="error-message">
+            @if (obtenerError('fechaNacimiento', 'required')) {
+              <small>Fecha de nacimiento es requerida.</small>
+            }
+            @if (obtenerError('fechaNacimiento', 'fechaFutura')) {
+              <small>No puede ser mayor a hoy.</small>
+            }
+            @if (obtenerError('fechaNacimiento', 'menorDeEdad')) {
+              <small>Debe ser mayor de 18 años para registrarse.</small>
+            }
+          </div>
+        }
+      </div>
     </div>
 
-    <div>
-      <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-      <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento">
-
-      @if (campoInvalido('fechaNacimiento')) {
-        <div class="error-message">
-          @if (obtenerError('fechaNacimiento', 'required')) {
-            <small>Fecha de nacimiento es requerida.</small>
-          }
-          @if (obtenerError('fechaNacimiento', 'fechaFutura')) {
-            <small>No puede ser mayor a hoy.</small>
-          }
-          @if (obtenerError('fechaNacimiento', 'menorDeEdad')) {
-            <small>Debe ser mayor de 18 años para registrarse.</small>
-          }
-        </div>
-      }
-    </div>
-
-    <div>
+    <div class="pac-field">
       <label for="sexo">Sexo:</label>
       <select id="sexo" formControlName="sexo">
         <option value="M">Masculino</option>
@@ -110,36 +125,41 @@
       </select>
     </div>
 
-    <hr>
-    <p style="text-align:center;color:#777;">Datos Opcionales</p>
-
-    <div>
-      <label for="telefono">Teléfono:</label>
-      <input
-        type="text"
-        id="telefono"
-        formControlName="telefono"
-        maxlength="9"
-      >
-
-      @if (campoInvalido('telefono')) {
-        <div class="error-message">
-          @if (obtenerError('telefono', 'pattern')) {
-            <small>Teléfono debe contener solo números y tener 9 dígitos.</small>
-          }
-        </div>
-      }
+    <div class="pac-divider">
+      <hr>
+      <p>Datos Opcionales</p>
     </div>
 
+    <div class="pac-grid">
+      <div class="pac-field">
+        <label for="telefono">Teléfono:</label>
+        <input
+          type="text"
+          id="telefono"
+          formControlName="telefono"
+          maxlength="9"
+          placeholder="9 dígitos"
+          inputmode="tel"
+        >
 
-    <div>
-      <label for="direccion">Dirección:</label>
-      <input type="text" id="direccion" formControlName="direccion">
+        @if (campoInvalido('telefono')) {
+          <div class="error-message">
+            @if (obtenerError('telefono', 'pattern')) {
+              <small>Teléfono debe contener solo números y tener 9 dígitos.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="pac-field">
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="direccion" formControlName="direccion" placeholder="Tu dirección">
+      </div>
     </div>
 
-    <div>
+    <div class="pac-field">
       <label for="ruc">RUC:</label>
-      <input type="text" id="ruc" formControlName="ruc" maxlength="11">
+      <input type="text" id="ruc" formControlName="ruc" maxlength="11" placeholder="Empieza con 20 (11 dígitos)" inputmode="numeric">
 
       @if (campoInvalido('ruc')) {
         <div class="error-message">
@@ -150,39 +170,45 @@
       }
     </div>
 
-    <div>
-      <label for="talla">Talla (m):</label>
-      <input 
-      type="text"
-      id="talla"
-      formControlName="talla"
-      (input)="limitarDecimales($event, 2)"
-    >
-
-      @if (campoInvalido('talla')) {
-        <div class="error-message">
-          <small>Talla debe estar entre 0.5 y 2.5.</small>
-        </div>
-      }
-    </div>
-
-    <div>
-      <label for="peso">Peso (kg):</label>
-      <input 
+    <div class="pac-grid">
+      <div class="pac-field">
+        <label for="talla">Talla (m):</label>
+        <input
         type="text"
-        id="peso"
-        formControlName="peso"
-        (input)="limitarDecimales($event, 1)"
+        id="talla"
+        formControlName="talla"
+        (input)="limitarDecimales($event, 2)"
+        placeholder="Ej: 1.75"
+        inputmode="decimal"
       >
 
-      @if (campoInvalido('peso')) {
-        <div class="error-message">
-          <small>Peso debe estar entre 1 y 300.</small>
-        </div>
-      }
+        @if (campoInvalido('talla')) {
+          <div class="error-message">
+            <small>Talla debe estar entre 0.5 y 2.5.</small>
+          </div>
+        }
+      </div>
+
+      <div class="pac-field">
+        <label for="peso">Peso (kg):</label>
+        <input
+          type="text"
+          id="peso"
+          formControlName="peso"
+          (input)="limitarDecimales($event, 1)"
+          placeholder="Ej: 70.5"
+          inputmode="decimal"
+        >
+
+        @if (campoInvalido('peso')) {
+          <div class="error-message">
+            <small>Peso debe estar entre 1 y 300.</small>
+          </div>
+        }
+      </div>
     </div>
 
-    <div>
+    <div class="pac-field">
       <label for="estadoCivil">Estado Civil:</label>
       <select id="estadoCivil" formControlName="estadoCivil">
         <option value="Soltero">Soltero(a)</option>
@@ -192,7 +218,10 @@
       </select>
     </div>
 
-    <button type="submit" [disabled]="registroForm.invalid">
+    <button type="submit" [disabled]="registroForm.invalid" class="pac-btn">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
       Registrar Paciente
     </button>
   </form>

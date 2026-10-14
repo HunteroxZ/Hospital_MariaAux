@@ -1,23 +1,36 @@
-/*src/styles.css*/
+/*src/styles.css — Tema global Sistema Hospitalario (paleta azul médica).
+  Clases compartidas por todas las vistas internas. No se eliminó ni renombró
+  ninguna clase: solo se unificó la paleta y se pulió la presentación. */
+
+:root {
+  --hosp-primary: #0e7ab5;
+  --hosp-primary-dark: #0a5c88;
+  --hosp-navy: #073450;
+  --hosp-text: #243642;
+  --hosp-muted: #5d6d7e;
+  --hosp-border: #dbe7ef;
+  --hosp-card-top: #0e7ab5;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   color: #000000;
-  /* --- Fondo Dinámico  --- */
+  /* --- Fondo Dinámico (azules médicos) --- */
   background: linear-gradient(-45deg,
-      #5cb8ff,
-      #c3b5f6,
-      #81b7ff,
-      #e264f8
+      #6fb3e8,
+      #a9cdec,
+      #5ea9dd,
+      #c2ddef
     );
   background-size: 400% 400%;
-  animation: gradientShift 10s ease infinite;
+  animation: gradientShift 12s ease infinite;
 }
 
 h1,
 h2,
 h3 {
-  color: #000000;
+  color: var(--hosp-navy);
   text-align: center;
 }
 
@@ -39,7 +52,7 @@ h3 {
 }
 
 .main-header .main-nav a:hover {
-  color: #3498db;
+  color: #0e7ab5;
 }
 
 /* Contenedor para tu <router-outlet> */
@@ -63,8 +76,9 @@ hr {
   background: #ffffff;
   margin: 2rem auto;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+  border-radius: 14px;
+  border-top: 5px solid var(--hosp-card-top);
+  box-shadow: 0 14px 34px rgba(7, 52, 80, 0.14);
 }
 
 .form-card {
@@ -83,6 +97,7 @@ hr {
   margin-bottom: 1.5rem;
   border-bottom: 1px solid #eee;
   padding-bottom: 0.8rem;
+  color: var(--hosp-navy);
 }
 
 /* --- Estilos de Formularios --- */
@@ -110,9 +125,18 @@ hr {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 8px;
   box-sizing: border-box;
   font-size: 1em;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+  outline: none;
+  border-color: var(--hosp-primary);
+  box-shadow: 0 0 0 3px rgba(14, 122, 181, 0.15);
 }
 
 .form-card textarea {
@@ -121,24 +145,28 @@ hr {
 }
 
 .form-card button {
-  background-color: #3498db;
+  background: linear-gradient(120deg, var(--hosp-primary), var(--hosp-primary-dark));
   color: white;
   font-weight: 700;
   border: none;
   padding: 15px;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: filter 0.2s, transform 0.15s;
   font-size: 1em;
   margin-top: 10px;
 }
 
 .form-card button:hover {
-  background-color: #2980b9;
+  filter: brightness(1.08);
+}
+
+.form-card button:active {
+  transform: translateY(1px);
 }
 
 .form-card button:disabled {
-  background-color: #bdc3c7;
+  background: #bdc3c7;
   cursor: not-allowed;
 }
 
@@ -149,7 +177,7 @@ hr {
 }
 
 .form-link a {
-  color: #177ec3;
+  color: var(--hosp-primary);
   text-decoration: none;
   font-weight: 600;
 }
@@ -168,22 +196,30 @@ hr {
 
 .dashboard-menu li {
   background: white;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border-left: 5px solid var(--hosp-primary);
+  box-shadow: 0 8px 22px rgba(7, 52, 80, 0.1);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.dashboard-menu li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(7, 52, 80, 0.16);
 }
 
 .dashboard-menu li a {
   display: block;
-  padding: 20px;
+  padding: 18px 20px;
   text-decoration: none;
-  color: #2c3e50;
-  font-weight: 600;
+  color: var(--hosp-navy);
+  font-weight: 700;
   transition: background-color 0.2s;
+  border-radius: 0 12px 12px 0;
 }
 
 .dashboard-menu li a:hover {
-  background-color: #f9f9f9;
+  background-color: #f2f7fb;
 }
 
 /* --- Mensajes de error/info --- */
@@ -198,7 +234,7 @@ hr {
   text-align: center;
   padding: 20px;
   margin-top: 15px;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 .loading-message {
@@ -220,7 +256,7 @@ hr {
   padding: 15px;
   margin: 1rem auto;
   max-width: 500px;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 /* --- Animación del Fondo --- */

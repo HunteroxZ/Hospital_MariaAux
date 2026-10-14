@@ -1,39 +1,74 @@
-<div class="card-simple"> <h2>Mis Citas Programadas</h2>
-
-  <div *ngIf="isLoading" class="loading-message">Cargando citas...</div>
-  <div *ngIf="errorMessage && !isLoading" class="error-message">{{ errorMessage }}</div>
-
-  <div *ngIf="!isLoading && !errorMessage">
-    <div *ngIf="citas.length === 0" class="info-message">
-      Aún no tienes citas registradas.
-    </div>
-
-    <table *ngIf="citas.length > 0" class="citas-table">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Hora</th>
-          <th>Especialidad</th>
-          <th>Médico</th>
-          <th>Motivo</th>
-          <th>Estado</th>
-          </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let cita of citas">
-          <td>{{ formatoFecha(cita.fecha) }}</td>
-          <td>{{ formatHora(cita.hora) }} <td>{{ cita.nombreEspecialidad }}</td>
-          <td class="capitalizar">Dr(a). {{ cita.nombreMedico }}</td>
-          <td class="capitalizar">{{ cita.motivoConsulta }}</td>
-          <td>
-            <span [ngClass]="'status-' + cita.estado" class="capitalizar">{{ formatoEstado(cita.estado) }}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<div class="card-simple pac-list">
+  <div class="pac-band">
+    <span class="pac-band-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/>
+      </svg>
+    </span>
+    <p class="pac-kicker">Historial de atención</p>
+    <h2>Mis Citas Programadas</h2>
+    <p class="pac-sub">Consulta fechas, médicos y el estado de cada cita.</p>
   </div>
 
-  <div class="form-link" style="margin-top: 20px;">
-    <a routerLink="/dashboard">Volver</a>
+  <div class="pac-body">
+    <div *ngIf="isLoading" class="loading-message">
+      <span class="pac-spinner" aria-hidden="true"></span>
+      Cargando citas...
+    </div>
+    <div *ngIf="errorMessage && !isLoading" class="error-message" role="alert">{{ errorMessage }}</div>
+
+    <div *ngIf="!isLoading && !errorMessage">
+      <div *ngIf="citas.length === 0" class="info-message">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        <p>Aún no tienes citas registradas.</p>
+      </div>
+
+      <div *ngIf="citas.length > 0" class="pac-table-wrap">
+        <table *ngIf="citas.length > 0" class="citas-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Especialidad</th>
+              <th>Médico</th>
+              <th>Motivo</th>
+              <th>Estado</th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cita of citas">
+              <td data-label="Fecha">{{ formatoFecha(cita.fecha) }}</td>
+              <td data-label="Hora">{{ formatHora(cita.hora) }}</td>
+              <td data-label="Especialidad">{{ cita.nombreEspecialidad }}</td>
+              <td data-label="Médico" class="capitalizar">Dr(a). {{ cita.nombreMedico }}</td>
+              <td data-label="Motivo" class="capitalizar">{{ cita.motivoConsulta }}</td>
+              <td data-label="Estado">
+                <span [ngClass]="'status-' + cita.estado" class="capitalizar pac-pill">{{ formatoEstado(cita.estado) }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="citas.length > 0" class="pac-legend">
+        <span class="pac-legend-item"><span class="pac-legend-dot status-pendiente"></span>Pendiente</span>
+        <span class="pac-legend-item"><span class="pac-legend-dot status-confirmada"></span>Confirmada</span>
+        <span class="pac-legend-item"><span class="pac-legend-dot status-atendida"></span>Atendida</span>
+        <span class="pac-legend-item"><span class="pac-legend-dot status-cancelada"></span>Cancelada</span>
+      </div>
+    </div>
+
+    <div class="form-link" style="margin-top: 20px;">
+      <a routerLink="/dashboard">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Volver
+      </a>
+    </div>
   </div>
 </div>

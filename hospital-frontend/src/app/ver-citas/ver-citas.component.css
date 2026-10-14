@@ -1,53 +1,267 @@
+:host {
+  display: block;
+  padding: 1.5rem 1rem 2.5rem;
+  --pac-navy: #073450;
+  --pac-primary: #0e7ab5;
+  --pac-dark: #0a5c88;
+  --pac-bg: #f2f7fb;
+  --pac-muted: #5d6d7e;
+}
 
-.citas-table {
-  width: 100%;
-  border-collapse: collapse; 
+:host .card-simple.pac-list {
+  max-width: 960px;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-top: none;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(7, 52, 80, 0.12);
+}
+
+:host .pac-band {
+  background: linear-gradient(120deg, #073450 0%, #0a5c88 60%, #0e7ab5 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 2rem 2rem 1.6rem;
+}
+
+:host .pac-band-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  margin-bottom: 0.8rem;
+}
+
+:host .pac-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9fd8ef;
+}
+
+:host .pac-band h2 {
+  margin: 0 0 0.4rem;
+  padding: 0;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+}
+
+:host .pac-sub {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+:host .pac-body {
+  padding: 1.4rem 1.6rem 1.6rem;
+}
+
+:host .pac-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  vertical-align: -4px;
+  border-radius: 50%;
+  border: 3px solid #b6d4fe;
+  border-top-color: #0e7ab5;
+  animation: pac-spin 0.9s linear infinite;
+}
+
+@keyframes pac-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Tabla */
+:host .pac-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #dbe7ef;
+  border-radius: 14px;
   margin-top: 20px;
+  background: #ffffff;
+}
+
+:host .citas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
   font-size: 0.9em;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+  box-shadow: none;
 }
 
-.citas-table th,
-.citas-table td {
-  border: 1px solid #dee2e6; 
-  padding: 12px 15px; 
+:host .citas-table th,
+:host .citas-table td {
+  border: 1px solid #dee2e6;
+  border-bottom: 1px solid #e3ecf2;
+  padding: 12px 15px;
   text-align: left;
-  vertical-align: middle; 
+  vertical-align: middle;
 }
 
-.citas-table thead th {
-  background-color: #e9ecef; 
-  font-weight: 600;
-  color: #495057;
-  border-bottom: 2px solid #adb5bd; 
+:host .citas-table thead th {
+  background: linear-gradient(120deg, #073450, #0a5c88);
+  background-color: #0a5c88;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffffff;
+  border: 1px solid #0a5c88;
+  white-space: nowrap;
 }
 
-.citas-table tbody tr:nth-child(even) { 
-  background-color: #f8f9fa; 
+:host .citas-table thead th:first-child {
+  border-top-left-radius: 0;
 }
 
-.citas-table tbody tr:hover {
-  background-color: #f1f3f5; 
+:host .citas-table tbody tr:nth-child(even) {
+  background-color: #f2f7fb;
 }
 
+:host .citas-table tbody tr:hover {
+  background-color: #e8f1f7;
+}
 
-.status-pendiente { color: #fd7e14; font-weight: bold;} 
-.status-confirmada { color: #198754; font-weight: bold;} 
-.status-atendida { color: #6c757d; } 
-.status-cancelada { color: #dc3545; text-decoration: line-through;} 
+/* Semáforo de estados — colores funcionales conservados */
+:host .pac-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.82em;
+  font-weight: 700;
+  white-space: nowrap;
+}
 
+:host .status-pendiente {
+  color: #fd7e14;
+  font-weight: bold;
+  background: #fff3e6;
+  border: 1px solid #fd7e14;
+}
+:host .status-confirmada {
+  color: #198754;
+  font-weight: bold;
+  background: #e6f4ec;
+  border: 1px solid #198754;
+}
+:host .status-atendida {
+  color: #6c757d;
+  background: #e9ecef;
+  border: 1px solid #adb5bd;
+}
+:host .status-cancelada {
+  color: #dc3545;
+  text-decoration: line-through;
+  background: #fdecef;
+  border: 1px solid #dc3545;
+}
 
-.loading-message, .info-message, .error-message {
+:host .pac-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.2rem;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: #f2f7fb;
+  border: 1px solid #dbe7ef;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #5d6d7e;
+}
+
+:host .pac-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+:host .pac-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+:host .pac-legend-dot.status-pendiente { background: #fd7e14; border: none; }
+:host .pac-legend-dot.status-confirmada { background: #198754; border: none; }
+:host .pac-legend-dot.status-atendida { background: #6c757d; border: none; }
+:host .pac-legend-dot.status-cancelada { background: #dc3545; border: none; }
+
+:host .loading-message, :host .info-message, :host .error-message {
   text-align: center;
   padding: 20px;
   margin-top: 15px;
-  border-radius: 5px;
+  border-radius: 12px;
 }
-.loading-message { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe;} 
-.info-message { background-color: #e9ecef; color: #6c757d;} 
-.error-message { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7;} 
+:host .loading-message { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe;}
+:host .info-message { background-color: #f2f7fb; color: #5d6d7e; border: 1px solid #dbe7ef;}
+:host .info-message p { margin: 0.5rem 0 0; }
+:host .error-message { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7;}
 
-.capitalizar {
+:host .capitalizar {
   text-transform: capitalize;
 }
 
+:host .form-link {
+  text-align: center;
+}
+
+:host .form-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+@media (max-width: 720px) {
+  :host {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  :host .pac-body {
+    padding: 1rem 1rem 1.2rem;
+  }
+
+  :host .citas-table thead {
+    display: none;
+  }
+
+  :host .citas-table,
+  :host .citas-table tbody,
+  :host .citas-table tr,
+  :host .citas-table td {
+    display: block;
+    width: 100%;
+  }
+
+  :host .citas-table tr {
+    border-bottom: 2px solid #dbe7ef;
+    padding: 0.4rem 0;
+  }
+
+  :host .citas-table td {
+    border: none;
+    border-bottom: 1px solid #eef3f7;
+    padding: 8px 12px;
+  }
+
+  :host .citas-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0a5c88;
+    margin-bottom: 2px;
+  }
+}

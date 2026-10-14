@@ -1,15 +1,34 @@
-
-    <div class="dashboard-container">
+<div class="dashboard-container">
       <div class="header-section">
-        <h1>Panel de Recepción</h1>
+        <div class="recep-head-brand">
+          <span class="recep-head-mark" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M8 5V3.5A1.5 1.5 0 0 1 9.5 2h5A1.5 1.5 0 0 1 16 3.5V5M8 12h8M12 8v8"/></svg>
+          </span>
+          <div class="recep-head-text">
+            <span class="recep-kicker">Hospital María Auxiliadora · Recepción</span>
+            <h1>Panel de Recepción</h1>
+            <p class="recep-head-sub">Búsqueda de citas, horarios, reserva y cobro en un solo flujo.</p>
+          </div>
+        </div>
         <div class="user-info">
+          <span class="recep-avatar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+          </span>
           <span>Bienvenido/a: <strong>{{ nombreRecepcionista }}</strong></span>
           <button (click)="cerrarSesion()" class="btn-cerrar-sesion">Cerrar Sesión</button>
         </div>
       </div>
 
-      <div class="card-simple">
-        <h2>Buscar Cita por DNI del Paciente</h2>
+      <div class="recep-grid">
+      <div class="card-simple recep-card">
+        <div class="recep-card-head">
+          <span class="recep-step" aria-hidden="true">01</span>
+          <div>
+            <span class="recep-kicker recep-kicker-dark">Atención al paciente</span>
+            <h2>Buscar Cita por DNI del Paciente</h2>
+            <p class="recep-card-desc">Busque por DNI, seleccione la cita pendiente y continúe con SIS o pago.</p>
+          </div>
+        </div>
         
         <div class="busqueda-section">
           <div class="input-group">
@@ -23,6 +42,7 @@
             />
           </div>
           <button (click)="buscarCita()" [disabled]="isLoading" class="btn-buscar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
             {{ isLoading ? 'Buscando...' : 'Buscar Cita' }}
           </button>
         </div>
@@ -94,8 +114,15 @@
         }
       </div>
 
-      <div class="card-simple horarios-section">
-        <h2>Ver Horarios de Médico</h2>
+      <div class="card-simple horarios-section recep-card">
+        <div class="recep-card-head">
+          <span class="recep-step" aria-hidden="true">02</span>
+          <div>
+            <span class="recep-kicker recep-kicker-dark">Agenda médica</span>
+            <h2>Ver Horarios de Médico</h2>
+            <p class="recep-card-desc">Filtre especialidad y médico, elija el día, el horario y confirme la reserva.</p>
+          </div>
+        </div>
 
         <div class="horarios-filtros">
           <div class="input-group">
@@ -192,6 +219,7 @@
             </div>
           }
         }
+      </div>
       </div>
     </div>
 

@@ -1,13 +1,26 @@
-<div class="card-simple">
-  <h2>Agenda del Día - {{ nombreMedicoLogueado }}</h2>
+<div class="card-simple agenda-card">
+  <div class="agenda-band">
+    <div class="agenda-band-top">
+      <div>
+        <span class="kicker">Agenda médica · Hospital María Auxiliadora</span>
+        <h2>Agenda del Día - {{ nombreMedicoLogueado }}</h2>
+        <p class="agenda-sub">Gestione sus citas: ver historial, marcar atención o inasistencia y habilitar cupos adicionales.</p>
+      </div>
+      <span class="agenda-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M9 15l2 2 4-4"/></svg>
+      </span>
+    </div>
+  </div>
 
+  <div class="agenda-body">
   <div class="week-nav">
     <button class="week-btn" (click)="semanaAnterior()" title="Semana anterior">‹</button>
     <span class="week-label">{{ etiquetaSemana }}</span>
     <button class="week-btn today" (click)="irAHoy()">Hoy</button>
     <button class="week-btn" (click)="semanaSiguiente()" title="Semana siguiente">›</button>
-    <button class="action-button add" *ngIf="puedeHabilitarAdicionales" (click)="abrirModalAdicionales()" style="margin-left: 10px;" title="Agenda finalizada: habilite hasta 2 adicionales de 10 min">
-      ➕ Habilitar Adicionales
+    <button class="action-button add btn-add-top" *ngIf="puedeHabilitarAdicionales" (click)="abrirModalAdicionales()" style="margin-left: 10px;" title="Agenda finalizada: habilite hasta 2 adicionales de 10 min">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span>Habilitar Adicionales</span>
     </button>
   </div>
 
@@ -26,6 +39,16 @@
 
   <hr>
 
+  <div class="legend-bar" aria-label="Leyenda de estados">
+    <span class="legend-title">Estados:</span>
+    <span class="legend-chip"><i class="dot dot-pendiente"></i>pendiente</span>
+    <span class="legend-chip"><i class="dot dot-confirmada"></i>confirmada</span>
+    <span class="legend-chip"><i class="dot dot-atendida"></i>atendida</span>
+    <span class="legend-chip"><i class="dot dot-cancelada"></i>cancelada</span>
+    <span class="legend-chip"><i class="dot dot-nopres"></i>no presentado</span>
+    <span class="legend-chip"><i class="dot adicional-dot"></i>adicional</span>
+  </div>
+
   <div *ngIf="isLoading" class="loading-message">Cargando agenda...</div>
   <div *ngIf="errorMessage && !isLoading" class="error-message">{{ errorMessage }}</div>
 
@@ -34,6 +57,7 @@
       No hay citas programadas para esta fecha.
     </div>
 
+    <div *ngIf="citasDelDia.length > 0" class="table-scroll">
     <table *ngIf="citasDelDia.length > 0" class="citas-table">
       <thead>
         <tr>
@@ -46,32 +70,34 @@
       </thead>
       <tbody>
         <tr *ngFor="let cita of citasDelDia">
-          <td>{{ formatHora(cita.hora) }} <span *ngIf="cita.esAdicional" class="badge-adicional" title="Cita adicional">➕</span></td>
+          <td><span class="hora-pill">{{ formatHora(cita.hora) }}</span> <span *ngIf="cita.esAdicional" class="badge-adicional" title="Cita adicional">ADIC</span></td>
           <td class="capitalizar">{{ cita.nombrePaciente }}</td>
           <td class="capitalizar">{{ cita.motivoConsulta }}</td>
           <td>
-            <span [ngClass]="'status-' + cita.estado" class="capitalizar">{{ formatoEstado(cita.estado) }}</span>
+            <span [ngClass]="'status-' + cita.estado" class="capitalizar status-pill">{{ formatoEstado(cita.estado) }}</span>
           </td>
           <td>
             <ng-container *ngIf="cita.estado === 'pendiente' || cita.estado === 'confirmada'">
-                
-                <button class="action-button view" title="Ver Detalles/Historial"
-                        (click)="verDetalles(cita.idCita, cita.idPaciente, cita.idEspecialidad)">📋</button>
-                
-                <button *ngIf="cita.estado === 'confirmada'" class="action-button attend" title="Marcar como Atendida"
-                        (click)="marcarComoAtendida(cita.idCita)">✔️</button>
+                <div class="actions-cell">
+                <button class="action-button view btn-act-view" title="Ver Detalles/Historial"
+                        (click)="verDetalles(cita.idCita, cita.idPaciente, cita.idEspecialidad)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg><span>Ver</span></button>
 
-                <button class="action-button cancel" title="Marcar como No Presentado"
-                        (click)="marcarComoNoPresentado(cita.idCita)">🚫</button>
-            
+                <button *ngIf="cita.estado === 'confirmada'" class="action-button attend btn-act-attend" title="Marcar como Atendida"
+                        (click)="marcarComoAtendida(cita.idCita)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Atender</span></button>
+
+                <button class="action-button cancel btn-act-cancel" title="Marcar como No Presentado"
+                        (click)="marcarComoNoPresentado(cita.idCita)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 8l8 8"/></svg><span>No asistió</span></button>
+                </div>
             </ng-container>
 
              <ng-container *ngIf="cita.estado === 'atendida'">
-                <button class="action-button view" title="Ver Historial Registrado"
-                        (click)="verDetalles(cita.idCita, cita.idPaciente, cita.idEspecialidad)">📋</button>
-                <span style="color: #198754; font-weight: bold;">Finalizada</span>
+                <div class="actions-cell">
+                <button class="action-button view btn-act-view" title="Ver Historial Registrado"
+                        (click)="verDetalles(cita.idCita, cita.idPaciente, cita.idEspecialidad)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg><span>Ver</span></button>
+                <span class="done-tag" style="color: #198754; font-weight: bold;">Finalizada</span>
+                </div>
             </ng-container>
-            
+
              <ng-container *ngIf="cita.estado === 'no_presentado'">
                  <span style="color: #e67e22; font-weight: bold;">No Asistió</span>
             </ng-container>
@@ -83,18 +109,19 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <div *ngIf="cuposAdicionalesFecha.length > 0" class="adicionales-section">
     <hr>
-    <h3>➕ Cupos Adicionales Habilitados ({{ formatoFecha(fechaSeleccionada) }})</h3>
+    <h3><span class="add-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span> Cupos Adicionales Habilitados ({{ formatoFecha(fechaSeleccionada) }})</h3>
     <div class="cupos-grid">
       <div *ngFor="let cupo of cuposAdicionalesFecha" class="cupo-card" [class.reservado]="esCupoReservado(cupo)">
         <span class="cupo-hora">{{ formatHora(cupo.horaInicio) }} - {{ formatHora(cupo.horaFin) }}</span>
         <span class="cupo-esp">{{ nombreEspecialidad(cupo.idEspecialidad) }}</span>
         <span class="cupo-estado">{{ esCupoReservado(cupo) ? 'Reservado' : 'Disponible' }}</span>
         <button *ngIf="cupo.disponible && !esCupoReservado(cupo)" class="cupo-delete" title="Eliminar cupo"
-                (click)="eliminarCupoAdicional(cupo)">🗑️</button>
+                (click)="eliminarCupoAdicional(cupo)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#8f1d1d" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M6 6l1 15a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-15"/></svg></button>
       </div>
     </div>
     <div class="color-index">
@@ -104,21 +131,25 @@
     </div>
   </div>
 
-   <div class="form-link" style="margin-top: 20px;">
-    <a routerLink="/medico/dashboard">Volver al Dashboard</a>
+   <div class="form-link agenda-back" style="margin-top: 20px;">
+    <a routerLink="/medico/dashboard">« Volver al Dashboard</a>
+  </div>
   </div>
 </div>
 
 <div class="modal-overlay" *ngIf="mostrarModalAdicionales" (click)="cerrarModalAdicionales()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Habilitar Cupos Adicionales</h3>
+      <div class="modal-title-wrap">
+        <span class="kicker kicker-modal">Cupos adicionales</span>
+        <h3>Habilitar Cupos Adicionales</h3>
+      </div>
       <button class="close-button" (click)="cerrarModalAdicionales()">&times;</button>
     </div>
     <div class="modal-body">
-      <p>¿Cuántos cupos adicionales desea abrir para el turno actual?</p>
-      <p><small>Se habilitan en la cola de su jornada (últimos 20 min en 2 bloques de 10 min, máx. 2 por día; el 2do puede pasar su salida hasta 10 min) ({{ formatoFecha(fechaSeleccionada) }}).</small></p>
-      
+      <p class="modal-lead">¿Cuántos cupos adicionales desea abrir para el turno actual?</p>
+      <p class="modal-hint"><small>Se habilitan en la cola de su jornada (últimos 20 min en 2 bloques de 10 min, máx. 2 por día; el 2do puede pasar su salida hasta 10 min) ({{ formatoFecha(fechaSeleccionada) }}).</small></p>
+
       <div class="form-group">
         <label for="especialidad">Especialidad:</label>
         <select id="especialidad" [(ngModel)]="idEspecialidadSeleccionada" (change)="cargarCuposExistentes()">
@@ -134,7 +165,7 @@
 
       <div class="form-group">
         <label for="cantidadCupos">Cantidad de cupos (máx. 2):</label>
-        <input type="number" id="cantidadCupos" [(ngModel)]="cantidadCuposAdicionales" 
+        <input type="number" id="cantidadCupos" [(ngModel)]="cantidadCuposAdicionales"
                min="1" max="2" placeholder="Ingrese cantidad">
       </div>
 
@@ -152,8 +183,8 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="action-button cancel" (click)="cerrarModalAdicionales()">Cancelar</button>
-      <button class="action-button add" (click)="habilitarCuposAdicionales()" [disabled]="isLoadingAdicionales || !idEspecialidadSeleccionada">
+      <button class="action-button cancel btn-modal-ghost" (click)="cerrarModalAdicionales()">Cancelar</button>
+      <button class="action-button add btn-modal-primary" (click)="habilitarCuposAdicionales()" [disabled]="isLoadingAdicionales || !idEspecialidadSeleccionada">
         {{ isLoadingAdicionales ? 'Habilitando...' : 'Habilitar Cupos' }}
       </button>
     </div>

@@ -1,0 +1,636 @@
+/* Página pública de inicio — estilos encapsulados del componente.
+   El margen negativo compensa el padding de .page-content (estilo global)
+   para lograr secciones a sangre (full-bleed) sin espacios entre bloques.
+   No se modifica ningún estilo global: el resto de vistas queda intacto. */
+
+:host {
+  display: block;
+  margin: -20px;
+  min-height: 100vh;
+  background: #fff;
+  --ini-primary: #0e7ab5;
+  --ini-primary-dark: #0a5c88;
+  --ini-navy: #073450;
+  --ini-footer-bg: #0c3547;
+  --ini-text: #243642;
+  --ini-muted: #5d6d7e;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  color: var(--ini-text);
+}
+
+/* ============ NAVBAR ============ */
+.ini-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 12px rgba(7, 52, 80, 0.1);
+}
+
+.ini-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.ini-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.ini-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--ini-primary), var(--ini-primary-dark));
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(14, 122, 181, 0.35);
+}
+
+.ini-brand-text strong {
+  display: block;
+  font-size: 1.08rem;
+  color: var(--ini-primary-dark);
+  line-height: 1.2;
+}
+
+.ini-brand-text small {
+  font-size: 0.72rem;
+  color: var(--ini-muted);
+}
+
+.ini-links {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.ini-links button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ini-text);
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.ini-links button:hover {
+  color: var(--ini-primary);
+  background: rgba(14, 122, 181, 0.09);
+}
+
+.ini-social {
+  display: flex;
+  gap: 1rem;
+  color: var(--ini-muted);
+  font-size: 1rem;
+  user-select: none;
+}
+
+.ini-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  margin-left: auto;
+}
+
+.ini-hamburger span {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ini-primary-dark);
+}
+
+/* ============ BARRA DE ACCESOS ============ */
+.ini-infobar {
+  background: #f2f7fb;
+  border-bottom: 1px solid #dde8f0;
+}
+
+.ini-infobar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.15fr;
+  align-items: stretch;
+}
+
+.ini-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.05rem 1.4rem;
+  border-right: 1px solid #dde8f0;
+}
+
+.ini-info-icon {
+  color: var(--ini-primary);
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.ini-info-text strong {
+  display: block;
+  font-size: 0.96rem;
+  color: var(--ini-primary-dark);
+}
+
+.ini-info-text small {
+  font-size: 0.8rem;
+  color: var(--ini-muted);
+}
+
+.ini-agendar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.05rem 1.4rem;
+  background: linear-gradient(120deg, var(--ini-primary), var(--ini-primary-dark));
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  text-align: left;
+  transition: filter 0.2s;
+}
+
+.ini-agendar:hover {
+  filter: brightness(1.1);
+}
+
+.ini-agendar .ini-info-icon {
+  color: #fff;
+}
+
+.ini-agendar .ini-info-text strong {
+  color: #fff;
+  font-size: 1.02rem;
+}
+
+.ini-agendar .ini-info-text small {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* ============ HERO ============ */
+.ini-hero {
+  background:
+    linear-gradient(100deg, rgba(7, 52, 80, 0.95) 0%, rgba(10, 92, 136, 0.85) 48%, rgba(14, 122, 181, 0.45) 100%),
+    url('/images/hero-hospital.jpg') center / cover no-repeat;
+  color: #fff;
+}
+
+.ini-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6.5rem 1.5rem;
+}
+
+.ini-hero-inner > * {
+  max-width: 660px;
+}
+
+.ini-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9fd8ef;
+  margin: 0 0 1.1rem;
+}
+
+.ini-hero h1 {
+  font-size: clamp(2.1rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  margin: 0 0 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  text-align: left;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+
+.ini-sub {
+  font-size: 1.12rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.93);
+  margin: 0 0 2.2rem;
+}
+
+.ini-hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ini-cta {
+  background: #fff;
+  color: var(--ini-primary-dark);
+  border: 2px solid #fff;
+  border-radius: 999px;
+  padding: 0.85rem 2.6rem;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ini-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+}
+
+.ini-cta-ghost {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  padding: 0.85rem 2.4rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.ini-cta-ghost:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #fff;
+}
+
+/* ============ STATS ============ */
+.ini-stats {
+  background: #fff;
+  border-bottom: 1px solid #e5eef4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.ini-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.ini-stat + .ini-stat {
+  border-left: 1px solid #e5eef4;
+}
+
+.ini-stat-icon {
+  color: var(--ini-primary);
+  margin-bottom: 0.4rem;
+}
+
+.ini-stat strong {
+  display: block;
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: var(--ini-navy);
+  line-height: 1;
+}
+
+.ini-stat span:last-child {
+  font-size: 0.9rem;
+  color: var(--ini-muted);
+}
+
+/* ============ MISIÓN / VISIÓN ============ */
+.ini-bloque {
+  scroll-margin-top: 70px;
+  padding: 4.5rem 1.5rem;
+  background: #fff;
+}
+
+.ini-bloque-alt {
+  background: #f2f7fb;
+}
+
+.ini-split {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+.ini-split.inv {
+  grid-template-columns: 1.1fr 1fr;
+}
+
+.ini-split.inv .ini-split-img {
+  order: 2;
+}
+
+.ini-split-img img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow: 0 20px 45px rgba(7, 52, 80, 0.22);
+  display: block;
+}
+
+.ini-kicker {
+  display: inline-block;
+  margin: 0 0 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ini-primary);
+  border-bottom: 3px solid var(--ini-primary);
+  padding-bottom: 0.35rem;
+}
+
+.ini-split-text h2 {
+  margin: 0 0 1.1rem;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  line-height: 1.25;
+  color: var(--ini-navy);
+  text-align: left;
+}
+
+.ini-split-text p:last-child {
+  margin: 0;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ini-muted);
+}
+
+/* ============ BANDA CTA ============ */
+.ini-cta-band {
+  background: linear-gradient(120deg, var(--ini-navy), var(--ini-primary-dark) 60%, var(--ini-primary));
+}
+
+.ini-cta-band-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3.2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.ini-cta-band h2 {
+  margin: 0 0 0.5rem;
+  color: #fff;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  text-align: left;
+}
+
+.ini-cta-band p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.02rem;
+}
+
+.ini-cta-band button {
+  background: #fff;
+  color: var(--ini-primary-dark);
+  border: none;
+  border-radius: 999px;
+  padding: 0.95rem 2.8rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s;
+}
+
+.ini-cta-band button:hover {
+  transform: translateY(-2px);
+}
+
+/* ============ FOOTER ============ */
+.ini-footer {
+  scroll-margin-top: 60px;
+  background: var(--ini-footer-bg);
+  color: #dce9ee;
+  border-top: 5px solid var(--ini-primary);
+}
+
+.ini-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 2.5rem;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 2.5rem;
+}
+
+.ini-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.7rem;
+}
+
+.ini-footer-brand strong {
+  color: #fff;
+  font-size: 1.08rem;
+}
+
+.ini-footer-brand small {
+  color: #9fc0cc;
+  font-size: 0.75rem;
+}
+
+.ini-footer-lema {
+  margin: 0 0 1.3rem;
+  font-size: 0.95rem;
+  color: #c4d8e0;
+}
+
+.ini-footer-siguenos {
+  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9fc0cc;
+}
+
+.ini-footer-redes {
+  display: flex;
+  gap: 0.7rem;
+  margin: 0;
+  user-select: none;
+}
+
+.ini-footer-redes span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1rem;
+}
+
+.ini-footer-col h3 {
+  color: #fff;
+  font-size: 1rem;
+  margin: 0 0 1.1rem;
+  text-align: left;
+}
+
+.ini-footer-col p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  margin: 0 0 0.9rem;
+  color: #c4d8e0;
+}
+
+.ini-footer-col strong {
+  color: #fff;
+}
+
+.ini-copy {
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  text-align: center;
+  padding: 1.2rem 1rem;
+  font-size: 0.82rem;
+  color: #9fc0cc;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 900px) {
+  .ini-infobar-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ini-info-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .ini-info-item {
+    border-bottom: 1px solid #dde8f0;
+  }
+
+  .ini-agendar {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+
+  .ini-split,
+  .ini-split.inv {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .ini-split.inv .ini-split-img {
+    order: 0;
+  }
+
+  .ini-split-img img {
+    height: 260px;
+  }
+
+  .ini-footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .ini-nav-inner {
+    position: relative;
+  }
+
+  .ini-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(7, 52, 80, 0.16);
+    padding: 0.6rem;
+    margin-left: 0;
+  }
+
+  .ini-links.abierto {
+    display: flex;
+  }
+
+  .ini-links button {
+    text-align: left;
+    padding: 0.9rem 1rem;
+  }
+
+  .ini-social {
+    display: none;
+  }
+
+  .ini-hamburger {
+    display: flex;
+  }
+
+  .ini-hero-inner {
+    padding: 4rem 1.5rem;
+  }
+
+  .ini-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .ini-stat + .ini-stat {
+    border-left: none;
+    border-top: 1px solid #e5eef4;
+  }
+
+  .ini-bloque {
+    padding: 3rem 1.5rem;
+  }
+
+  .ini-footer-inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .ini-infobar-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .ini-info-item {
+    border-right: none;
+  }
+}

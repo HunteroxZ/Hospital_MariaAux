@@ -1,23 +1,122 @@
-
-<div class="role-selection-card">
-  <h2>Bienvenido al Sistema de Gestión Hospitalaria</h2>
-  <p>Por favor, seleccione su rol para iniciar sesión:</p>
-
-  <div class="role-buttons">
-    <button (click)="goToLogin('/login')" class="role-button patient">
-      Soy Paciente
+<div class="rol-layout">
+  <!-- Panel de marca -->
+  <aside class="rol-brand">
+    <button class="rol-logo" (click)="volverInicio()" aria-label="Volver al inicio">
+      <span class="rol-logo-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3z"/>
+        </svg>
+      </span>
+      <span class="rol-logo-text">
+        <strong>Sistema Hospitalario</strong>
+        <small>Hospital María Auxiliadora</small>
+      </span>
     </button>
 
-    <button (click)="goToLogin('/medico/login')" class="role-button doctor">
-      Soy Médico
-    </button>
+    <h1>Tu puerta de acceso a la salud digital</h1>
+    <p class="rol-brand-sub">
+      Identifícate según tu rol para reservar citas, gestionar agendas
+      o administrar el hospital. Rápido, seguro y sin filas.
+    </p>
 
-    <button (click)="goToLogin('/recepcionista/login')" class="role-button recepcionista">
-      Soy Recepcionista
-    </button>
+    <ul class="rol-features">
+      <li>
+        <span class="rol-feat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+        </span>
+        <span><strong>Citas en línea</strong><small>Reserva en minutos</small></span>
+      </li>
+      <li>
+        <span class="rol-feat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="8" width="14" height="11" rx="2"/>
+            <path d="M12 8V4M8 4h8"/>
+            <circle cx="12" cy="13" r="1" fill="currentColor"/>
+            <path d="M9 17h6"/>
+          </svg>
+        </span>
+        <span><strong>Asistente con IA</strong><small>Triaje inteligente</small></span>
+      </li>
+      <li>
+        <span class="rol-feat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+            <path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/>
+            <circle cx="20" cy="10" r="2"/>
+          </svg>
+        </span>
+        <span><strong>12 especialidades</strong><small>Cobertura integral</small></span>
+      </li>
+    </ul>
+  </aside>
 
-    <button (click)="goToLogin('/admin/login')" class="role-button admin">
-      Soy Administrador
-    </button>
-  </div>
+  <!-- Tarjeta de roles -->
+  <main class="rol-card">
+    <p class="rol-kicker">Acceso al sistema</p>
+    <h2>¿Cómo deseas ingresar?</h2>
+    <p class="rol-hint">Por favor, seleccione su rol para iniciar sesión:</p>
+
+    <div class="role-buttons">
+      <button (click)="goToLogin('/login')" class="role-button patient">
+        <span class="rol-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/>
+          </svg>
+        </span>
+        <span class="rol-btn-text">
+          <strong>Soy Paciente</strong>
+          <small>Reserva y consulta tus citas médicas</small>
+        </span>
+        <span class="rol-btn-arrow" aria-hidden="true">&#8250;</span>
+      </button>
+
+      <button (click)="goToLogin('/medico/login')" class="role-button doctor">
+        <span class="rol-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+            <path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/>
+            <circle cx="20" cy="10" r="2"/>
+          </svg>
+        </span>
+        <span class="rol-btn-text">
+          <strong>Soy Médico</strong>
+          <small>Gestiona tu agenda e historiales</small>
+        </span>
+        <span class="rol-btn-arrow" aria-hidden="true">&#8250;</span>
+      </button>
+
+      <button (click)="goToLogin('/recepcionista/login')" class="role-button recepcionista">
+        <span class="rol-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="3" width="14" height="18" rx="2"/>
+            <path d="M9 3.5h6v3H9zM9 12l2 2 4-4"/>
+          </svg>
+        </span>
+        <span class="rol-btn-text">
+          <strong>Soy Recepcionista</strong>
+          <small>Registra, agenda y cobra citas</small>
+        </span>
+        <span class="rol-btn-arrow" aria-hidden="true">&#8250;</span>
+      </button>
+
+      <button (click)="goToLogin('/admin/login')" class="role-button admin">
+        <span class="rol-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>
+          </svg>
+        </span>
+        <span class="rol-btn-text">
+          <strong>Soy Administrador</strong>
+          <small>Reportes y gestión del hospital</small>
+        </span>
+        <span class="rol-btn-arrow" aria-hidden="true">&#8250;</span>
+      </button>
+    </div>
+
+    <button class="rol-volver" (click)="volverInicio()">&larr; Volver al inicio</button>
+  </main>
 </div>

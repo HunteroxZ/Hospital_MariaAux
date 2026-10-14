@@ -1,24 +1,39 @@
+<div class="admin-shell">
+  <div class="admin-header">
+    <div class="brand-row">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4z"/><path d="M12 8v6M9 11h6"/></svg>
+      </span>
+      <div class="brand-text">
+        <span class="eyebrow">Hospital María Auxiliadora</span>
+        <h2>Panel de Administración - Pacientes</h2>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <button routerLink="/admin/dashboard/inicio" routerLinkActive="active">Inicio</button>
+      <button routerLink="/admin/dashboard/pacientes" routerLinkActive="active">Pacientes</button>
+      <button routerLink="/admin/dashboard/medicos" routerLinkActive="active">Médicos</button>
+      <button routerLink="/admin/dashboard/reportes" routerLinkActive="active">Reportes</button>
+      <button class="cerrar-sesion" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </nav>
+  </div>
 
 <div class="card-simple">
-  <h2>Panel de Administración - Pacientes</h2>
-
-  <nav class="admin-nav">
-    <button routerLink="/admin/dashboard/inicio" routerLinkActive="active">Inicio</button>
-    <button routerLink="/admin/dashboard/pacientes" routerLinkActive="active">Pacientes</button>
-    <button routerLink="/admin/dashboard/medicos" routerLinkActive="active">Médicos</button>
-    <button routerLink="/admin/dashboard/reportes" routerLinkActive="active">Reportes</button>
-    <button class="cerrar-sesion" (click)="cerrarSesion()">Cerrar Sesión</button>
-  </nav>
-
+  <div class="page-head">
+    <div>
+      <span class="eyebrow">Gestión de pacientes</span>
+      <h2 class="page-title">Lista de Pacientes</h2>
+      <p class="page-sub">Busca por DNI, consulta el detalle y edita los datos de contacto.</p>
+    </div>
+    <button class="btn-refresh" (click)="cargarPacientes()" [disabled]="cargando">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/></svg>
+      <span>Actualizar</span>
+    </button>
+  </div>
 
   <div class="contenido">
-    
- 
     <div class="header-actions">
       <h3>Lista de Pacientes</h3>
-      <button class="btn-refresh" (click)="cargarPacientes()" [disabled]="cargando">
-        🔄 Actualizar
-      </button>
     </div>
 
     <div class="filtro-container">
@@ -35,34 +50,31 @@
           maxlength="8"
           [disabled]="cargando"
         />
-        <button 
-          class="btn-limpiar" 
+        <button
+          class="btn-limpiar"
           (click)="limpiarFiltro()"
           *ngIf="dniFiltro"
           [disabled]="cargando"
           title="Limpiar búsqueda">
-          ✖ Limpiar
+          × Limpiar
         </button>
       </div>
       <small class="filtro-resultado" *ngIf="dniFiltro && !cargando && !error">
-        🔍 Buscando pacientes con DNI que inicie con: <strong>{{ dniFiltro }}</strong>
+        Buscando pacientes con DNI que inicie con: <strong>{{ dniFiltro }}</strong>
       </small>
       <small class="filtro-buscando" *ngIf="cargando && dniFiltro">
-        ⏳ Buscando...
+        Buscando...
       </small>
     </div>
 
-
     <div class="alert alert-error" *ngIf="error">
-      ⚠️ {{ error }}
+      {{ error }}
     </div>
-
 
     <div class="loading-container" *ngIf="cargando">
       <div class="spinner"></div>
       <p>Cargando pacientes...</p>
     </div>
-
 
     <div class="tabla-responsive" *ngIf="!cargando">
       <table class="tabla-pacientes">
@@ -88,40 +100,38 @@
               <span class="badge-citas">{{ paciente.numeroCitas }}</span>
             </td>
             <td class="acciones-col">
-              <button 
-                class="btn-action btn-ver" 
+              <button
+                class="btn-action btn-ver"
                 (click)="verDetalles(paciente)"
                 title="Ver detalles">
-                👁️
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
-              <button 
-                class="btn-action btn-editar" 
+              <button
+                class="btn-action btn-editar"
                 (click)="editarPaciente(paciente)"
                 title="Editar">
-                ✏️
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
               </button>
-              <button 
-                class="btn-action btn-eliminar" 
+              <button
+                class="btn-action btn-eliminar"
                 (click)="eliminarPaciente(paciente)"
                 title="Eliminar">
-                🗑️
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
               </button>
             </td>
           </tr>
-          
-         
+
           <tr *ngIf="pacientes.length === 0 && !error">
             <td colspan="7" class="no-data">
-              📋 No hay pacientes registrados en el sistema
+              No hay pacientes registrados en el sistema
             </td>
           </tr>
         </tbody>
       </table>
 
-
       <div class="paginacion-container" *ngIf="totalPaginas > 1">
-        <button 
-          class="btn-pag" 
+        <button
+          class="btn-pag"
           (click)="irAPagina(paginaActual - 1)"
           [disabled]="paginaActual === 1">
           ← Anterior
@@ -132,7 +142,7 @@
         </span>
 
         <div class="paginas-numeros">
-          <button 
+          <button
             *ngFor="let pagina of getPaginas()"
             class="btn-num-pag"
             [class.active]="pagina === paginaActual"
@@ -141,14 +151,13 @@
           </button>
         </div>
 
-        <button 
-          class="btn-pag" 
+        <button
+          class="btn-pag"
           (click)="irAPagina(paginaActual + 1)"
           [disabled]="paginaActual === totalPaginas">
           Siguiente →
         </button>
       </div>
-
 
       <div class="tabla-footer" *ngIf="pacientes.length > 0">
         <p>
@@ -160,13 +169,13 @@
 
   </div>
 </div>
-
+</div>
 
 <div class="modal-overlay" *ngIf="mostrarModalDetalles" (click)="cerrarModalDetalles()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h3>Detalles del Paciente</h3>
-      <button class="btn-close" (click)="cerrarModalDetalles()">✖</button>
+      <button class="btn-close" (click)="cerrarModalDetalles()">×</button>
     </div>
 
     <div class="modal-body" *ngIf="!cargandoDetalles && pacienteSeleccionado">
@@ -245,7 +254,7 @@
   <div class="modal-content modal-form" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h3>Editar Paciente</h3>
-      <button class="btn-close" (click)="cerrarModalEdicion()">✖</button>
+      <button class="btn-close" (click)="cerrarModalEdicion()">×</button>
     </div>
 
     <div class="modal-body" *ngIf="!cargandoDetalles">
@@ -324,14 +333,14 @@
     </div>
 
     <div class="modal-footer">
-      <button 
-        class="btn-secondary" 
+      <button
+        class="btn-secondary"
         (click)="cerrarModalEdicion()"
         [disabled]="guardandoEdicion">
         Cancelar
       </button>
-      <button 
-        class="btn-primary" 
+      <button
+        class="btn-primary"
         (click)="guardarEdicion()"
         [disabled]="guardandoEdicion || cargandoDetalles">
         {{ guardandoEdicion ? 'Guardando...' : 'Guardar Cambios' }}
@@ -339,4 +348,3 @@
     </div>
   </div>
 </div>
-

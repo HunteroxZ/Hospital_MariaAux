@@ -21,6 +21,9 @@ import { MedicoHistorialBuscarComponent } from './medico-historial-buscar/medico
 import { RecepcionistaLoginComponent } from './recepcionista/recepcionista-login/recepcionista-login.component';
 import { RecepcionistaDashboardComponent } from './recepcionista/recepcionista-dashboard/recepcionista-dashboard.component';
 
+// Componente Página de Inicio (pública)
+import { InicioComponent } from './inicio/inicio.component';
+
 // Componente Selección de Rol
 import { SeleccionarRolComponent } from './seleccionar-rol/seleccionar-rol.component';
 
@@ -39,7 +42,10 @@ import { recepcionistaGuard } from './auth/recepcionista.guard';
 import { recepcionistaLoginGuard } from './auth/recepcionistaLoginGuard';
 
 export const routes: Routes = [
-  // --- Ruta Principal: Selección de Rol ---
+  // --- Ruta Principal: Página de Inicio (pública) ---
+  { path: '', component: InicioComponent },
+
+  // --- Selección de Rol (destino de "Agendar Cita") ---
   { path: 'seleccionar-rol', component: SeleccionarRolComponent },
 
   // --- Rutas de Autenticación PACIENTE ---
@@ -74,6 +80,5 @@ export const routes: Routes = [
   { path: 'recepcionista/dashboard', component: RecepcionistaDashboardComponent, canActivate: [recepcionistaGuard] },
 
   // --- Rutas por Defecto ---
-  { path: '', redirectTo: '/seleccionar-rol', pathMatch: 'full' },
   { path: '**', redirectTo: '/seleccionar-rol' }
 ];

@@ -81,7 +81,10 @@ public class ChatService {
         SINTOMAS_A_ESPECIALIDAD.put("arritmia", "Cardiología");
         SINTOMAS_A_ESPECIALIDAD.put("mareo", "Cardiología");
         SINTOMAS_A_ESPECIALIDAD.put("mareos", "Cardiología");
+        SINTOMAS_A_ESPECIALIDAD.put("maree", "Cardiología");
+        SINTOMAS_A_ESPECIALIDAD.put("latidos", "Cardiología");
         SINTOMAS_A_ESPECIALIDAD.put("desmayo", "Cardiología");
+        SINTOMAS_A_ESPECIALIDAD.put("desmayar", "Cardiología");
         SINTOMAS_A_ESPECIALIDAD.put("se desmaya", "Cardiología");
 
         // Neurología
@@ -481,7 +484,7 @@ public class ChatService {
             estado.put("datos", new HashMap<>());
             return menu("Operacion cancelada.");
         }
-        if (esSaludo(msg)) {
+        if (msg.length() <= 30 && esSaludo(msg)) {
             estado.put("paso", Paso.ESPERANDO_OPCION);
             estado.put("datos", new HashMap<>());
             return new ChatResponse("Hola " + nombre + "! Bienvenido al Sistema de Gestion Hospitalaria.\n\n1. Reservar cita\n2. Ver mis citas\n3. Informacion de especialidades\n4. Informacion de pagos" + SALIR, "saludo", null);

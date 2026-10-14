@@ -1,6 +1,144 @@
-:host .form-link p {
-  margin: 0; 
-  font-size: 0.95em; 
-  color: #555; 
+:host {
+  display: block;
+  padding: 1.5rem 1rem 2.5rem;
+  --pac-navy: #073450;
+  --pac-primary: #0e7ab5;
+  --pac-dark: #0a5c88;
+  --pac-bg: #f2f7fb;
+  --pac-muted: #5d6d7e;
 }
 
+:host .form-card.pac-auth {
+  max-width: 480px;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(7, 52, 80, 0.12);
+}
+
+/* Banda de cabecera */
+:host .pac-band {
+  background: linear-gradient(120deg, #073450 0%, #0a5c88 60%, #0e7ab5 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 2rem 2rem 1.6rem;
+}
+
+:host .pac-band-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  margin-bottom: 0.8rem;
+}
+
+:host .pac-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9fd8ef;
+}
+
+:host .pac-band h2 {
+  margin: 0 0 0.4rem;
+  padding: 0;
+  border: none;
+  color: #ffffff;
+  font-size: 1.55rem;
+}
+
+:host .pac-sub {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* Cuerpo del formulario */
+:host .pac-auth form {
+  padding: 1.6rem 2rem 0.4rem;
+}
+
+:host .pac-field {
+  margin-bottom: 1.05rem;
+}
+
+:host .pac-field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pac-navy);
+  margin-bottom: 0.4rem;
+}
+
+:host .error-message-global {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.2rem 2rem 0;
+}
+
+:host .pac-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  background: linear-gradient(120deg, #0e7ab5, #0a5c88);
+  border-radius: 10px;
+}
+
+:host .form-link {
+  padding: 0 2rem;
+}
+
+:host .form-link p {
+  margin: 0;
+  font-size: 0.95em;
+  color: #555;
+}
+
+:host .pac-back {
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  padding-bottom: 1.6rem;
+}
+
+:host .pac-back a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+@media (max-width: 720px) {
+  :host {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  :host .pac-auth form {
+    padding: 1.3rem 1.2rem 0.3rem;
+  }
+
+  :host .error-message-global {
+    margin: 1rem 1.2rem 0;
+  }
+
+  :host .form-link {
+    padding: 0 1.2rem;
+  }
+
+  :host .pac-back {
+    padding-bottom: 1.3rem;
+  }
+}

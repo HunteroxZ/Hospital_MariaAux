@@ -1,22 +1,39 @@
-<div class="card-simple">
-  <h2>Gestionar mi Perfil</h2>
+<div class="card-simple perfil-card">
+  <div class="perfil-band">
+    <div class="perfil-band-top">
+      <div>
+        <span class="kicker">Zona profesional · Hospital María Auxiliadora</span>
+        <h2>Gestionar mi Perfil</h2>
+        <p class="perfil-sub">Sus datos personales son fijos; mantenga actualizado su contacto institucional.</p>
+      </div>
+      <span class="perfil-avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5.5 8-5.5s6.5 1.5 8 5.5"/></svg>
+      </span>
+    </div>
+  </div>
 
+  <div class="perfil-body">
   <div *ngIf="isLoading" class="loading-message">Cargando perfil...</div>
   <div *ngIf="errorMessage" class="error-message-global">{{ errorMessage }}</div>
 
   <div *ngIf="!isLoading && !errorMessage">
 
     <div *ngIf="!modoEdicion" class="perfil-lectura">
-      <h4>Datos Personales (Fijos)</h4>
-      <p><strong>Nombre:</strong> {{ medicoInfo.nombres }} {{ medicoInfo.apellidos }}</p>
-      <p><strong>DNI:</strong> {{ medicoInfo.dni }}</p>
-      <p><strong>Cód. Colegiatura:</strong> {{ medicoInfo.codigoColegiatura }}</p>
+      <div class="perfil-grid">
+        <div class="perfil-block">
+          <h4><span class="h4-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 11h8M8 15h5"/></svg></span>Datos Personales (Fijos)</h4>
+          <p><strong>Nombre:</strong> {{ medicoInfo.nombres }} {{ medicoInfo.apellidos }}</p>
+          <p><strong>DNI:</strong> {{ medicoInfo.dni }}</p>
+          <p><strong>Cód. Colegiatura:</strong> {{ medicoInfo.codigoColegiatura }}</p>
+        </div>
 
-      <hr>
-      <h4>Datos de Contacto (Editables)</h4>
-      <p><strong>Correo:</strong> {{ updateData.correo }}</p>
-      <p><strong>Teléfono:</strong> {{ updateData.telefono || 'No registrado' }}</p>
-      <p><strong>Dirección:</strong> {{ updateData.direccion || 'No registrada' }}</p>
+        <div class="perfil-block">
+          <h4><span class="h4-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/><path d="M3 7l9 6 9-6"/></svg></span>Datos de Contacto (Editables)</h4>
+          <p><strong>Correo:</strong> {{ updateData.correo }}</p>
+          <p><strong>Teléfono:</strong> {{ updateData.telefono || 'No registrado' }}</p>
+          <p><strong>Dirección:</strong> {{ updateData.direccion || 'No registrada' }}</p>
+        </div>
+      </div>
 
       <div class="perfil-acciones">
         <button (click)="activarModoEdicion()" class="btn btn-primary">Editar Datos</button>
@@ -35,24 +52,26 @@
       <form (ngSubmit)="guardarCambios()" #perfilForm="ngForm">
 
         <h4>Datos de Contacto (Editables)</h4>
-        <div>
+        <div class="pf-field">
           <label for="correo">Correo Electrónico:</label>
-          <input type="email" id="correo" name="correo" [(ngModel)]="updateData.correo" required>
+          <input type="email" id="correo" name="correo" [(ngModel)]="updateData.correo" required placeholder="correo@hospital.pe">
         </div>
-        <div>
-          <label for="telefono">Teléfono:</label>
-          <input type="tel" id="telefono" name="telefono" [(ngModel)]="updateData.telefono">
-        </div>
-        <div>
-          <label for="direccion">Dirección:</label>
-          <input type="text" id="direccion" name="direccion" [(ngModel)]="updateData.direccion">
+        <div class="pf-row">
+          <div class="pf-field">
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" name="telefono" [(ngModel)]="updateData.telefono" placeholder="999 999 999">
+          </div>
+          <div class="pf-field">
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" [(ngModel)]="updateData.direccion" placeholder="Av. / Jr. / Calle">
+          </div>
         </div>
 
         <hr>
         <h4>Actualizar Contraseña (Opcional)</h4>
-        <div>
+        <div class="pf-field">
           <label for="clave">Nueva Contraseña:</label>
-          <input type="password" id="clave" name="clave" [(ngModel)]="updateData.clave" placeholder="Dejar en blanco para no cambiar">
+          <input type="password" id="clave" name="clave" [(ngModel)]="updateData.clave" placeholder="Dejar en blanco para no cambiar" autocomplete="new-password">
         </div>
 
         <div class="perfil-acciones-edicion">
@@ -66,5 +85,6 @@
       </form>
     </div>
 
+  </div>
   </div>
 </div>

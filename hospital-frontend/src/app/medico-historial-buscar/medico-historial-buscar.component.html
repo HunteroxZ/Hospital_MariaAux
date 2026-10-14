@@ -1,16 +1,26 @@
+<div class="card-simple buscar-card">
+  <div class="buscar-band">
+    <div>
+      <span class="kicker">Historias clínicas · Hospital María Auxiliadora</span>
+      <h2>Consultar Historiales Médicos</h2>
+      <p>Ingrese el DNI del paciente para ver su historial médico completo.</p>
+    </div>
+    <span class="buscar-ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </span>
+  </div>
 
-<div class="card-simple">
-  <h2>Consultar Historiales Médicos</h2>
-  <p>Ingrese el DNI del paciente para ver su historial médico completo.</p>
-
+  <div class="buscar-body">
   <form (ngSubmit)="onBuscarPaciente()" #searchForm="ngForm" class="search-form">
     <div class="form-group">
       <label for="dniBusqueda">DNI del Paciente:</label>
-      <input type="text" id="dniBusqueda" name="dniBusqueda"
-             [(ngModel)]="dniBusqueda"
-             placeholder="Ingrese 8 dígitos..."
-             required minlength="8" maxlength="8" pattern="[0-9]*"
-             #dniInput="ngModel">
+      <div class="search-input-wrap">
+        <input type="text" id="dniBusqueda" name="dniBusqueda"
+               [(ngModel)]="dniBusqueda"
+               placeholder="Ingrese 8 dígitos..."
+               required minlength="8" maxlength="8" pattern="[0-9]*"
+               #dniInput="ngModel" inputmode="numeric">
+      </div>
     </div>
     <button type="submit" [disabled]="!searchForm.form.valid || isLoading" class="btn btn-primary">
       {{ isLoading ? 'Buscando...' : 'Buscar Paciente' }}
@@ -31,7 +41,7 @@
 
   @if (historialPaciente.length > 0 && !isLoading) {
     <hr>
-    <h3>Historial Encontrado: {{ pacienteEncontradoNombre }} (DNI: {{ dniBusqueda }})</h3>
+    <h3 class="result-title"><span class="kicker kicker-navy">Resultado</span>Historial Encontrado: {{ pacienteEncontradoNombre }} (DNI: {{ dniBusqueda }})</h3>
 
     <section class="historial-previo">
       <div class="history-list">
@@ -39,43 +49,44 @@
           <div class="history-card">
             <div class="card-header">
               <div>
-                <strong>Fecha:</strong> {{ entrada.fechaConsulta | date:'dd/MM/yyyy' }} | 
+                <strong>Fecha:</strong> {{ entrada.fechaConsulta | date:'dd/MM/yyyy' }} |
                 <strong>Especialidad:</strong> {{ entrada.especialidad }}
               </div>
+              <span class="card-count-chip" aria-hidden="true"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/></svg></span>
             </div>
             <div class="card-body">
               <h4>Diagnóstico:</h4>
               <p>{{ entrada.diagnostico }}</p>
               <p><strong>Síntomas:</strong> {{ entrada.sintomas }}</p>
-              
+
               @if (entrada.antecedentesPersonales) {
                 <div class="optional-field">
-                  <strong>Ant. Personales:</strong> 
+                  <strong>Ant. Personales:</strong>
                   <p>{{ entrada.antecedentesPersonales }}</p>
                 </div>
               }
-              
+
               @if (entrada.antecedentesFamiliares) {
                 <div class="optional-field">
                   <strong>Ant. Familiares:</strong>
                   <p>{{ entrada.antecedentesFamiliares }}</p>
                 </div>
               }
-              
+
               @if (entrada.historiaEnfermedadActual) {
                 <div class="optional-field">
                   <strong>Historia Enfermedad Actual:</strong>
                   <p>{{ entrada.historiaEnfermedadActual }}</p>
                 </div>
               }
-              
+
               @if (entrada.historiaPsicosocial) {
                 <div class="optional-field">
                   <strong>Historia Psicosocial:</strong>
                   <p>{{ entrada.historiaPsicosocial }}</p>
                 </div>
               }
-              
+
               <p class="medico-info-historial">Atendido por: Dr(a). {{ entrada.nombreMedico }}</p>
             </div>
           </div>
@@ -84,7 +95,8 @@
     </section>
   }
 
-  <div class="form-link" style="margin-top: 30px;">
-    <a routerLink="/medico/dashboard">Volver al Dashboard</a>
+  <div class="form-link buscar-back" style="margin-top: 30px;">
+    <a routerLink="/medico/dashboard">« Volver al Dashboard</a>
+  </div>
   </div>
 </div>

@@ -1,13 +1,16 @@
-
 <div class="modal-overlay">
   <div class="modal-content pago-modal">
     <div class="modal-header">
-      <h2>Menú de Pago</h2>
+      <div class="pago-head-text">
+        <span class="recep-kicker">Cobro en recepción</span>
+        <h2>Menú de Pago</h2>
+      </div>
       <button class="btn-close" (click)="cerrarModal()">&times;</button>
     </div>
 
     <div class="modal-body">
       <div class="monto-cita">
+        <span class="recep-kicker recep-kicker-dark">Total a cobrar</span>
         <h3>Monto de la Cita: <span class="precio">S/ {{ cita.precio | number:'1.2-2' }}</span></h3>
       </div>
 
@@ -18,7 +21,10 @@
       }
 
       <div class="pago-section">
-        <h4>Ingrese el monto de dinero con el que está pagando:</h4>
+        <h4>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></svg>
+          Ingrese el monto de dinero con el que está pagando:
+        </h4>
         <input 
           type="number" 
           [(ngModel)]="montoPagado" 
@@ -101,7 +107,10 @@
   <div class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Pago con Tarjeta</h2>
+        <div class="pago-head-text">
+          <span class="recep-kicker">Izipay · Tarjeta</span>
+          <h2>Pago con Tarjeta</h2>
+        </div>
         <button class="btn-close" (click)="mostrarModalTarjeta = false; errorMessageTarjeta = ''">&times;</button>
       </div>
       <div class="modal-body">
@@ -160,7 +169,9 @@
       </div>
       <div class="modal-body pasar-tarjeta">
         <div class="tarjeta-icon">
-          <div class="card-animation">💳</div>
+          <div class="card-animation" aria-hidden="true">
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#0e7ab5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20M6 15h4"/></svg>
+          </div>
           <p>Por favor, pase su tarjeta</p>
         </div>
         <button (click)="siguientePasarTarjeta()" class="btn-siguiente">
@@ -175,7 +186,10 @@
   <div class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Pago con QR</h2>
+        <div class="pago-head-text">
+          <span class="recep-kicker">Izipay · QR</span>
+          <h2>Pago con QR</h2>
+        </div>
         <button class="btn-close" (click)="mostrarModalQR = false; mostrarQRGenerado = false; mostrarFallbackQR = false; errorMessageQR = ''">&times;</button>
       </div>
       <div class="modal-body">

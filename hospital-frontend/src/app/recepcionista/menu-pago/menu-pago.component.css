@@ -1,3 +1,20 @@
+:host {
+  display: block;
+}
+
+.recep-kicker {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 4px;
+}
+
+.recep-kicker-dark {
+  color: #0e7ab5;
+}
 
 .modal-overlay {
   position: fixed;
@@ -5,19 +22,22 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(7, 52, 80, 0.62);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .modal-content {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(7, 52, 80, 0.08);
+  box-shadow: 0 18px 48px rgba(7, 52, 80, 0.35);
   max-width: 600px;
-  width: 90%;
+  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   animation: slideIn 0.3s ease;
@@ -35,55 +55,64 @@
 }
 
 .modal-header {
-  background: #3498db;
+  background: linear-gradient(120deg, #073450 0%, #0a5c88 62%, #0e7ab5 100%);
   color: white;
-  padding: 20px;
-  border-radius: 12px 12px 0 0;
+  padding: 18px 22px;
+  border-radius: 18px 18px 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
+.pago-head-text h2,
 .modal-header h2 {
   margin: 0;
   color: white;
+  font-size: 1.25rem;
 }
 
 .btn-close {
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   color: white;
-  font-size: 2em;
+  font-size: 1.5em;
   cursor: pointer;
   padding: 0;
   width: 40px;
   height: 40px;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background 0.3s;
+  transition: background 0.25s;
+  line-height: 1;
 }
 
 .btn-close:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .modal-body {
-  padding: 30px;
+  padding: 26px;
+  background: #f2f7fb;
+  border-radius: 0 0 18px 18px;
 }
 
 .monto-cita {
   text-align: center;
   padding: 20px;
-  background: #e8f4f8;
-  border-radius: 8px;
-  margin-bottom: 25px;
+  background: #ffffff;
+  border: 1px solid #d9e6f0;
+  border-radius: 16px;
+  margin-bottom: 22px;
+  box-shadow: 0 10px 24px rgba(7, 52, 80, 0.08);
 }
 
 .monto-cita h3 {
-  margin: 0;
-  color: #2c3e50;
+  margin: 4px 0 0;
+  color: #073450;
 }
 
 .precio {
@@ -93,26 +122,44 @@
 }
 
 .pago-section {
-  margin: 25px 0;
+  margin: 22px 0;
+  background: #ffffff;
+  border: 1px solid #e1eaf1;
+  border-radius: 16px;
+  padding: 20px;
 }
 
 .pago-section h4 {
-  color: #2c3e50;
-  margin-bottom: 12px;
+  color: #073450;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.98rem;
+}
+
+.pago-section h4 svg {
+  color: #0e7ab5;
+  flex: 0 0 auto;
 }
 
 .pago-section input {
   width: 100%;
   padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #d4dee7;
+  border-radius: 12px;
   font-size: 1.1em;
-  transition: border-color 0.3s;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  box-sizing: border-box;
+  background: #fbfdff;
+  color: #073450;
 }
 
 .pago-section input:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #0e7ab5;
+  box-shadow: 0 0 0 3px rgba(14, 122, 181, 0.15);
+  background: #ffffff;
 }
 
 .vuelto-section {
@@ -121,26 +168,34 @@
 
 .vuelto-section label {
   display: block;
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #073450;
   margin-bottom: 8px;
 }
 
 .vuelto-section input {
-  background: #f8f9fa;
+  background: #eef4f9;
   cursor: not-allowed;
+  color: #0a5c88;
+  font-weight: 700;
 }
 
 .facturacion-section {
-  margin: 30px 0;
+  margin: 24px 0;
   padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e1eaf1;
+  border-radius: 16px;
 }
 
 .facturacion-section h4 {
   color: #e74c3c;
-  margin-bottom: 15px;
+  margin: 0 0 15px;
+  font-size: 0.88rem;
+  letter-spacing: 0.05em;
 }
 
 .form-group {
@@ -149,57 +204,73 @@
 
 .form-group label {
   display: block;
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #073450;
   margin-bottom: 6px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 10px 12px;
+  border: 1px solid #d4dee7;
+  border-radius: 10px;
   font-size: 1em;
+  box-sizing: border-box;
+  background: #fbfdff;
+  color: #073450;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #0e7ab5;
+  box-shadow: 0 0 0 3px rgba(14, 122, 181, 0.15);
+  background: #ffffff;
 }
 
 .metodos-pago {
   display: flex;
   gap: 15px;
-  margin-top: 30px;
+  margin-top: 26px;
 }
 
 .btn-efectivo, .btn-tarjeta {
   flex: 1;
   padding: 15px;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1em;
+  border-radius: 12px;
+  font-size: 1.05em;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .btn-efectivo {
   background: #27ae60;
   color: white;
+  box-shadow: 0 8px 18px rgba(39, 174, 96, 0.28);
 }
 
 .btn-efectivo:hover {
   background: #229954;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+  box-shadow: 0 12px 22px rgba(39, 174, 96, 0.34);
 }
 
 .btn-tarjeta {
   background: #e74c3c;
   color: white;
+  box-shadow: 0 8px 18px rgba(231, 76, 60, 0.28);
 }
 
 .btn-tarjeta:hover {
   background: #c0392b;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+  box-shadow: 0 12px 22px rgba(231, 76, 60, 0.34);
 }
 
 /* Estilos para modales de Izipay */
@@ -213,16 +284,17 @@
 
 .btn-option {
   width: 100%;
-  padding: 20px;
+  padding: 18px;
   margin: 10px 0;
   background: white;
   border: 2px solid #e74c3c;
-  border-radius: 8px;
-  font-size: 1.1em;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 1.05em;
+  font-weight: 700;
   color: #e74c3c;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 .btn-option:hover {
@@ -234,30 +306,34 @@
 .cuotas-section {
   margin: 20px 0;
   padding: 15px;
-  background: #f8f9fa;
-  border-radius: 6px;
+  background: #eef4f9;
+  border: 1px solid #d9e6f0;
+  border-radius: 12px;
 }
 
 .cuotas-section label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 10px;
+  color: #073450;
 }
 
 .cuotas-section input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  accent-color: #0e7ab5;
 }
 
 .cuotas-section input[type="number"] {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 10px 12px;
+  border: 1px solid #d4dee7;
+  border-radius: 10px;
   margin-top: 10px;
+  box-sizing: border-box;
 }
 
 .modal-actions {
@@ -270,11 +346,11 @@
   flex: 1;
   padding: 12px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 1em;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .btn-cancelar {
@@ -287,12 +363,13 @@
 }
 
 .btn-continuar {
-  background: #3498db;
+  background: linear-gradient(120deg, #0e7ab5 0%, #0a5c88 100%);
   color: white;
+  box-shadow: 0 8px 18px rgba(14, 122, 181, 0.28);
 }
 
 .btn-continuar:hover {
-  background: #2980b9;
+  filter: brightness(1.05);
 }
 
 .pasar-tarjeta {
@@ -306,13 +383,15 @@
 
 .tarjeta-icon p {
   font-size: 1.2em;
-  color: #2c3e50;
+  color: #073450;
   margin-top: 20px;
+  font-weight: 600;
 }
 
 /* Animación de tarjeta */
 .card-animation {
-  font-size: 80px;
+  display: flex;
+  justify-content: center;
   animation: slideCard 2s infinite;
 }
 
@@ -324,35 +403,37 @@
 .btn-siguiente, .btn-generar-qr, .btn-imprimir {
   width: 100%;
   padding: 15px;
-  background: #3498db;
+  background: linear-gradient(120deg, #0e7ab5 0%, #0a5c88 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1em;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 1.05em;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   margin-top: 20px;
+  box-sizing: border-box;
 }
 
 .btn-siguiente:hover, .btn-generar-qr:hover, .btn-imprimir:hover {
-  background: #2980b9;
+  filter: brightness(1.05);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 10px 22px rgba(14, 122, 181, 0.3);
 }
 
 .qr-section {
   text-align: center;
-  padding: 30px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e1eaf1;
+  border-radius: 14px;
   margin: 20px 0;
 }
 
 .qr-section p {
   margin-top: 15px;
-  color: #2c3e50;
-  font-size: 1.1em;
+  color: #073450;
+  font-size: 1.05em;
 }
 
 /* QR Code - Imagen real y fallback */
@@ -369,14 +450,15 @@
   align-items: center;
   padding: 20px;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
+  border: 1px solid #d9e6f0;
 }
 
 .qr-image-container img {
   max-width: 250px;
   width: 100%;
   height: auto;
-  border: 3px solid #2c3e50;
+  border: 3px solid #073450;
   border-radius: 8px;
   padding: 10px;
   background: white;
@@ -387,14 +469,14 @@
 .qr-instructions {
   margin-top: 20px;
   padding: 15px;
-  background: white;
-  border-radius: 8px;
+  background: #eef4f9;
+  border-radius: 12px;
   text-align: left;
 }
 
 .qr-instructions p {
   margin: 8px 0;
-  color: #2c3e50;
+  color: #073450;
   font-size: 0.95em;
 }
 
@@ -406,7 +488,7 @@
   margin-top: 10px !important;
   padding: 10px;
   background: #d4edda;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 /* Fallback QR en CSS (si la imagen no carga) */
@@ -417,8 +499,8 @@
   margin: 20px auto;
   padding: 20px;
   background: white;
-  border: 2px solid #2c3e50;
-  border-radius: 8px;
+  border: 2px solid #073450;
+  border-radius: 12px;
 }
 
 .qr-fallback div {
@@ -478,16 +560,39 @@
 }
 
 .confirmacion p {
-  color: #7f8c8d;
+  color: #5d6d7e;
   font-size: 1.1em;
   margin-bottom: 30px;
+  letter-spacing: 0.04em;
 }
 
 .error-message {
   background-color: #f8d7da;
   color: #842029;
   border: 1px solid #f5c2c7;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
   margin: 15px 0;
+}
+
+@media (max-width: 720px) {
+  .modal-body {
+    padding: 20px 16px;
+  }
+
+  .metodos-pago {
+    flex-direction: column;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .pasar-tarjeta {
+    padding: 28px 18px;
+  }
+
+  .confirmacion {
+    padding: 36px 18px;
+  }
 }

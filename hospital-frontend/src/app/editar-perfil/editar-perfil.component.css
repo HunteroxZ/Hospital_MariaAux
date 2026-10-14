@@ -1,35 +1,197 @@
-
-:host .form-card h2 + div {
-  background-color: #f9f9f9; 
-  border: 1px solid #eee;     
-  border-radius: 8px;
-  padding: 16px 20px;
-  margin-bottom: 1.5rem;
+:host {
+  display: block;
+  padding: 1.5rem 1rem 2.5rem;
+  --pac-navy: #073450;
+  --pac-primary: #0e7ab5;
+  --pac-dark: #0a5c88;
+  --pac-bg: #f2f7fb;
+  --pac-muted: #5d6d7e;
 }
 
-:host .form-card h2 + div p {
-  margin: 8px 0; 
+:host .form-card.pac-perfil {
+  max-width: 600px;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(7, 52, 80, 0.12);
+}
+
+:host .pac-band {
+  background: linear-gradient(120deg, #073450 0%, #0a5c88 60%, #0e7ab5 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 2rem 2rem 1.6rem;
+}
+
+:host .pac-band-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  margin-bottom: 0.8rem;
+}
+
+:host .pac-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9fd8ef;
+}
+
+:host .pac-band h2 {
+  margin: 0 0 0.4rem;
+  padding: 0;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+}
+
+:host .pac-sub {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+:host .pac-body {
+  padding: 1.4rem 2rem 1.6rem;
+}
+
+/* Tarjeta de identidad (conserva el bloque h2 + div original, ahora con clase) */
+:host .form-card h2 + div.pac-idcard,
+:host .pac-idcard {
+  background-color: #f2f7fb;
+  border: 1px solid #dbe7ef;
+  border-radius: 16px;
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+:host .pac-idcard-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid #dbe7ef;
+}
+
+:host .pac-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0e7ab5, #0a5c88);
+}
+
+:host .pac-idcard-head strong {
+  display: block;
+  color: #073450;
+  font-size: 1.02rem;
+  text-transform: capitalize;
+}
+
+:host .pac-idcard-head small {
+  color: #5d6d7e;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+:host .form-card h2 + div p,
+:host .pac-idcard p {
+  margin: 8px 0;
   font-size: 1em;
   color: #333;
 }
 
-:host .form-card h2 + div p strong {
-  color: #2c3e50; 
-  min-width: 90px; 
+:host .form-card h2 + div p strong,
+:host .pac-idcard p strong {
+  color: #073450;
+  min-width: 90px;
   display: inline-block;
   margin-right: 5px;
 }
 
-:host .form-card > p {
+:host .form-card > p,
+:host .pac-hint {
   text-align: center;
   font-size: 0.9em;
-  color: #555;
+  color: #5d6d7e;
   margin-top: 0;
   margin-bottom: 1rem;
+}
+
+:host .pac-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+}
+
+:host .pac-field {
+  margin-bottom: 1rem;
+}
+
+:host .pac-field label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #073450;
+  margin-bottom: 0.4rem;
 }
 
 :host input[type="password"]::placeholder {
   color: #aaa;
   font-style: italic;
   font-size: 0.95em;
+}
+
+:host .pac-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  background: linear-gradient(120deg, #0e7ab5, #0a5c88);
+  border-radius: 10px;
+}
+
+:host .form-link {
+  text-align: center;
+}
+
+:host .form-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+@media (max-width: 720px) {
+  :host {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  :host .pac-body {
+    padding: 1.1rem 1.2rem 1.3rem;
+  }
+
+  :host .pac-grid {
+    grid-template-columns: 1fr;
+  }
 }

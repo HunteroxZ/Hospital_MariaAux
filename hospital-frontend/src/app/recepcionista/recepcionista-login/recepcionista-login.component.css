@@ -1,0 +1,206 @@
+:host {
+  display: block;
+  background: #f2f7fb;
+}
+
+.recep-login-page {
+  min-height: calc(100vh - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 18px;
+  background:
+    radial-gradient(900px 320px at 12% -4%, rgba(14, 122, 181, 0.14), transparent 60%),
+    radial-gradient(800px 300px at 88% 108%, rgba(7, 52, 80, 0.12), transparent 60%),
+    #f2f7fb;
+}
+
+.form-card.recep-login-card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(7, 52, 80, 0.12);
+  border: 1px solid rgba(7, 52, 80, 0.08);
+  overflow: hidden;
+}
+
+.recep-login-band {
+  background: linear-gradient(120deg, #073450 0%, #0a5c88 62%, #0e7ab5 100%);
+  color: #ffffff;
+  padding: 26px 28px 22px;
+}
+
+.recep-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.recep-brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  flex: 0 0 auto;
+}
+
+.recep-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.recep-login-band h2 {
+  margin: 0 0 6px;
+  color: #ffffff;
+  font-size: 1.45rem;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+.recep-login-sub {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.recep-login-form {
+  padding: 24px 28px 8px;
+}
+
+.recep-field {
+  margin-bottom: 16px;
+}
+
+.recep-field label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #073450;
+  margin-bottom: 8px;
+}
+
+.recep-input-wrap {
+  position: relative;
+}
+
+.recep-input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0e7ab5;
+  display: inline-flex;
+  pointer-events: none;
+}
+
+.recep-input-wrap input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #d4dee7;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fbfdff;
+  color: #073450;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recep-input-wrap input::placeholder {
+  color: #8ba0b1;
+}
+
+.recep-input-wrap input:focus {
+  outline: none;
+  border-color: #0e7ab5;
+  box-shadow: 0 0 0 3px rgba(14, 122, 181, 0.16);
+  background: #ffffff;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin: 6px 0 14px;
+  font-size: 0.92rem;
+}
+
+.recep-btn-primary {
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  padding: 13px 18px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  background: linear-gradient(120deg, #0e7ab5 0%, #0a5c88 100%);
+  box-shadow: 0 10px 22px rgba(14, 122, 181, 0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.recep-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 14px 26px rgba(14, 122, 181, 0.32);
+}
+
+.recep-btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+  box-shadow: none;
+}
+
+.form-link {
+  padding: 16px 28px 26px;
+  text-align: center;
+}
+
+.form-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0e7ab5;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.form-link a:hover {
+  color: #0a5c88;
+  border-bottom-color: #0a5c88;
+}
+
+@media (max-width: 720px) {
+  .recep-login-page {
+    padding: 22px 12px;
+    align-items: flex-start;
+  }
+
+  .recep-login-band {
+    padding: 22px 20px 18px;
+  }
+
+  .recep-login-form {
+    padding: 20px 20px 6px;
+  }
+
+  .form-link {
+    padding: 14px 20px 22px;
+  }
+}

@@ -1,33 +1,37 @@
-<div class="card-simple container-historial">
-  
-    <div class="header-historial">
-        <h2>Registro y Historial Médico</h2>
-        <p>Paciente: <strong>{{ nombrePaciente }}</strong></p>
-        <button (click)="volverAAgenda()" class="btn btn-secondary">
+<div class="card-simple container-historial hist-card">
+
+    <div class="header-historial hist-band">
+        <div class="hist-band-txt">
+          <span class="kicker">Atención médica · Hospital María Auxiliadora</span>
+          <h2>Registro y Historial Médico</h2>
+          <p>Paciente: <strong>{{ nombrePaciente }}</strong></p>
+        </div>
+        <button (click)="volverAAgenda()" class="btn btn-secondary btn-back-top">
             « Volver a Agenda
         </button>
     </div>
 
+    <div class="hist-body">
     <section *ngIf="estadoCita === 'pendiente' && !isLoading" class="registro-actual form-card">
-        <h3>Registro de Diagnóstico</h3> 
+        <h3><span class="kicker kicker-navy">Consulta actual</span>Registro de Diagnóstico</h3>
         <p class="warning-message">
             <strong>AVISO:</strong> Al registrar este historial, la cita se marcará automáticamente como 'Atendida'.
         </p>
-        
+
         <form [formGroup]="historialForm" (ngSubmit)="onSubmit()">
-            
+
             <fieldset>
                 <legend>Datos de la Consulta</legend>
                 <div class="form-group">
                     <label for="sintomas">Síntomas Reportados (*):</label>
-                    <textarea id="sintomas" formControlName="sintomas" rows="3"></textarea>
+                    <textarea id="sintomas" formControlName="sintomas" rows="3" placeholder="Describa los síntomas reportados por el paciente..."></textarea>
                     <div *ngIf="historialForm.controls['sintomas'].invalid && (historialForm.controls['sintomas'].touched || historialForm.controls['sintomas'].dirty)" class="error-message">
                         Los síntomas son obligatorios.
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="diagnostico">Diagnóstico y Plan de Tratamiento (*):</label>
-                    <textarea id="diagnostico" formControlName="diagnostico" rows="5"></textarea>
+                    <textarea id="diagnostico" formControlName="diagnostico" rows="5" placeholder="Diagnóstico, tratamiento y recomendaciones..."></textarea>
                     <div *ngIf="historialForm.controls['diagnostico'].invalid && (historialForm.controls['diagnostico'].touched || historialForm.controls['diagnostico'].dirty)" class="error-message">
                         El diagnóstico es obligatorio.
                     </div>
@@ -57,8 +61,8 @@
                     <textarea id="antecedentes" formControlName="antecedentes" rows="2"></textarea>
                 </div>
             </fieldset>
-            
-            <button type="submit" [disabled]="historialForm.invalid || isSubmitting" class="btn btn-primary">
+
+            <button type="submit" [disabled]="historialForm.invalid || isSubmitting" class="btn btn-primary btn-submit">
                 {{ isSubmitting ? 'Guardando...' : 'Registrar Historial y Finalizar Cita' }}
             </button>
         </form>
@@ -69,10 +73,10 @@
     </section>
 
     <hr>
-    
+
     <section class="historial-previo">
         <h3>Historial Previo ({{ historialFiltrado.length }} Consultas en esta Especialidad)</h3>
-        
+
         <div *ngIf="isLoading" class="loading-message">Cargando...</div>
         <div *ngIf="!isLoading && historialFiltrado.length === 0" class="info-message">
             El paciente no tiene entradas de historial previas *en esta especialidad*.
@@ -82,25 +86,27 @@
             <div *ngFor="let entrada of historialFiltrado" class="history-card">
                 <div class="card-header">
                     <div>
-                        <strong>Fecha:</strong> {{ entrada.fechaConsulta | date:'dd/MM/yyyy' }} | 
+                        <strong>Fecha:</strong> {{ entrada.fechaConsulta | date:'dd/MM/yyyy' }} |
                         <strong>Especialidad:</strong> {{ entrada.especialidad }}
                     </div>
                     <div>
                         <button class="btn btn-icon-print" (click)="imprimirHistorialPDF(entrada)">
-                            📄 Imprimir
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            <span>Imprimir</span>
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="card-body">
                     <h4>Diagnóstico:</h4>
                     <p>{{ entrada.diagnostico }}</p>
-                    
+
                     <p><strong>Síntomas:</strong> {{ entrada.sintomas }}</p>
-                    
+
                     <p class="medico-info-historial">Atendido por: Dr(a). {{ entrada.nombreMedico }}</p>
                 </div>
                 </div>
         </div>
     </section>
+    </div>
 </div>

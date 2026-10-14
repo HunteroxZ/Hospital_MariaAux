@@ -15,7 +15,11 @@ export class SeleccionarRolComponent {
 
 
   goToLogin(path: string): void {
-    
-    this.router.navigate([path]); 
+
+    this.router.navigate([path]);
+  }
+
+  volverInicio(): void {
+    this.router.navigate(['/']);
   }
 }

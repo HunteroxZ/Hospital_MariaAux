@@ -1,16 +1,29 @@
-<div class="form-card">
-  <h2>Iniciar Sesión</h2>
+<div class="form-card pac-auth">
+  <div class="pac-band">
+    <span class="pac-band-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </span>
+    <p class="pac-kicker">Portal del paciente</p>
+    <h2>Iniciar Sesión</h2>
+    <p class="pac-sub">Accede con tu DNI y contraseña para gestionar tus citas.</p>
+  </div>
 
   @if (errorMessage) {
-    <div class="error-message-global">
-      {{ errorMessage }}
+    <div class="error-message-global" role="alert">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 8v4M12 16h.01"/>
+      </svg>
+      <span>{{ errorMessage }}</span>
     </div>
   }
 
   <form [formGroup]="formLogin" (ngSubmit)="onLogin()">
 
-
-    <div>
+    <div class="pac-field">
       <label for="dni">DNI:</label>
       <input
         id="dni"
@@ -18,6 +31,9 @@
         maxlength="8"
         formControlName="dni"
         (input)="limitarDNI($event)"
+        placeholder="8 dígitos numéricos"
+        inputmode="numeric"
+        autocomplete="username"
       />
 
       @if (formLogin.get('dni')?.invalid && formLogin.get('dni')?.touched) {
@@ -32,9 +48,9 @@
       }
     </div>
 
-    <div>
+    <div class="pac-field">
       <label for="clave">Contraseña:</label>
-      <input id="clave" type="password" formControlName="clave" />
+      <input id="clave" type="password" formControlName="clave" placeholder="Tu contraseña" autocomplete="current-password" />
 
       @if (formLogin.get('clave')?.invalid && formLogin.get('clave')?.touched) {
         <div class="error-message">
@@ -43,7 +59,11 @@
       }
     </div>
 
-    <button type="submit" [disabled]="formLogin.invalid">
+    <button type="submit" [disabled]="formLogin.invalid" class="pac-btn">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <path d="M10 17l5-5-5-5M15 12H3"/>
+      </svg>
       Ingresar
     </button>
   </form>
@@ -52,8 +72,13 @@
     <p>¿No tienes una cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
   </div>
 
-  <div class="form-link" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 15px;">
-    <a routerLink="/seleccionar-rol">« Volver a seleccionar rol</a>
+  <div class="form-link pac-back">
+    <a routerLink="/seleccionar-rol">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Volver a seleccionar rol
+    </a>
   </div>
 
 </div>

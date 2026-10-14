@@ -1,54 +1,99 @@
-<div class="form-card">
-  <h2>Editar mi Perfil</h2>
-  
-  <div *ngIf="pacienteActual.dni">
-    <p><strong>DNI:</strong> {{ pacienteActual.dni }}</p>
-    <p><strong>Paciente:</strong> {{ pacienteActual.nombres }} {{ pacienteActual.apellidos }}</p>
-    <p><strong>Correo:</strong> {{ pacienteActual.correo }}</p>
+<div class="form-card pac-perfil">
+  <div class="pac-band">
+    <span class="pac-band-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </span>
+    <p class="pac-kicker">Mi cuenta</p>
+    <h2>Editar mi Perfil</h2>
+    <p class="pac-sub">Mantén tus datos de contacto siempre actualizados.</p>
   </div>
 
-  <hr>
-  <p>Edita tus datos personales.</p>
-
-  <form (ngSubmit)="onUpdate()" #updateForm="ngForm">
-    
-    <div>
-      <label for="telefono">Teléfono:</label>
-      <input type="tel" id="telefono" name="telefono"
-             [(ngModel)]="updateData.telefono">
-    </div>
-
-    <div>
-      <label for="direccion">Dirección:</label>
-      <input type="text" id="direccion" name="direccion"
-             [(ngModel)]="updateData.direccion">
-    </div>
-
-    <div>
-      <label for="talla">Talla (ej: 1.75):</label>
-      <input type="number" step="0.01" id="talla" name="talla"
-             [(ngModel)]="updateData.talla">
-    </div>
-
-    <div>
-      <label for="peso">Peso (ej: 70.5):</label>
-      <input type="number" step="0.1" id="peso" name="peso"
-             [(ngModel)]="updateData.peso">
+  <div class="pac-body">
+    <div *ngIf="pacienteActual.dni" class="pac-idcard">
+      <div class="pac-idcard-head">
+        <span class="pac-avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </span>
+        <div>
+          <strong class="capitalizar">{{ pacienteActual.nombres }} {{ pacienteActual.apellidos }}</strong>
+          <small>Paciente registrado</small>
+        </div>
+      </div>
+      <p><strong>DNI:</strong> {{ pacienteActual.dni }}</p>
+      <p><strong>Paciente:</strong> {{ pacienteActual.nombres }} {{ pacienteActual.apellidos }}</p>
+      <p><strong>Correo:</strong> {{ pacienteActual.correo }}</p>
     </div>
 
     <hr>
-    
-    <div>
-      <label for="clave">Nueva Contraseña (opcional):</label>
-      <input type="password" id="clave" name="clave"
-             [(ngModel)]="updateData.clave"
-             placeholder="Dejar en blanco para no cambiar">
-    </div>
-    
-    <button type="submit">Actualizar Perfil</button>
-  </form>
+    <p class="pac-hint">Edita tus datos personales.</p>
 
-  <div class="form-link">
-    <a routerLink="/dashboard">Volver</a>
+    <form (ngSubmit)="onUpdate()" #updateForm="ngForm">
+
+      <div class="pac-grid">
+        <div class="pac-field">
+          <label for="telefono">Teléfono:</label>
+          <input type="tel" id="telefono" name="telefono"
+                 [(ngModel)]="updateData.telefono" placeholder="9 dígitos">
+        </div>
+
+        <div class="pac-field">
+          <label for="direccion">Dirección:</label>
+          <input type="text" id="direccion" name="direccion"
+                 [(ngModel)]="updateData.direccion" placeholder="Tu dirección actual">
+        </div>
+      </div>
+
+      <div class="pac-grid">
+        <div class="pac-field">
+          <label for="talla">Talla (ej: 1.75):</label>
+          <input type="number" step="0.01" id="talla" name="talla"
+                 [(ngModel)]="updateData.talla" placeholder="Ej: 1.75">
+        </div>
+
+        <div class="pac-field">
+          <label for="peso">Peso (ej: 70.5):</label>
+          <input type="number" step="0.1" id="peso" name="peso"
+                 [(ngModel)]="updateData.peso" placeholder="Ej: 70.5">
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="pac-field pac-pass">
+        <label for="clave">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Nueva Contraseña (opcional):
+        </label>
+        <input type="password" id="clave" name="clave"
+               [(ngModel)]="updateData.clave"
+               placeholder="Dejar en blanco para no cambiar"
+               autocomplete="new-password">
+      </div>
+
+      <button type="submit" class="pac-btn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+        Actualizar Perfil
+      </button>
+    </form>
+
+    <div class="form-link">
+      <a routerLink="/dashboard">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Volver
+      </a>
+    </div>
   </div>
 </div>

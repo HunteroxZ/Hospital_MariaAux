@@ -1,6 +1,130 @@
+:host {
+  display: block;
+  padding: 1.5rem 1rem 2.5rem;
+  --pac-navy: #073450;
+  --pac-primary: #0e7ab5;
+  --pac-dark: #0a5c88;
+  --pac-bg: #f2f7fb;
+  --pac-muted: #5d6d7e;
+}
+
+:host .pac-dash {
+  max-width: 620px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 34px rgba(7, 52, 80, 0.12);
+}
+
+:host .pac-band {
+  background: linear-gradient(120deg, #073450 0%, #0a5c88 60%, #0e7ab5 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 2.2rem 2rem 1.8rem;
+}
+
+:host .pac-kicker {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9fd8ef;
+}
+
+:host .pac-band h2 {
+  margin: 0 0 0.4rem;
+  color: #ffffff;
+  font-size: 1.7rem;
+}
+
+:host .pac-band h2 + p,
 :host h2 + p {
   text-align: center;
-  font-size: 1.1em;
-  color: #000000; 
-  margin-bottom: 1.5rem; 
+  font-size: 1.02em;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+:host .dashboard-menu {
+  padding: 1.4rem 1.4rem 1.6rem;
+  margin: 0 auto;
+  max-width: 560px;
+}
+
+:host .dashboard-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+}
+
+:host .pac-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0e7ab5, #0a5c88);
+  box-shadow: 0 4px 12px rgba(14, 122, 181, 0.35);
+}
+
+:host .pac-logout .pac-menu-icon {
+  background: linear-gradient(135deg, #5d6d7e, #3d4a56);
+  box-shadow: 0 4px 12px rgba(93, 109, 126, 0.35);
+}
+
+:host .pac-menu-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+:host .pac-menu-text strong {
+  font-size: 1rem;
+  color: #073450;
+}
+
+:host .pac-menu-text small {
+  font-size: 0.82rem;
+  color: #5d6d7e;
+}
+
+:host .pac-menu-arrow {
+  margin-left: auto;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: #0e7ab5;
+  line-height: 1;
+}
+
+:host .pac-highlight {
+  border-left-color: #0a5c88;
+  background: linear-gradient(180deg, #ffffff, #f2f7fb);
+}
+
+@media (max-width: 720px) {
+  :host {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  :host .dashboard-menu {
+    padding: 1rem 1rem 1.2rem;
+  }
+
+  :host .dashboard-menu li a {
+    padding: 0.9rem;
+    gap: 0.75rem;
+  }
+
+  :host .pac-menu-icon {
+    width: 42px;
+    height: 42px;
+  }
 }

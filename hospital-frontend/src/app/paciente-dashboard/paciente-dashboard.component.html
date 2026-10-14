@@ -1,17 +1,69 @@
-<h2>¡Bienvenido!</h2>
-<p>¿Qué deseas hacer?</p>
+<section class="pac-dash">
+  <div class="pac-band">
+    <p class="pac-kicker">Hospital María Auxiliadora</p>
+    <h2>¡Bienvenido!</h2>
+    <p>¿Qué deseas hacer?</p>
+  </div>
 
-<ul class="dashboard-menu">
-  <li>
-    <a routerLink="/editar-perfil">Editar mi Perfil</a>
-  </li>
-  <li>
-    <a routerLink="/ver-citas">Ver mis Citas</a>
-  </li>
-  <li>
-    <a routerLink="/generar-cita">Generar nueva Cita</a>
-  </li>
-  <li>
-    <a (click)="onLogout()" style="cursor: pointer;">Cerrar Sesión</a> 
-  </li>
-</ul>
+  <ul class="dashboard-menu">
+    <li>
+      <a routerLink="/editar-perfil">
+        <span class="pac-menu-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+          </svg>
+        </span>
+        <span class="pac-menu-text">
+          <strong>Editar mi Perfil</strong>
+          <small>Actualiza tu teléfono, dirección y datos</small>
+        </span>
+        <span class="pac-menu-arrow" aria-hidden="true">›</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/ver-citas">
+        <span class="pac-menu-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/>
+          </svg>
+        </span>
+        <span class="pac-menu-text">
+          <strong>Ver mis Citas</strong>
+          <small>Consulta fechas, médicos y estados</small>
+        </span>
+        <span class="pac-menu-arrow" aria-hidden="true">›</span>
+      </a>
+    </li>
+    <li class="pac-highlight">
+      <a routerLink="/generar-cita">
+        <span class="pac-menu-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/>
+          </svg>
+        </span>
+        <span class="pac-menu-text">
+          <strong>Generar nueva Cita</strong>
+          <small>Elige especialidad, médico y horario</small>
+        </span>
+        <span class="pac-menu-arrow" aria-hidden="true">›</span>
+      </a>
+    </li>
+    <li class="pac-logout">
+      <a (click)="onLogout()" style="cursor: pointer;">
+        <span class="pac-menu-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <path d="M16 17l5-5-5-5M21 12H9"/>
+          </svg>
+        </span>
+        <span class="pac-menu-text">
+          <strong>Cerrar Sesión</strong>
+          <small>Salir del portal del paciente</small>
+        </span>
+        <span class="pac-menu-arrow" aria-hidden="true">›</span>
+      </a>
+    </li>
+  </ul>
+</section>

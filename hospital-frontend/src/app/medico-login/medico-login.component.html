@@ -1,59 +1,83 @@
-<div class="form-card">
-  <h2>Iniciar Sesión - Personal Médico</h2>
-
-  @if (errorMessage) {
-    <div class="error-message-global">
-      {{ errorMessage }}
+<div class="ml-wrap">
+  <div class="form-card ml-card">
+    <div class="ml-band">
+      <div class="ml-brand">
+        <span class="ml-cross" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>
+        </span>
+        <div class="ml-brand-txt">
+          <span class="kicker">Acceso profesional · Hospital María Auxiliadora</span>
+          <h2>Iniciar Sesión - Personal Médico</h2>
+          <p class="ml-sub">Ingrese su DNI y contraseña institucional para continuar.</p>
+        </div>
+      </div>
     </div>
-  }
 
-  <form [formGroup]="formMedico" (ngSubmit)="onLoginMedico()">
-
-
-    <div>
-      <label for="dni">DNI:</label>
-      <input
-        id="dni"
-        type="text"
-        formControlName="dni"
-        maxlength="8"
-        (input)="limitarCampo($event, 'dni', 8)"
-      >
-
-
-      @if (formMedico.get('dni')?.invalid && formMedico.get('dni')?.touched) {
-        <div class="error-message">
-          @if (formMedico.get('dni')?.errors?.['required']) {
-            <small>El DNI es obligatorio.</small>
-          }
-          @if (formMedico.get('dni')?.errors?.['pattern']) {
-            <small>Debe tener 8 dígitos numéricos.</small>
-          }
+    <div class="ml-body">
+      @if (errorMessage) {
+        <div class="error-message-global">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span>{{ errorMessage }}</span>
         </div>
       }
-    </div>
 
-    <div>
-      <label for="clave">Contraseña:</label>
-      <input id="clave" type="password" formControlName="clave" />
+      <form [formGroup]="formMedico" (ngSubmit)="onLoginMedico()" class="ml-form">
 
-      @if (formMedico.get('clave')?.invalid && formMedico.get('clave')?.touched) {
-        <div class="error-message">
-          <small>La contraseña es obligatoria.</small>
+        <div class="ml-field">
+          <label for="dni">DNI:</label>
+          <div class="ml-input">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#0e7ab5" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 9h5M14 12h5M14 15h3"/></svg>
+            <input
+              id="dni"
+              type="text"
+              formControlName="dni"
+              maxlength="8"
+              (input)="limitarCampo($event, 'dni', 8)"
+              placeholder="8 dígitos numéricos"
+              autocomplete="username"
+              inputmode="numeric"
+            >
+          </div>
+
+          @if (formMedico.get('dni')?.invalid && formMedico.get('dni')?.touched) {
+            <div class="error-message">
+              @if (formMedico.get('dni')?.errors?.['required']) {
+                <small>El DNI es obligatorio.</small>
+              }
+              @if (formMedico.get('dni')?.errors?.['pattern']) {
+                <small>Debe tener 8 dígitos numéricos.</small>
+              }
+            </div>
+          }
         </div>
-      }
+
+        <div class="ml-field">
+          <label for="clave">Contraseña:</label>
+          <div class="ml-input">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#0e7ab5" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <input id="clave" type="password" formControlName="clave" placeholder="Su contraseña" autocomplete="current-password" />
+          </div>
+
+          @if (formMedico.get('clave')?.invalid && formMedico.get('clave')?.touched) {
+            <div class="error-message">
+              <small>La contraseña es obligatoria.</small>
+            </div>
+          }
+        </div>
+
+        <button type="submit" [disabled]="formMedico.invalid" class="ml-btn">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          <span>Ingresar como Médico</span>
+        </button>
+      </form>
+
+      <div class="form-link ml-link">
+        <p>¿Eres un paciente? <a routerLink="/login">Inicia sesión aquí</a></p>
+      </div>
+
+      <div class="form-link ml-back" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 15px;">
+        <a routerLink="/seleccionar-rol">« Volver a seleccionar rol</a>
+      </div>
     </div>
-
-    <button type="submit" [disabled]="formMedico.invalid">
-      Ingresar como Médico
-    </button>
-  </form>
-
-  <div class="form-link">
-    <p>¿Eres un paciente? <a routerLink="/login">Inicia sesión aquí</a></p>
-  </div>
-
-  <div class="form-link" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 15px;">
-    <a routerLink="/seleccionar-rol">« Volver a seleccionar rol</a>
   </div>
 </div>
