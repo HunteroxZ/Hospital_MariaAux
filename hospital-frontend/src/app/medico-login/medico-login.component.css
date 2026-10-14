@@ -36,14 +36,32 @@
 .ml-form { display: flex; flex-direction: column; gap: 18px; }
 .ml-field label { display: block; font-weight: 700; margin-bottom: 7px; color: #073450; font-size: .92rem; }
 .ml-input {
-  display: flex; align-items: center; gap: 10px;
-  border: 1.5px solid #dbe7ef; border-radius: 12px;
-  padding: 0 12px; background: #f2f7fb; transition: border-color .15s, box-shadow .15s, background .15s;
+  position: relative;
+  border: 1.5px solid #dbe7ef;
+  border-radius: 12px;
+  background: #f2f7fb;
+  transition: border-color .15s, box-shadow .15s, background .15s;
 }
 .ml-input:focus-within { border-color: #0e7ab5; background: #fff; box-shadow: 0 0 0 3px rgba(14,122,181,.15); }
-.ml-input input {
-  flex: 1; border: none; outline: none; background: transparent;
-  padding: 12px 0; font-size: 1rem; color: #073450; min-width: 0;
+.ml-ico {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  pointer-events: none;
+}
+.ml-form .ml-field .ml-input input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 12px 12px 12px 40px;
+  font-size: 1rem;
+  color: #073450;
 }
 .error-message-global {
   display: flex; gap: 8px; align-items: center;

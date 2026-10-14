@@ -1,5 +1,5 @@
 /*admin/inicio/inicio.css*/
-:host { display: block; background: #f2f7fb; min-height: 100vh; }
+:host { display: block; margin: -20px; background: #f2f7fb; min-height: 100vh; overflow-x: clip; }
 
 .admin-container {
   min-height: 100vh;

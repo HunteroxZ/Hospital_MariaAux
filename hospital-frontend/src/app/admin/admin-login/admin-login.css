@@ -1,6 +1,8 @@
 :host {
   display: block;
+  margin: -20px;
   min-height: 100vh;
+  overflow-x: clip;
   background: #f2f7fb;
   color: #073450;
   font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;

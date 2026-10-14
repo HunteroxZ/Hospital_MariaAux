@@ -1,4 +1,4 @@
-:host { display: block; background: #f2f7fb; min-height: 100vh; }
+:host { display: block; margin: -20px; background: #f2f7fb; min-height: 100vh; overflow-x: clip; }
 
 .admin-shell {
   min-height: 100vh;
