@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: hospital-backend
+    env: docker
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://gateway01.us-east-1.prod.aws.tidbcloud.com:4000/HMA_BD?useSSL=true&allowPublicKeyRetrieval=true
+      - key: SPRING_DATASOURCE_USERNAME
+        value: 3DphCmF7tLRiCfQ.root
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: CQfeWOMVFsTh9MyQ
+      - key: GROQ_API_KEY
+        value: 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
+      - key: PORT
+        value: 10000
